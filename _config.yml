@@ -1,0 +1,47 @@
+name: Based on Herring Cove
+author: Wen Xu
+github: https://github.com/dragonrider1024
+twitter: http://twitter.com
+facebook: http://facebook.com
+linkedin: https://www.linkedin.com/in/wxutamu/
+email: xuzhiwen1024@gmail.com
+disqus: wenx
+
+collections:
+  authors:
+    output: true
+
+  projects:
+    output: true
+
+defaults:
+  - scope:
+      path: ""
+      type: projects
+
+    values:
+      layout: "project"
+
+  - scope:
+      path: ""
+      type: "authors"
+
+    values:
+      layout: "author"
+
+  - scope:
+      path: ""
+      type: "posts"
+
+    values:
+      layout: "post"
+
+  - scope:
+      path: ""
+    values: "default"
+
+  - scope:
+      path: "assets/img/home_page_img"
+
+    values:
+      home_page_img: true

@@ -1,0 +1,22 @@
+---
+layout: default
+comments: true
+---
+<div class="article-title"> {{page.title}}</div>
+<p class="meta">
+	<small>
+      &nbsp;<i class="fa fa-calendar-o"></i> {{ page.date | date_to_string}}
+    </small>
+</p>
+<p> By 
+	{% assign author = site.authors | where: 'short_name', page.author | first %}
+  	{% if author %}
+    <a href="{{ author.url }}">{{ author.name }}</a>
+  	{% endif %}
+ </p>
+<div class="post">
+{{ content }}
+</div>
+{% include share.html %}
+{% include pager.html %}
+{% include comment.html %}

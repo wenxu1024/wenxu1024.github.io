@@ -1,0 +1,8 @@
+---
+layout: default
+title: Home
+---
+{% include greeting.html %}
+{% assign home_page_images = site.static_files | where: "home_page_img", true %}
+{% assign home_page_image = home_page_images | sample %}
+<img src = "{{home_page_image.path}}" alt="img">

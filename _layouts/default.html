@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+  <head>
+    {% include header.html %}
+    {% if jekyll.environment == 'production' %}
+    {% include analytics.html %}
+    {% endif %}
+  </head>
+  <body>
+  	<div class="wrapper">
+  	{% include navigation.html %}
+  		<div class="container">
+    	{{ content }}
+		</div>
+	{% include footer.html %}
+	</div>
+  </body>
+</html>
