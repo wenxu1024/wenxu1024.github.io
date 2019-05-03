@@ -1,13 +1,15 @@
 ---
-layout: default
 title: Projects
+layout: default
 ---
+
 <h1> Recent Projects </h1>
 <ol>
 	{% for project in site.projects %}
 	<li>
 		<h2><a href={{project.url}}>{{project.name}}</a></h2>
-		<p>{{project.content|markdownify}}</p>
+		<p>{{project.excerpt|markdownify}}</p>
 	</li>
+	<hr/>
 	{% endfor %}
 </ol>

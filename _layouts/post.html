@@ -14,6 +14,11 @@ comments: true
     <a href="{{ author.url }}">{{ author.name }}</a>
   	{% endif %}
  </p>
+ <p>
+ 	{% for tag in page.tags %}
+ 		<a href="/tags/{{tag}}/">{{tag}}</a>
+ 	{% endfor %}
+ </p>
 <div class="post">
 {{ content }}
 </div>

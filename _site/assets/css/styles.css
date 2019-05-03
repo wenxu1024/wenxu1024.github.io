@@ -8,9 +8,9 @@
   padding-top: 30px; }
 
 #sidebar-wrapper {
-  margin-left: -250px;
-  left: 250px;
-  width: 250px;
+  margin-left: -20%;
+  left: 20%;
+  width: 20%;
   background: #263651;
   position: fixed;
   height: 100%;
@@ -91,3 +91,18 @@ img {
 
 ul, ol {
   list-style: none; }
+
+.text-justify {
+  text-align: justify; }
+
+.half-size-img {
+  width: 50%;
+  height: 50%; }
+
+.seventy-size-img {
+  width: 80%;
+  height: 80%; }
+
+.thirty-size-img {
+  width: 20%;
+  height: 20%; }

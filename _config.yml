@@ -24,6 +24,13 @@ defaults:
 
   - scope:
       path: ""
+      type: tags
+
+    values:
+      layout: "tagpage"
+
+  - scope:
+      path: ""
       type: "authors"
 
     values:
@@ -45,3 +52,9 @@ defaults:
 
     values:
       home_page_img: true
+
+kramdown:
+  auto_ids: true
+
+title: [Wen Xu's Personal Site]
+description: [A website for Tech and Life]
