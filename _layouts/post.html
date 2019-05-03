@@ -13,12 +13,12 @@ comments: true
   	{% if author %}
     <a href="{{ author.url }}">{{ author.name }}</a>
   	{% endif %}
- </p>
- <p>
+</p>
+<p>
  	{% for tag in page.tags %}
- 		<a href="/tags/{{tag}}/">{{tag}}</a>
+ 		<a href="/tags/{{tag}}.html/">{{tag}}</a>
  	{% endfor %}
- </p>
+</p>
 <div class="post">
 {{ content }}
 </div>
