@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-<title>Test</title>
+<title>Best Time to Buy and Sell Stock (II) (LeetCode 122)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A website for Tech and Life">
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -90,10 +90,10 @@
       </button>
       <hr/>
   		<div class="container">
-    	 <div class="article-title"> Test</div>
+    	 <div class="article-title"> Best Time to Buy and Sell Stock (II) (LeetCode 122)</div>
 <p class="meta">
 	<small>
-      &nbsp;<i class="fa fa-calendar-o"></i> 20 Aug 2018
+      &nbsp;<i class="fa fa-calendar-o"></i> 04 May 2019
     </small>
 </p>
 <p> By 
@@ -104,24 +104,68 @@
 </p>
 <p>
  	
- 		<a href="/tags/foo.html">foo</a>
+ 		<a href="/tags/leetcode.html">leetcode</a>
  	
- 		<a href="/tags/bar.html">bar</a>
+ 		<a href="/tags/algorithm.html">algorithm</a>
  	
 </p>
 <div class="post">
-<p>Test. This is my first blog.
-<!--more--></p>
+<h2 id="problem-description">Problem description</h2>
+<p>Say you have an array for which the ith element is the price of a given stock on day i.</p>
 
-<p>Second paragraph.</p>
+<p>Design an algorithm to find the maximum profit. You may complete as many transactions as you like (i.e., buy one and sell one share of the stock multiple times).</p>
+
+<p>Note: You may not engage in multiple transactions at the same time (i.e., you must sell the stock before you buy again).</p>
+
+<p>Example 1:</p>
+
+<p>Input: [7,1,5,3,6,4]
+Output: 7
+Explanation: Buy on day 2 (price = 1) and sell on day 3 (price = 5), profit = 5-1 = 4.
+             Then buy on day 4 (price = 3) and sell on day 5 (price = 6), profit = 6-3 = 3.
+Example 2:</p>
+
+<p>Input: [1,2,3,4,5]
+Output: 4
+Explanation: Buy on day 1 (price = 1) and sell on day 5 (price = 5), profit = 5-1 = 4.
+             Note that you cannot buy on day 1, buy on day 2 and sell them later, as you are
+             engaging multiple transactions at the same time. You must sell before buying again.
+Example 3:</p>
+
+<p>Input: [7,6,4,3,1]
+Output: 0
+Explanation: In this case, no transaction is done, i.e. max profit = 0.</p>
+
+<h2 id="solution">Solution</h2>
+<ol>
+  <li>This time you can perform as many transactions as you want to maximize you profit. You would buy everytime you see a price drop and sell when the price rise up. Then you buy again (you have to sell before you buy, but you can sell and buy in the same day). We accumulate the profit we gained so far.</li>
+  <li>Below is python implementation</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">maxProfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prices</span><span class="p">)</span>
+        <span class="n">total_profit</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">prev</span> <span class="o">=</span> <span class="n">prices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">prev</span><span class="p">:</span>
+                <span class="n">profit</span> <span class="o">=</span> <span class="n">prices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">prev</span>
+                <span class="n">total_profit</span> <span class="o">+=</span> <span class="n">profit</span>
+            <span class="n">prev</span> <span class="o">=</span> <span class="n">prices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">total_profit</span>
+</code></pre></div></div>
 
 </div>
 <a href="https://twitter.com/share" class="twitter-share-button " data-size="small" data-count="none">Tweet</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 <ul class="pager">
 
+  <li class="previous"><a href="/2019/05/03/leetcode901.html">&larr; Older</a></li>
 
-  <li class="next"><a href="/2019/04/28/divide-and-conqur.html">Newer &rarr;</a></li>
+
+  <li class="next"><a href="/2019/05/04/leetcode123.html">Newer &rarr;</a></li>
 
 </ul>
 <div id="disqus_thread">

@@ -13,69 +13,177 @@
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif] d-->
     
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-47234019-2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-47234019-2');
-</script>
-    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" async="async"></script>
   </head>
   <body>
   	<div class="wrapper">
   	<div id="sidebar-wrapper">
 <nav class="sidebar-nav">
-	<ul>
-	
-		<li>
-		<a href="/" >
-		Home
-		</a>
-		</li>
-	
-		<li>
-		<a href="/research.html" >
-		Research
-		</a>
-		</li>
-	
-		<li>
-		<a href="/blog.html" >
-		Blog
-		</a>
-		</li>
-	
-		<li>
-		<a href="/projects.html" >
-		Projects
-		</a>
-		</li>
-	
-		<li>
-		<a href="/about.html" >
-		About
-		</a>
-		</li>
-	
-	<hr />
-    <div id="social-wrapper">
-      <li> <a href="http://twitter.com"><i class="fa fa-twitter-square"></i> @twitter</a></li>
-      <li> <a href="https://www.linkedin.com/in/wxutamu/"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
-      <li> <a href="http://facebook.com"><i class="fa fa-facebook-square"></i> facebook</a></li>
-      <li> <a href="https://github.com/dragonrider1024"><i class="fa fa-github-square"></i> github</a> </li>
-      <li> <a href="mailto:xuzhiwen1024@gmail.com"><i class="fa fa-envelope"></i> email</a></li>
-    </div>
-	</ul>
+	<div class="active">
+		<ul>
+		
+			<li>
+			<a href="/" >
+				Home
+			</a>
+			</li>
+		
+			<li>
+			<a href="/research.html" >
+				Research
+			</a>
+			</li>
+		
+			<li>
+			<a href="/blog.html" >
+				Blog
+			</a>
+			</li>
+		
+			<li>
+			<a href="/projects.html" >
+				Projects
+			</a>
+			</li>
+		
+			<li>
+			<a href="/about.html" >
+				About
+			</a>
+			</li>
+		
+		<hr />
+    	<div id="social-wrapper">
+      		<li> <a href="http://twitter.com"><i class="fa fa-twitter-square"></i> @twitter</a></li>
+      		<li> <a href="https://www.linkedin.com/in/wxutamu/"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
+      		<li> <a href="http://facebook.com"><i class="fa fa-facebook-square"></i> facebook</a></li>
+      		<li> <a href="https://github.com/dragonrider1024"><i class="fa fa-github-square"></i> github</a> </li>
+      		<li> <a href="mailto:xuzhiwen1024@gmail.com"><i class="fa fa-envelope"></i> email</a></li>
+    	</div>
+		</ul>
+	</div>
 </nav>
+<script type="text/javascript">
+    $(document).ready(function () {
+    $('#sidebarCollapse').on('click', function () {
+        $('#sidebar-wrapper').toggleClass('active');
+        $(this).toggleClass('active');
+      });
+    });
+</script>
 </div>
+    <div class="content">
+      <button type="button" id="sidebarCollapse" class="navbar-btn">
+      <span></span>
+      <span></span>
+      <span></span>
+      </button>
+      <hr/>
   		<div class="container">
-    	<h1> Leetcode</h1>
+    	 <h1> Leetcode</h1>
 <hr/>
 <p></p>
 <ul>
+	
+		<h2><a href="/2019/05/05/leetcode1038.html">Binary Search Tree to Greater Sum Tree (LeetCode 1038)</a></h2>
+			<p>
+				
+					<a href="/tags/leetcode.html">leetcode</a>
+				
+					<a href="/tags/algorithm.html">algorithm</a>
+				
+					<a href="/tags/binary search tree.html">binary search tree</a>
+				
+			</p>
+			<a href="/2019/05/05/leetcode1038.html#disqus_thread">Comments Count</a>
+			<p><h2 id="problem-description">Problem Description</h2>
+<p>Given the root of a binary search tree with distinct values, modify it so that every node has a new value equal to the sum of the values of the original tree that are greater than or equal to node.val.</p>
+
+</p>
+			<hr/>
+	
+		<h2><a href="/2019/05/04/leetcode392.html">Is Subsequence (LeetCode 392)</a></h2>
+			<p>
+				
+					<a href="/tags/algorithm.html">algorithm</a>
+				
+					<a href="/tags/leetcode.html">leetcode</a>
+				
+					<a href="/tags/two pointers.html">two pointers</a>
+				
+			</p>
+			<a href="/2019/05/04/leetcode392.html#disqus_thread">Comments Count</a>
+			<p><h2 id="problem-description">Problem description</h2>
+<p>Given a string s and a string t, check if s is subsequence of t.</p>
+
+</p>
+			<hr/>
+	
+		<h2><a href="/2019/05/04/leetcode123.html">Best Time to Buy and Sell Stock (LeetCode 121)</a></h2>
+			<p>
+				
+					<a href="/tags/algorithm.html">algorithm</a>
+				
+					<a href="/tags/leetcode.html">leetcode</a>
+				
+					<a href="/tags/.html"></a>
+				
+			</p>
+			<a href="/2019/05/04/leetcode123.html#disqus_thread">Comments Count</a>
+			<p><h2 id="problem-description">Problem Description</h2>
+<p>Say you have an array for which the ith element is the price of a given stock on day i.</p>
+
+</p>
+			<hr/>
+	
+		<h2><a href="/2019/05/04/leetcode122.html">Best Time to Buy and Sell Stock (II) (LeetCode 122)</a></h2>
+			<p>
+				
+					<a href="/tags/leetcode.html">leetcode</a>
+				
+					<a href="/tags/algorithm.html">algorithm</a>
+				
+			</p>
+			<a href="/2019/05/04/leetcode122.html#disqus_thread">Comments Count</a>
+			<p><h2 id="problem-description">Problem description</h2>
+<p>Say you have an array for which the ith element is the price of a given stock on day i.</p>
+
+</p>
+			<hr/>
+	
+		<h2><a href="/2019/05/03/leetcode901.html">Online stock span (LeetCode 901)</a></h2>
+			<p>
+				
+					<a href="/tags/algorithm.html">algorithm</a>
+				
+					<a href="/tags/leetcode.html">leetcode</a>
+				
+					<a href="/tags/stack.html">stack</a>
+				
+			</p>
+			<a href="/2019/05/03/leetcode901.html#disqus_thread">Comments Count</a>
+			<p><h2 id="problem-description">Problem description</h2>
+<p>Write a class StockSpanner which collects daily price quotes for some stock, and returns the span of that stock’s price for the current day.</p>
+
+</p>
+			<hr/>
+	
+		<h2><a href="/2019/05/03/leetcode682.html">Base Ball Game (LeetCode 682)</a></h2>
+			<p>
+				
+					<a href="/tags/algorithm.html">algorithm</a>
+				
+					<a href="/tags/leetcode.html">leetcode</a>
+				
+					<a href="/tags/stack.html">stack</a>
+				
+			</p>
+			<a href="/2019/05/03/leetcode682.html#disqus_thread">Comments Count</a>
+			<p><h2 id="problem-description">Problem description</h2>
+<p>You’re now a baseball game point recorder.</p>
+
+</p>
+			<hr/>
 	
 		<h2><a href="/2019/05/03/leet-code450.html">Delete Node in a BST (LeetCode 450)</a></h2>
 			<p>
@@ -96,16 +204,17 @@
 	
 </ul>
 <script id="dsq-count-scr" src="//wenx.disqus.com/count.js" async></script>
-		</div>
-	<div class="container">
+		  </div>
+      <div class="container">
   <footer>
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-05-03 18:14:29 -0400
+      	2019-05-05 15:59:17 -0400
     </p>
   </footer>
 </div>
+    </div>
 	</div>
   </body>
 </html>

@@ -55,6 +55,7 @@ defaults:
 
 kramdown:
   auto_ids: true
+  syntax_highlighter: rouge
 
 title: [Wen Xu's Personal Site]
 description: [A website for Tech and Life]

@@ -2,40 +2,6 @@
 	color: green;
 }
 
-.container
-{
-  width:60%;
-  padding-left:30px;
-  padding-right:0;
-  padding-top:30px
-}
-
-#sidebar-wrapper
-{
-  margin-left:-20%;
-  left:20%;
-  width:20%;
-  background:#263651;
-  position:fixed;
-  height:100%;
-  overflow-y:auto;
-  z-index:1000;
-  margin-top:-4px;
-  border-top:solid #d90006;
-  transition:all .4s ease 0;
-  border-width:4px
-}
-
-.sidebar-nav
-{
-  position:absolute;
-  top:0;
-  width:250px;
-  list-style:none;
-  margin:0;
-  padding:30px 0 0
-}
-
 .credit
 {
   bottom:0;
@@ -81,7 +47,7 @@
 
 img
 {
-  width:100%;
+  width:80%;
 }
 
 #social-wrapper
@@ -120,7 +86,7 @@ img
   border-bottom: 1px #b1b1b1 solid;
 }
 
-ul,ol
+ul
 {
   list-style:none;
 }
@@ -142,4 +108,72 @@ ul,ol
 .thirty-size-img {
   width: 20%;
   height: 20%;
+}
+
+ #sidebarCollapse {
+    width: 40px;
+    height: 40px;
+    background: #ffffff;
+    border-style: none;
+}
+
+#sidebarCollapse span {
+    width: 100%;
+    height: 2px;
+    margin: 0 auto;
+    display: block;
+    background: #555;
+    transition: all 0.8s cubic-bezier(0.810, -0.330, 0.345, 1.375);
+}
+
+#sidebarCollapse span:first-of-type {
+    /* rotate first one */
+    transform: rotate(45deg) translate(2px, 2px);
+}
+#sidebarCollapse span:nth-of-type(2) {
+    /* second one is not visible */
+    opacity: 0;
+}
+#sidebarCollapse span:last-of-type {
+    /* rotate third one */
+    transform: rotate(-45deg) translate(1px, -1px);
+}
+
+#sidebarCollapse.active span {
+    /* no rotation */
+    transform: none;
+    /* all bars are visible */
+    opacity: 1;
+    margin: 5px auto;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    perspective: 1500px;
+}
+
+#sidebar-wrapper {
+    min-width: 20%;
+    max-width: 20%;
+    min-height: 100vh;
+    background:#263651;
+    z-index:1000;
+    border-width:4px;
+    overflow-y:auto;
+    margin-top:-4px;
+    border-top:solid #d90006;
+    transition: all 0.6s cubic-bezier(0.945, 0.020, 0.270, 0.665);
+    transform-origin: center left; /* Set the transformed position of sidebar to center left side. */
+}
+
+#sidebar-wrapper.active {
+    margin-left: -20%;
+    transform: rotateY(100deg); /* Rotate sidebar vertically by 100 degrees. */
+}
+
+.sidebar-nav {
+  position: fixed;
+  padding-top:40px;
 }

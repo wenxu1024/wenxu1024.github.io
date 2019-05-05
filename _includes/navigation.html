@@ -1,21 +1,31 @@
 <div id="sidebar-wrapper">
 <nav class="sidebar-nav">
-	<ul>
-	{% for item in site.data.navigation %}
-		<li>
-		<a href="{{item.link}}" {%if page.url == item.link %} class="current" {% endif %}>
-		{{item.name}}
-		</a>
-		</li>
-	{% endfor %}
-	<hr />
-    <div id="social-wrapper">
-      <li> <a href="{{ site.twitter }}"><i class="fa fa-twitter-square"></i> @twitter</a></li>
-      <li> <a href="{{ site.linkedin }}"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
-      <li> <a href="{{ site.facebook }}"><i class="fa fa-facebook-square"></i> facebook</a></li>
-      <li> <a href="{{ site.github }}"><i class="fa fa-github-square"></i> github</a> </li>
-      <li> <a href="mailto:{{ site.email }}"><i class="fa fa-envelope"></i> email</a></li>
-    </div>
-	</ul>
+	<div class="active">
+		<ul>
+		{% for item in site.data.navigation %}
+			<li>
+			<a href="{{item.link}}" {%if page.url == item.link %} class="current" {% endif %}>
+				{{item.name}}
+			</a>
+			</li>
+		{% endfor %}
+		<hr />
+    	<div id="social-wrapper">
+      		<li> <a href="{{ site.twitter }}"><i class="fa fa-twitter-square"></i> @twitter</a></li>
+      		<li> <a href="{{ site.linkedin }}"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
+      		<li> <a href="{{ site.facebook }}"><i class="fa fa-facebook-square"></i> facebook</a></li>
+      		<li> <a href="{{ site.github }}"><i class="fa fa-github-square"></i> github</a> </li>
+      		<li> <a href="mailto:{{ site.email }}"><i class="fa fa-envelope"></i> email</a></li>
+    	</div>
+		</ul>
+	</div>
 </nav>
+<script type="text/javascript">
+    $(document).ready(function () {
+    $('#sidebarCollapse').on('click', function () {
+        $('#sidebar-wrapper').toggleClass('active');
+        $(this).toggleClass('active');
+      });
+    });
+</script>
 </div>

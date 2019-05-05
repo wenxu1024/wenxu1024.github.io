@@ -23,56 +23,74 @@
   gtag('config', 'UA-47234019-2');
 </script>
     
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" async="async"></script>
   </head>
   <body>
   	<div class="wrapper">
   	<div id="sidebar-wrapper">
 <nav class="sidebar-nav">
-	<ul>
-	
-		<li>
-		<a href="/" >
-		Home
-		</a>
-		</li>
-	
-		<li>
-		<a href="/research.html" >
-		Research
-		</a>
-		</li>
-	
-		<li>
-		<a href="/blog.html" >
-		Blog
-		</a>
-		</li>
-	
-		<li>
-		<a href="/projects.html" >
-		Projects
-		</a>
-		</li>
-	
-		<li>
-		<a href="/about.html" >
-		About
-		</a>
-		</li>
-	
-	<hr />
-    <div id="social-wrapper">
-      <li> <a href="http://twitter.com"><i class="fa fa-twitter-square"></i> @twitter</a></li>
-      <li> <a href="https://www.linkedin.com/in/wxutamu/"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
-      <li> <a href="http://facebook.com"><i class="fa fa-facebook-square"></i> facebook</a></li>
-      <li> <a href="https://github.com/dragonrider1024"><i class="fa fa-github-square"></i> github</a> </li>
-      <li> <a href="mailto:xuzhiwen1024@gmail.com"><i class="fa fa-envelope"></i> email</a></li>
-    </div>
-	</ul>
+	<div class="active">
+		<ul>
+		
+			<li>
+			<a href="/" >
+				Home
+			</a>
+			</li>
+		
+			<li>
+			<a href="/research.html" >
+				Research
+			</a>
+			</li>
+		
+			<li>
+			<a href="/blog.html" >
+				Blog
+			</a>
+			</li>
+		
+			<li>
+			<a href="/projects.html" >
+				Projects
+			</a>
+			</li>
+		
+			<li>
+			<a href="/about.html" >
+				About
+			</a>
+			</li>
+		
+		<hr />
+    	<div id="social-wrapper">
+      		<li> <a href="http://twitter.com"><i class="fa fa-twitter-square"></i> @twitter</a></li>
+      		<li> <a href="https://www.linkedin.com/in/wxutamu/"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
+      		<li> <a href="http://facebook.com"><i class="fa fa-facebook-square"></i> facebook</a></li>
+      		<li> <a href="https://github.com/dragonrider1024"><i class="fa fa-github-square"></i> github</a> </li>
+      		<li> <a href="mailto:xuzhiwen1024@gmail.com"><i class="fa fa-envelope"></i> email</a></li>
+    	</div>
+		</ul>
+	</div>
 </nav>
+<script type="text/javascript">
+    $(document).ready(function () {
+    $('#sidebarCollapse').on('click', function () {
+        $('#sidebar-wrapper').toggleClass('active');
+        $(this).toggleClass('active');
+      });
+    });
+</script>
 </div>
+    <div class="content">
+      <button type="button" id="sidebarCollapse" class="navbar-btn">
+      <span></span>
+      <span></span>
+      <span></span>
+      </button>
+      <hr/>
   		<div class="container">
-    	<h1> Some useful python and bash scripts for computational chemistry </h1>
+    	 <h1> Some useful python and bash scripts for computational chemistry </h1>
 <p>Chemistry has evloved from “beaker and test tube” age for a long time. Paul Dirac once said</p>
 <blockquote class="text-justify">
   <p>The underlying physical laws necessary for the mathematical theory of a large part of physics and the <strong>whole of chemistry</strong> are thus <strong>completely known</strong>, and the difficulty is only that the exact application of these laws leads to equations much too complicated to be soluble. It therefore becomes desirable that <strong>approximate</strong> practical methods of applying quantum mechanics should be developed, which can lead to an explanation of the main features of complex atomic systems without too much computation.</p>
@@ -441,16 +459,17 @@ if </span><span class="nb">grep</span> <span class="nt">-q</span> <span class="s
   <span class="k">print</span> <span class="n">Tk</span><span class="p">,</span> <span class="n">sigma_tot</span>
 </code></pre></div></div>
 
-		</div>
-	<div class="container">
+		  </div>
+      <div class="container">
   <footer>
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-05-03 18:14:29 -0400
+      	2019-05-05 15:59:14 -0400
     </p>
   </footer>
 </div>
+    </div>
 	</div>
   </body>
 </html>
