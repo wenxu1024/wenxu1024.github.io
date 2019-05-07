@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-<title>Binary Search Tree to Greater Sum Tree (LeetCode 1038)</title>
+<title>Lowest Common Ancestor of a Binary Search Tree (LC235)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A website for Tech and Life">
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -84,10 +84,10 @@
       </button>
       <hr/>
   		<div class="container">
-    	 <div class="article-title"> Binary Search Tree to Greater Sum Tree (LeetCode 1038)</div>
+    	 <div class="article-title"> Lowest Common Ancestor of a Binary Search Tree (LC235)</div>
 <p class="meta">
 	<small>
-      &nbsp;<i class="fa fa-calendar-o"></i> 05 May 2019
+      &nbsp;<i class="fa fa-calendar-o"></i> 06 May 2019
     </small>
 </p>
 <p> By 
@@ -106,29 +106,31 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem Description</h2>
-<p>Given the root of a binary search tree with distinct values, modify it so that every node has a new value equal to the sum of the values of the original tree that are greater than or equal to node.val.</p>
+<h2 id="problem-description">Problem description</h2>
+<p>Given a binary search tree (BST), find the lowest common ancestor (LCA) of two given nodes in the BST.</p>
 
-<p>As a reminder, a binary search tree is a tree that satisfies these constraints:</p>
+<p>According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes p and q as the lowest node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”</p>
 
-<p>The left subtree of a node contains only nodes with keys less than the node’s key.
-The right subtree of a node contains only nodes with keys greater than the node’s key.
-Both the left and right subtrees must also be binary search trees.</p>
+<p>Given binary search tree:  root = [6,2,8,0,4,7,9,null,null,3,5]</p>
 
 <p>Example 1:</p>
 
-<p>Input: [4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]
-Output: [30,36,21,36,35,26,15,null,null,null,33,null,null,null,8]</p>
+<p>Input: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
+Output: 6
+Explanation: The LCA of nodes 2 and 8 is 6.
+Example 2:</p>
+
+<p>Input: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4
+Output: 2
+Explanation: The LCA of nodes 2 and 4 is 2, since a node can be a descendant of itself according to the LCA definition.</p>
 
 <p>Note:</p>
 
-<p>The number of nodes in the tree is between 1 and 100.
-Each node will have value between 0 and 100.
-The given tree is a binary search tree.</p>
+<p>All of the nodes’ values will be unique.
+p and q are different and both values will exist in the BST.</p>
 
 <h2 id="solution">Solution</h2>
-<p>Since the given tree is binary search tree, we can do reverse inorder traversal of the tree and keep the sum of all nodes that have been visited and update current node val to the sum. We’ve modified the tree in place.
-Below is python implementation</p>
+<p>This can be solved by binary search</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Definition for a binary tree node.
 # class TreeNode:
@@ -138,21 +140,16 @@ Below is python implementation</p>
 #         self.right = None
 </span>
 <span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">bstToGst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">TreeNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TreeNode</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="nb">sum</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">root</span>
-        
-        
-    <span class="k">def</span> <span class="nf">dfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">TreeNode</span><span class="p">)</span><span class="o">-&gt;</span><span class="bp">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">root</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="nb">sum</span> <span class="o">+=</span> <span class="n">root</span><span class="o">.</span><span class="n">val</span>
-        <span class="n">root</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="nb">sum</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
-        <span class="k">return</span>
-				
+    <span class="k">def</span> <span class="nf">lowestCommonAncestor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="s">'TreeNode'</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="s">'TreeNode'</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="s">'TreeNode'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s">'TreeNode'</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">root</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="ow">or</span> <span class="n">root</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="n">q</span><span class="o">.</span><span class="n">val</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">root</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">val</span> <span class="o">&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="ow">and</span> <span class="n">root</span><span class="o">.</span><span class="n">val</span> <span class="o">&gt;</span> <span class="n">q</span><span class="o">.</span><span class="n">val</span><span class="p">):</span> 
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lowestCommonAncestor</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">val</span> <span class="o">&lt;</span> <span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="ow">and</span> <span class="n">root</span><span class="o">.</span><span class="n">val</span> <span class="o">&lt;</span> <span class="n">q</span><span class="o">.</span><span class="n">val</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lowestCommonAncestor</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">root</span>
+						
 </code></pre></div></div>
 
 </div>
@@ -160,10 +157,8 @@ Below is python implementation</p>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 <ul class="pager">
 
-  <li class="previous"><a href="/2019/05/04/leetcode392.html">&larr; Older</a></li>
+  <li class="previous"><a href="/2019/05/06/leetcode230.html">&larr; Older</a></li>
 
-
-  <li class="next"><a href="/2019/05/05/leetcode1039.html">Newer &rarr;</a></li>
 
 </ul>
 <div id="disqus_thread">

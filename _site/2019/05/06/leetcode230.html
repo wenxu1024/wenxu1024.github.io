@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-<title>Binary Search Tree to Greater Sum Tree (LeetCode 1038)</title>
+<title>Kth Smallest Element in a BST (LC230)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A website for Tech and Life">
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -84,10 +84,10 @@
       </button>
       <hr/>
   		<div class="container">
-    	 <div class="article-title"> Binary Search Tree to Greater Sum Tree (LeetCode 1038)</div>
+    	 <div class="article-title"> Kth Smallest Element in a BST (LC230)</div>
 <p class="meta">
 	<small>
-      &nbsp;<i class="fa fa-calendar-o"></i> 05 May 2019
+      &nbsp;<i class="fa fa-calendar-o"></i> 06 May 2019
     </small>
 </p>
 <p> By 
@@ -106,29 +106,41 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem Description</h2>
-<p>Given the root of a binary search tree with distinct values, modify it so that every node has a new value equal to the sum of the values of the original tree that are greater than or equal to node.val.</p>
+<h2 id="problem-description">Problem description</h2>
+<p>Given a binary search tree, write a function kthSmallest to find the kth smallest element in it.</p>
 
-<p>As a reminder, a binary search tree is a tree that satisfies these constraints:</p>
-
-<p>The left subtree of a node contains only nodes with keys less than the node’s key.
-The right subtree of a node contains only nodes with keys greater than the node’s key.
-Both the left and right subtrees must also be binary search trees.</p>
+<p>Note: 
+You may assume k is always valid, 1 ≤ k ≤ BST’s total elements.</p>
 
 <p>Example 1:</p>
 
-<p>Input: [4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]
-Output: [30,36,21,36,35,26,15,null,null,null,33,null,null,null,8]</p>
+<p>Input: root = [3,1,4,null,2], k = 1
+   3
+  / \
+ 1   4
+  \
+   2
+Output: 1
+Example 2:</p>
 
-<p>Note:</p>
-
-<p>The number of nodes in the tree is between 1 and 100.
-Each node will have value between 0 and 100.
-The given tree is a binary search tree.</p>
+<p>Input: root = [5,3,6,2,4,null,null,1], k = 3
+       5
+      / \
+     3   6
+    / \
+   2   4
+  /
+ 1
+Output: 3
+Follow up:
+What if the BST is modified (insert/delete operations) often and you need to find the kth smallest frequently? How would you optimize the kthSmallest routine?</p>
 
 <h2 id="solution">Solution</h2>
-<p>Since the given tree is binary search tree, we can do reverse inorder traversal of the tree and keep the sum of all nodes that have been visited and update current node val to the sum. We’ve modified the tree in place.
-Below is python implementation</p>
+<ol>
+  <li>Let left be the count of nodes in left subtree, if k = 1 + left, then root is the answer. If k &gt; 1 + left, then the answer is in right subtree with modified k = k - 1 - left</li>
+</ol>
+
+<p>Below is python implementation</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Definition for a binary tree node.
 # class TreeNode:
@@ -138,20 +150,20 @@ Below is python implementation</p>
 #         self.right = None
 </span>
 <span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">bstToGst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">TreeNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TreeNode</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="nb">sum</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">root</span>
+    <span class="k">def</span> <span class="nf">kthSmallest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">TreeNode</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span>
         
+        <span class="k">def</span> <span class="nf">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">:</span><span class="n">TreeNode</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">root</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">left</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ans</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">val</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">k</span> <span class="o">-</span> <span class="n">left</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span>
         
-    <span class="k">def</span> <span class="nf">dfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">TreeNode</span><span class="p">)</span><span class="o">-&gt;</span><span class="bp">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">root</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="nb">sum</span> <span class="o">+=</span> <span class="n">root</span><span class="o">.</span><span class="n">val</span>
-        <span class="n">root</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="nb">sum</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
-        <span class="k">return</span>
+        <span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ans</span>
 				
 </code></pre></div></div>
 
@@ -160,10 +172,10 @@ Below is python implementation</p>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 <ul class="pager">
 
-  <li class="previous"><a href="/2019/05/04/leetcode392.html">&larr; Older</a></li>
+  <li class="previous"><a href="/2019/05/06/leetcode173.html">&larr; Older</a></li>
 
 
-  <li class="next"><a href="/2019/05/05/leetcode1039.html">Newer &rarr;</a></li>
+  <li class="next"><a href="/2019/05/06/leetcode235.html">Newer &rarr;</a></li>
 
 </ul>
 <div id="disqus_thread">

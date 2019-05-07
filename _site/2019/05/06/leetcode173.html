@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-<title>Binary Search Tree to Greater Sum Tree (LeetCode 1038)</title>
+<title>Binary Search Tree Iterator (LC173)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A website for Tech and Life">
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -84,10 +84,10 @@
       </button>
       <hr/>
   		<div class="container">
-    	 <div class="article-title"> Binary Search Tree to Greater Sum Tree (LeetCode 1038)</div>
+    	 <div class="article-title"> Binary Search Tree Iterator (LC173)</div>
 <p class="meta">
 	<small>
-      &nbsp;<i class="fa fa-calendar-o"></i> 05 May 2019
+      &nbsp;<i class="fa fa-calendar-o"></i> 06 May 2019
     </small>
 </p>
 <p> By 
@@ -106,29 +106,35 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem Description</h2>
-<p>Given the root of a binary search tree with distinct values, modify it so that every node has a new value equal to the sum of the values of the original tree that are greater than or equal to node.val.</p>
+<h2 id="problem-description">Problem description</h2>
+<p>Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a BST.</p>
 
-<p>As a reminder, a binary search tree is a tree that satisfies these constraints:</p>
+<p>Calling next() will return the next smallest number in the BST.</p>
 
-<p>The left subtree of a node contains only nodes with keys less than the node’s key.
-The right subtree of a node contains only nodes with keys greater than the node’s key.
-Both the left and right subtrees must also be binary search trees.</p>
+<p>Example:</p>
 
-<p>Example 1:</p>
-
-<p>Input: [4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]
-Output: [30,36,21,36,35,26,15,null,null,null,33,null,null,null,8]</p>
+<p>BSTIterator iterator = new BSTIterator(root);
+iterator.next();    // return 3
+iterator.next();    // return 7
+iterator.hasNext(); // return true
+iterator.next();    // return 9
+iterator.hasNext(); // return true
+iterator.next();    // return 15
+iterator.hasNext(); // return true
+iterator.next();    // return 20
+iterator.hasNext(); // return false</p>
 
 <p>Note:</p>
 
-<p>The number of nodes in the tree is between 1 and 100.
-Each node will have value between 0 and 100.
-The given tree is a binary search tree.</p>
+<p>next() and hasNext() should run in average O(1) time and uses O(h) memory, where h is the height of the tree.
+You may assume that next() call will always be valid, that is, there will be at least a next smallest number in the BST when next() is called.</p>
 
 <h2 id="solution">Solution</h2>
-<p>Since the given tree is binary search tree, we can do reverse inorder traversal of the tree and keep the sum of all nodes that have been visited and update current node val to the sum. We’ve modified the tree in place.
-Below is python implementation</p>
+<ol>
+  <li>We can solve the problem by iterative binary tree inorder traversal</li>
+</ol>
+
+<p>Below is python code</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Definition for a binary tree node.
 # class TreeNode:
@@ -137,33 +143,48 @@ Below is python implementation</p>
 #         self.left = None
 #         self.right = None
 </span>
-<span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">bstToGst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">TreeNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TreeNode</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="nb">sum</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">root</span>
-        
-        
-    <span class="k">def</span> <span class="nf">dfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">TreeNode</span><span class="p">)</span><span class="o">-&gt;</span><span class="bp">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">root</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="nb">sum</span> <span class="o">+=</span> <span class="n">root</span><span class="o">.</span><span class="n">val</span>
-        <span class="n">root</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="nb">sum</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
-        <span class="k">return</span>
-				
-</code></pre></div></div>
+<span class="k">class</span> <span class="nc">BSTIterator</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">TreeNode</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="k">while</span> <span class="n">current</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">left</span>
+
+    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="s">"""
+        @return the next smallest number
+        """</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">right</span>
+        <span class="k">while</span> <span class="n">current</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">left</span>
+        <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">hasNext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="s">"""
+        @return whether we have a next smallest number
+        """</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
+
+
+<span class="c1"># Your BSTIterator object will be instantiated and called as such:
+# obj = BSTIterator(root)
+# param_1 = obj.next()
+# param_2 = obj.hasNext()
+</span></code></pre></div></div>
 
 </div>
 <a href="https://twitter.com/share" class="twitter-share-button " data-size="small" data-count="none">Tweet</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 <ul class="pager">
 
-  <li class="previous"><a href="/2019/05/04/leetcode392.html">&larr; Older</a></li>
+  <li class="previous"><a href="/2019/05/05/leetcode1039.html">&larr; Older</a></li>
 
 
-  <li class="next"><a href="/2019/05/05/leetcode1039.html">Newer &rarr;</a></li>
+  <li class="next"><a href="/2019/05/06/leetcode230.html">Newer &rarr;</a></li>
 
 </ul>
 <div id="disqus_thread">
