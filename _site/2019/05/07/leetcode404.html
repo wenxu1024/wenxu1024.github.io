@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-<title>Kth Smallest Element in a BST (LC230)</title>
+<title>Sum of Left Leaves (LC404)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A website for Tech and Life">
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -84,10 +84,10 @@
       </button>
       <hr/>
   		<div class="container">
-    	 <div class="article-title"> Kth Smallest Element in a BST (LC230)</div>
+    	 <div class="article-title"> Sum of Left Leaves (LC404)</div>
 <p class="meta">
 	<small>
-      &nbsp;<i class="fa fa-calendar-o"></i> 06 May 2019
+      &nbsp;<i class="fa fa-calendar-o"></i> 07 May 2019
     </small>
 </p>
 <p> By 
@@ -102,43 +102,30 @@
  	
  		<a href="/tags/algorithm.html">algorithm</a>
  	
- 		<a href="/tags/binary search tree.html">binary search tree</a>
+ 		<a href="/tags/binary tree.html">binary tree</a>
+ 	
+ 		<a href="/tags/depth first search.html">depth first search</a>
+ 	
+ 		<a href="/tags/tree traversal.html">tree traversal</a>
  	
 </p>
 <div class="post">
 <h2 id="problem-description">Problem description</h2>
-<p>Given a binary search tree, write a function kthSmallest to find the kth smallest element in it.</p>
+<p>Find the sum of all left leaves in a given binary tree.</p>
 
-<p>Note: 
-You may assume k is always valid, 1 ≤ k ≤ BST’s total elements.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Example:
 
-<p>Example 1:</p>
+    3
+   / \
+  9  20
+    /  \
+   15   7
 
-<p>Input: root = [3,1,4,null,2], k = 1
-   3
-  / \
- 1   4
-  \
-   2
-Output: 1
-Example 2:</p>
-
-<p>Input: root = [5,3,6,2,4,null,null,1], k = 3
-       5
-      / \
-     3   6
-    / \
-   2   4
-  /
- 1
-Output: 3
-Follow up:
-What if the BST is modified (insert/delete operations) often and you need to find the kth smallest frequently? How would you optimize the kthSmallest routine?</p>
+There are two left leaves in the binary tree, with values 9 and 15 respectively. Return 24.
+</code></pre></div></div>
 
 <h2 id="solution">Solution</h2>
-<ol>
-  <li>Let left be the count of nodes in left subtree, if k = 1 + left, then root is the answer. If k &gt; 1 + left, then the answer is in right subtree with modified k = k - 1 - left</li>
-</ol>
+<p>We do post order traversal of the tree. For each node, we check whether its left child is leaf(that means node.left.left == None and node.left.right == None). If it is leaf, we add the val of its left child to the ans.</p>
 
 <p>Below is python implementation</p>
 
@@ -150,20 +137,19 @@ What if the BST is modified (insert/delete operations) often and you need to fin
 #         self.right = None
 </span>
 <span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">kthSmallest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">TreeNode</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">def</span> <span class="nf">sumOfLeftLeaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">TreeNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="nb">sum</span> <span class="o">=</span> <span class="mi">0</span>
         
-        <span class="k">def</span> <span class="nf">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">:</span><span class="n">TreeNode</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">root</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="mi">0</span>
-            <span class="n">left</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">left</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ans</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">val</span>
-            <span class="n">right</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">k</span> <span class="o">-</span> <span class="n">left</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span>
+        <span class="k">def</span> <span class="nf">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">:</span> <span class="n">TreeNode</span><span class="p">)</span><span class="o">-&gt;</span><span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">root</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+            <span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">root</span><span class="o">.</span><span class="n">left</span> <span class="ow">and</span> <span class="n">root</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">root</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="nb">sum</span> <span class="o">+=</span> <span class="n">root</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">val</span>
         
-        <span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ans</span>
+        <span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="nb">sum</span>
 				
 </code></pre></div></div>
 
@@ -172,10 +158,8 @@ What if the BST is modified (insert/delete operations) often and you need to fin
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 <ul class="pager">
 
-  <li class="previous"><a href="/2019/05/06/leetcode173.html">&larr; Older</a></li>
+  <li class="previous"><a href="/2019/05/07/leetcode337.html">&larr; Older</a></li>
 
-
-  <li class="next"><a href="/2019/05/06/leetcode235.html">Newer &rarr;</a></li>
 
 </ul>
 <div id="disqus_thread">
