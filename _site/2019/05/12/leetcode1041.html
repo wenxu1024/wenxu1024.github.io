@@ -1,0 +1,216 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<title>Robot Bounded In Circle (LC1041)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A website for Tech and Life">
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+<link href="/assets/css/styles.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif] d-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-47234019-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-47234019-2');
+</script>
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="/assets/js/mysite.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <body>
+  	<div class="wrapper">
+  	<div id="sidebar-wrapper">
+<nav class="sidebar-nav">
+	<div class="active">
+		<ul>
+		
+			<li>
+			<a href="/" >
+				Home
+			</a>
+			</li>
+		
+			<li>
+			<a href="/research.html" >
+				Research
+			</a>
+			</li>
+		
+			<li>
+			<a href="/blog.html" >
+				Blog
+			</a>
+			</li>
+		
+			<li>
+			<a href="/projects.html" >
+				Projects
+			</a>
+			</li>
+		
+			<li>
+			<a href="/about.html" >
+				About
+			</a>
+			</li>
+		
+		<hr />
+    	<div id="social-wrapper">
+      		<li> <a href="http://twitter.com"><i class="fa fa-twitter-square"></i> @twitter</a></li>
+      		<li> <a href="https://www.linkedin.com/in/wxutamu/"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
+      		<li> <a href="http://facebook.com"><i class="fa fa-facebook-square"></i> facebook</a></li>
+      		<li> <a href="https://github.com/dragonrider1024"><i class="fa fa-github-square"></i> github</a> </li>
+      		<li> <a href="mailto:xuzhiwen1024@gmail.com"><i class="fa fa-envelope"></i> email</a></li>
+    	</div>
+		</ul>
+	</div>
+</nav>
+</div>
+    <div class="content">
+      <button type="button" id="sidebarCollapse" class="navbar-btn">
+      <span></span>
+      <span></span>
+      <span></span>
+      </button>
+      <hr/>
+  		<div class="container">
+    	 <div class="article-title"> Robot Bounded In Circle (LC1041)</div>
+<p class="meta">
+	<small>
+      &nbsp;<i class="fa fa-calendar-o"></i> 12 May 2019
+    </small>
+</p>
+<p> By 
+	
+  	
+    <a href="/authors/wen.html">Wen Xu</a>
+  	
+</p>
+<p>
+ 	
+ 		<a href="/tags/leetcode.html">leetcode</a>
+ 	
+ 		<a href="/tags/algorithm.html">algorithm</a>
+ 	
+</p>
+<div class="post">
+<h2 id="problem-description">Problem description</h2>
+<p>On an infinite plane, a robot initially stands at (0, 0) and faces north.  The robot can receive one of three instructions:</p>
+
+<p>“G”: go straight 1 unit;
+“L”: turn 90 degrees to the left;
+“R”: turn 90 degress to the right.
+The robot performs the instructions given in order, and repeats them forever.</p>
+
+<p>Return true if and only if there exists a circle in the plane such that the robot never leaves the circle.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Example 1:
+
+Input: "GGLLGG"
+Output: true
+Explanation: 
+The robot moves from (0,0) to (0,2), turns 180 degrees, and then returns to (0,0).
+When repeating these instructions, the robot remains in the circle of radius 2 centered at the origin.
+Example 2:
+
+Input: "GG"
+Output: false
+Explanation: 
+The robot moves north indefinetely.
+Example 3:
+
+Input: "GL"
+Output: true
+Explanation: 
+The robot moves from (0, 0) -&gt; (0, 1) -&gt; (-1, 1) -&gt; (-1, 0) -&gt; (0, 0) -&gt; ...
+</code></pre></div></div>
+
+<h2 id="solution">Solution</h2>
+<ol>
+  <li>We notice after 4 sets of instructions, we always face the original direction (north). If at this time, we are at origin. Then we are bounded. If not, then we are unbounded.</li>
+  <li>We can keep track of the current position and current direction. as (x, y), (directionx, directiony). Turn left, we just mutiply the direction by ((0,1),(-1,0)). Turn right, we just mutiply the direction by matrix ((0,-1),(1,0)). Move, we just add x + directionx, y + directiony</li>
+</ol>
+
+<p>Below is my python implementation</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">isRobotBounded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instructions</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">instructions</span> <span class="o">=</span> <span class="n">instructions</span> <span class="o">*</span> <span class="mi">4</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="n">directionx</span><span class="p">,</span> <span class="n">directiony</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">instructions</span><span class="p">:</span>
+            <span class="c1">#print(x,y,directionx, directiony)
+</span>            <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="s">'G'</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">+=</span> <span class="n">directionx</span>
+                <span class="n">y</span> <span class="o">+=</span> <span class="n">directiony</span>
+            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="s">'L'</span><span class="p">:</span>
+                <span class="n">newdirectionx</span> <span class="o">=</span> <span class="o">-</span><span class="n">directiony</span>
+                <span class="n">newdirectiony</span> <span class="o">=</span> <span class="n">directionx</span>
+                <span class="n">directionx</span> <span class="o">=</span> <span class="n">newdirectionx</span>
+                <span class="n">directiony</span> <span class="o">=</span> <span class="n">newdirectiony</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">newdirectionx</span> <span class="o">=</span> <span class="n">directiony</span>
+                <span class="n">newdirectiony</span> <span class="o">=</span> <span class="o">-</span><span class="n">directionx</span>
+                <span class="n">directionx</span> <span class="o">=</span> <span class="n">newdirectionx</span>
+                <span class="n">directiony</span> <span class="o">=</span> <span class="n">newdirectiony</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">0</span>
+				
+</code></pre></div></div>
+
+</div>
+<a href="https://twitter.com/share" class="twitter-share-button " data-size="small" data-count="none">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<ul class="pager">
+
+  <li class="previous"><a href="/2019/05/11/leetcode814.html">&larr; Older</a></li>
+
+
+  <li class="next"><a href="/2019/05/12/leetcode1043.html">Newer &rarr;</a></li>
+
+</ul>
+<div id="disqus_thread">
+
+  <script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+      var disqus_shortname = 'wenx'; // required: replace example with your forum shortname
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>
+    Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+
+  <a href="http://disqus.com" class="dsq-brlink">
+    comments powered by <span class="logo-disqus">Disqus</span>
+  </a>
+
+</div>
+
+		  </div>
+      <div class="container">
+  <footer>
+    <p class="text-muted credit">
+      &copy; 2019 Based on Herring Cove &middot; Build with
+      	<a href="https://jekyllrb.com"> Jekyll </a>
+      	2019-05-12 09:32:39 -0400
+    </p>
+  </footer>
+</div>
+    </div>
+	</div>
+  </body>
+</html>
