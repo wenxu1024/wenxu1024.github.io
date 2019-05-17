@@ -1,0 +1,677 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<title>Python Density Functional Theory in 2D</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A website for Tech and Life">
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+<link href="/assets/css/styles.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif] d-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-47234019-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-47234019-2');
+</script>
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="/assets/js/mysite.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <body>
+  	<div class="wrapper">
+  	<div id="sidebar-wrapper">
+<nav class="sidebar-nav">
+	<div class="active">
+		<ul>
+		
+			<li>
+			<a href="/" >
+				Home
+			</a>
+			</li>
+		
+			<li>
+			<a href="/research.html" >
+				Research
+			</a>
+			</li>
+		
+			<li>
+			<a href="/blog.html" >
+				Blog
+			</a>
+			</li>
+		
+			<li>
+			<a href="/projects.html" >
+				Projects
+			</a>
+			</li>
+		
+			<li>
+			<a href="/about.html" >
+				About
+			</a>
+			</li>
+		
+		<hr />
+    	<div id="social-wrapper">
+      		<li> <a href="http://twitter.com"><i class="fa fa-twitter-square"></i> @twitter</a></li>
+      		<li> <a href="https://www.linkedin.com/in/wxutamu/"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
+      		<li> <a href="http://facebook.com"><i class="fa fa-facebook-square"></i> facebook</a></li>
+      		<li> <a href="https://github.com/dragonrider1024"><i class="fa fa-github-square"></i> github</a> </li>
+      		<li> <a href="mailto:xuzhiwen1024@gmail.com"><i class="fa fa-envelope"></i> email</a></li>
+    	</div>
+		</ul>
+	</div>
+</nav>
+</div>
+    <div class="content">
+      <button type="button" id="sidebarCollapse" class="navbar-btn">
+      <span></span>
+      <span></span>
+      <span></span>
+      </button>
+      <hr/>
+  		<div class="container">
+    	 <div class="article-title"> Python Density Functional Theory in 2D</div>
+<p class="meta">
+	<small>
+      &nbsp;<i class="fa fa-calendar-o"></i> 16 May 2019
+    </small>
+</p>
+<p> By 
+	
+  	
+    <a href="/authors/wen.html">Wen Xu</a>
+  	
+</p>
+<p>
+ 	
+ 		<a href="/tags/quantum mechanics.html">quantum mechanics</a>
+ 	
+ 		<a href="/tags/density functional theory.html">density functional theory</a>
+ 	
+ 		<a href="/tags/python.html">python</a>
+ 	
+</p>
+<div class="post">
+<h1 id="density-functional-theory-in-python-code-2d-external-potential">Density Functional Theory in Python Code (2D External Potential)</h1>
+
+<p>This note book follows the example as illustrate in the following link</p>
+
+<p><a href="https://github.com/tamuhey/python_1d_dft">Density Functinoal Theory in Python (1D)</a></p>
+
+<p>First we need to import the plotting tools for 3D. There are many out there. Here I choose to use matplot3d</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="n">sns</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s">"white"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Below we create a 2D parabolic function and plotted out the 3D surface</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">n_grid</span><span class="o">=</span><span class="mi">50</span>
+<span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">n_grid</span><span class="p">)</span>
+<span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">n_grid</span><span class="p">)</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">xmesh</span><span class="p">,</span> <span class="n">ymesh</span> <span class="o">=</span> <span class="n">mesh</span>
+<span class="n">zmesh</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">xmesh</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">ymesh</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">xflat</span> <span class="o">=</span> <span class="n">xmesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">yflat</span> <span class="o">=</span> <span class="n">ymesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">zflat</span> <span class="o">=</span> <span class="n">zmesh</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span> <span class="n">yflat</span><span class="p">,</span> <span class="n">zflat</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><img src="/assets/img/output_5_0.png" alt="png" /></p>
+
+<h3 id="for-two-dimensional-system-the-hamiltonian-operator-is">For two dimensional system, the Hamiltonian operator is</h3>
+<p>\begin{align}
+\hat{H} = -\frac{1}{2}(\nabla_x^2 + \nabla_y^2)
+\end{align}
+in atomic unit, where m = 1, and $\hbar$ = 1</p>
+
+<p>We use finite difference to calculate the differntial
+\begin{align}
+h = x_{i+1} - x_{i} = y_{i+1}-y_{i}
+<br />
+D_x = \frac{Z_{i+1,j} - Z_{i,j}}{h}
+<br />
+D_y = \frac{Z_{i,j+1} - Z_{i,j}}{h}
+\end{align}</p>
+
+<p>However, two dimentional representation of function Z is very inconvienient. Here we flatten Z into one dimensional vector using numpy flatten function.</p>
+
+<p>As a result, D_x and D_y become the <a href="https://en.wikipedia.org/wiki/Kronecker_product">kronecker product</a> of the original D matrix in 1D space with the Identity Matrix.
+\begin{align}
+D_x = {D}\otimes{I}
+<br />
+D_y = {I}\otimes{D}
+\end{align}</p>
+
+<p>We can still calculate the second dirivitive by $D_x^2 = -D_xD_x^T$ and $D_y^2 = -D_yD_y^T$</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">h</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">D</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_grid</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">diagflat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n_grid</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">D</span> <span class="o">/</span> <span class="n">h</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_grid</span><span class="p">),</span> <span class="n">D</span><span class="p">)</span>
+<span class="n">Dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_grid</span><span class="p">))</span>
+<span class="n">Dx2</span> <span class="o">=</span> <span class="n">Dx</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="o">-</span><span class="n">Dx</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">Dy2</span> <span class="o">=</span> <span class="n">Dy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="o">-</span><span class="n">Dy</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Now we have the kinetic part of the $\hat{H}$, we can add the parabolic potential function Z to the Hamiltonian. And the final Hamiltonian is
+\begin{align}
+\hat{H} = -\frac{1}{2}(\nabla_x^2+\nabla_y^2) + \frac{1}{2}(x^2+y^2)
+\end{align}</p>
+
+<p>Then we will obtain the $\hat{H}$ representation in coordinate basis and we can diagonalize the matrix and obtain the eigenvalues and eigenvectors. This can be done using numpy linear algebra package.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">diagflat</span><span class="p">(</span><span class="n">zflat</span><span class="p">)</span>
+<span class="n">eig_harm</span><span class="p">,</span> <span class="n">psi_harm</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">Dx2</span><span class="o">+</span><span class="n">Dy2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">+</span><span class="n">Z</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Now we have Eigenvalues (Energies!) and Eigenvectors (Orbitals!) we can plot them out. We will first plot out the lowest orbital.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span><span class="n">n_grid</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'RdGy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">eig_harm</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p><img src="/assets/img/output_12_0.png" alt="png" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0.9983310783944462
+</code></pre></div></div>
+
+<p><img src="/assets/img/output_12_2.png" alt="png" /></p>
+
+<p>We can see that the lowest lying orbital does not have any node in it. That’s what we expected. It has a energy of 0.9983310783944462 (should be 1 because of rounding error and finite basis set used). Now let’s look into higher lying orbital start from 1.</p>
+
+<p>This orbtial has 1 node it it. That’s the first excited orbital (That’s also what we expected). It has a energy of 1.994985677390388 (Should be 2 exactly). Now let’s move to the second orbital.</p>
+
+<p>Now we start to see something intresting. This orbital also have 1 node and energy of 1.9949856773903958 (should be 2) which is the same as the first orbital. In this case, the second orbital and first orbtial are <a href="https://en.wikipedia.org/wiki/Degenerate_energy_levels">degenerate</a></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">orb1</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span><span class="n">n_grid</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'RdGy'</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">orb1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">orb2</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span><span class="n">n_grid</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'RdGy'</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">orb2</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">eig_harm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">eig_harm</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p><img src="/assets/img/output_14_0.png" alt="png" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.994985677390388 1.9949856773903958
+</code></pre></div></div>
+
+<p>Now let’s move to the third, fourth, fifth orbital. This three orbtials have very close energies. They are degenerate.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">3</span><span class="p">],</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">4</span><span class="p">],</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">5</span><span class="p">],</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">orb3</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span><span class="n">n_grid</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'RdGy'</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">orb3</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">orb4</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span><span class="n">n_grid</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'RdGy'</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">orb4</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">orb5</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span><span class="n">n_grid</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'RdGy'</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">orb5</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">eig_harm</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">eig_harm</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="n">eig_harm</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2.9882552654219587 2.988255265422003 2.9916402763863372
+</code></pre></div></div>
+
+<p><img src="/assets/img/output_16_1.png" alt="png" /></p>
+
+<p>Now let’s see the sixth, seventh, eigth, nineth orbital.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">6</span><span class="p">],</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">7</span><span class="p">],</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">8</span><span class="p">],</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">9</span><span class="p">],</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">orb6</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span><span class="n">n_grid</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'RdGy'</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">orb6</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">orb7</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span><span class="n">n_grid</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'RdGy'</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">orb7</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">orb8</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span><span class="n">n_grid</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'RdGy'</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">orb8</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">orb9</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">[:,</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span><span class="n">n_grid</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'RdGy'</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">orb9</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">eig_harm</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span><span class="n">eig_harm</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span><span class="n">eig_harm</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span><span class="n">eig_harm</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>3.977930246184832 3.9779302461848434 3.984909864417891 3.9849098644179026
+</code></pre></div></div>
+
+<p><img src="/assets/img/output_18_1.png" alt="png" /></p>
+
+<p>We can also plot the density of states for this 2D harmonic oscillator. The density of states is a linear function of energy.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">eig_harm</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(array([1., 2., 3., 4., 5., 6., 7., 8., 9.]),
+ array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+ &lt;a list of 9 Patch objects&gt;)
+</code></pre></div></div>
+
+<p><img src="/assets/img/output_20_1.png" alt="png" /></p>
+
+<p>For this harmonic oscillator, we can solve the Schrödinger’s Equation <strong>Excatly</strong>. The energy levels are
+\begin{align}
+E=(n_x+\frac{1}{2})\hbar\omega_x + (n_y+\frac{1}{2})\hbar\omega_y = (n_x + n_y + 1)
+\end{align}
+where $n_x$ and $n_y$ are the quantum numbers for the x and y directions, respectively. Since $\omega_x = \omega_y = 1$.The additional 1 is for <strong>Zero point</strong> energy. From this equation, we can easily obtain the degeneracy of level n as n + 1 as there are n + 1 solutions of ($n_x$,$n_y$) for $n_x+n_y=n$</p>
+
+<p>The orbtial is
+\begin{align}
+\psi_{m,n}(x,y)= \psi_m(x)\psi_n(y)
+<br />
+\psi_m(x) = \frac{1}{\sqrt{2^mm!}}\pi^{-1/4}exp(-x^2/2)H_m(x)
+<br />
+\psi_n(y) = \frac{1}{\sqrt{2^nn!}}\pi^{-1/4}exp(-y^2/2)H_n(y)
+\end{align}</p>
+
+<p>where $H_n(x)$ is n<sup>th</sup> order <a href="https://en.wikipedia.org/wiki/Hermite_polynomials">Hermite Polynomials</a></p>
+
+<p>If you look carefully at the node (zero point) of the wave function $\psi_{m,n}(x,y)$, you will notice that $\psi_{1,0}$ and $\psi_{0,1}$ has node $x=0$ and $y=0$,respectively. However, the orbital 1 and orbital2 we calculated have node of $x - y = 0$ and $x + y = 0$, respectively.</p>
+
+<p>Acutally, our orbital 1 and 2 are linear combinations of $\psi_{1,0}$ and $\psi_{0,1}$
+\begin{align}
+orbital 1 = \frac{1}{\sqrt{2}}(\psi_{1,0}(x,y) - \psi_{0,1}(x,y))
+<br />
+orbital 2 = \frac{1}{\sqrt{2}}(\psi_{1,0}(x,y) + \psi_{0,1}(x,y))
+\end{align}</p>
+
+<p>We can do this <strong>linear combination</strong> without causing change in orbital energies since these orbitals are degenerated and these transformed orbitals are still the eigenvectors of the Hamiltonian.</p>
+
+<p>Similarly,
+\begin{align}
+orbital 3 = \frac{1}{\sqrt{2}}(\psi_{2,0}(x,y) + \psi_{0,2}(x,y))
+<br />
+orbital 4 = \frac{1}{\sqrt{2}}(\psi_{2,0}(x,y) - \psi_{0,2}(x,y))
+<br />
+orbital 5 = \psi_{1,1}(x,y)
+\end{align}</p>
+
+<p>and</p>
+
+<p>\begin{align}
+orbital 6 = \frac{1}{2}(\psi_{3,0}(x,y) - \psi_{0,3}(x,y) - \psi_{2,1}(x,y) + \psi_{1,2}(x,y))
+<br />
+orbital 7 = \frac{1}{2}(\psi_{3,0}(x,y) + \psi_{0,3}(x,y) + \psi_{2,1}(x,y) + \psi_{1,2}(x,y))
+<br />
+orbital 8 = \frac{1}{2}(\psi_{3,0}(x,y) - \psi_{0,3}(x,y) + \psi_{2,1}(x,y) - \psi_{1,2}(x,y))
+<br />
+orbital 9 = \frac{1}{2}(\psi_{3,0}(x,y) + \psi_{0,3}(x,y) - \psi_{2,1}(x,y) - \psi_{1,2}(x,y))
+\end{align}</p>
+
+<h2 id="now-add-more-than-one-electrons">Now Add More than One electrons</h2>
+<p>All the above analysis only considers the one electron in the orbtial (1 Body problem). In reality there are many electrons fill the orbitals. Now let’s start adding electrons to the orbitals.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#integral
+</span><span class="k">def</span> <span class="nf">integral</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">psi</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">psi</span><span class="o">*</span><span class="n">dx</span><span class="o">*</span><span class="n">dy</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">num_electrons</span> <span class="o">=</span> <span class="mi">12</span>
+</code></pre></div></div>
+
+<p>Now let’s calculate the ground state electron density $n(x,y)$</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_nxy</span><span class="p">(</span><span class="n">num_electrons</span><span class="p">,</span> <span class="n">psi</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="c1"># normalization
+</span>    <span class="n">I</span><span class="o">=</span><span class="n">integral</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span> <span class="n">psi</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">normed_psi</span><span class="o">=</span><span class="n">psi</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+    
+    <span class="c1"># occupation num
+</span>    <span class="n">fn</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_electrons</span><span class="o">//</span><span class="mi">2</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">num_electrons</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">fn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># density
+</span>    <span class="n">res</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">normed_psi</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">ne</span><span class="p">,</span> <span class="n">psi</span>  <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="n">normed_psi</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">ne</span><span class="o">*</span><span class="p">(</span><span class="n">psi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">get_nxy</span><span class="p">(</span><span class="n">num_electrons</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">get_nxy</span><span class="p">(</span><span class="n">num_electrons</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span><span class="n">n_grid</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'RdGy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">get_nxy</span><span class="p">(</span><span class="n">num_electrons</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span> <span class="n">n_grid</span><span class="p">)[:,</span><span class="n">n_grid</span><span class="o">//</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'x coordinate'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'electron density'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'cross section of 2D electron density at y = 0'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="mi">4</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="mi">8</span><span class="o">*</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="mi">8</span><span class="o">*</span><span class="mi">2</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">((</span><span class="s">'numerical'</span><span class="p">,</span> <span class="s">'analytical hermite'</span><span class="p">),</span><span class="n">loc</span><span class="o">=</span><span class="s">'upper right'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/assets/img/output_27_0.png" alt="png" /></p>
+
+<p><img src="/assets/img/output_27_1.png" alt="png" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;matplotlib.legend.Legend at 0x13c471780&gt;
+</code></pre></div></div>
+
+<p><img src="/assets/img/output_27_3.png" alt="png" /></p>
+
+<h2 id="energy-exchange">Energy Exchange</h2>
+<p>Consider the exchange functional in the LDA:
+For now ignore the correlation functional for simplicity:
+\begin{align}
+E_{X}^{LDA}[n(x,y)] = -\frac{3}{4}(\frac{3}{\pi})^{\frac{1}{3}}\int{n(x,y)^{\frac{4}{3}}}dxdy
+\end{align}</p>
+
+<p>The potential is given by the <a href="https://en.wikipedia.org/wiki/Functional_derivative">functional derivative</a> of the exchange energy $E_{x}^{LDA}$ with respect to the density $n(x,y)$</p>
+
+<p>\begin{align}
+v_{x}^{LDA} = = -(\frac{3}{\pi})^{\frac{1}{3}}n(x,y)^{\frac{1}{3}}
+\end{align}</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_exchange</span><span class="p">(</span><span class="n">nxy</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+    <span class="n">energy</span><span class="o">=-</span><span class="mi">3</span><span class="o">/</span><span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">integral</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">nxy</span><span class="o">**</span><span class="p">(</span><span class="mi">4</span><span class="o">/</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">potential</span><span class="o">=-</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">nxy</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">potential</span>
+</code></pre></div></div>
+
+<h2 id="coumlobic-potential">Coumlobic potential</h2>
+<p>Electrostatic or Hartree energy
+\begin{align}
+E_{hartree}[n] = 1/2 \int\int{\frac{n(x’,y’)n(x,y)}{\sqrt{(x-x’)^2+(y-y’)^2}}}dxdydx’dy’
+\end{align}</p>
+
+<p>The potential is again the functional derivative of $E_{hartree}$ with respect to $n(x,y)$
+\begin{align}
+v_{hartree}[n] = \int{\frac{n(x,y)}{\sqrt{(x-x’)^2+(y-y’)^2}}}dx’dy’
+\end{align}</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_hatree</span><span class="p">(</span><span class="n">nxy</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">eps</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">):</span>
+    <span class="n">hx</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">hy</span><span class="o">=</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">energy</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">nxy</span><span class="p">[</span><span class="bp">None</span><span class="p">,:]</span><span class="o">*</span><span class="n">nxy</span><span class="p">[:,</span><span class="bp">None</span><span class="p">]</span><span class="o">*</span><span class="n">hx</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">hy</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">xflat</span><span class="p">[</span><span class="bp">None</span><span class="p">,:]</span><span class="o">-</span><span class="n">xflat</span><span class="p">[:,</span><span class="bp">None</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">yflat</span><span class="p">[</span><span class="bp">None</span><span class="p">,:]</span><span class="o">-</span><span class="n">yflat</span><span class="p">[:,</span><span class="bp">None</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">eps</span><span class="p">))</span>
+    <span class="n">potential</span><span class="o">=</span><span class="n">nxy</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">hx</span><span class="o">*</span><span class="n">hy</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">xflat</span><span class="p">[</span><span class="bp">None</span><span class="p">,:]</span><span class="o">-</span><span class="n">xflat</span><span class="p">[:,</span><span class="bp">None</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">yflat</span><span class="p">[</span><span class="bp">None</span><span class="p">,:]</span><span class="o">-</span><span class="n">yflat</span><span class="p">[:,</span><span class="bp">None</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">eps</span><span class="p">),</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">potential</span>
+</code></pre></div></div>
+
+<h2 id="solve-the-ks-equationself-consistency-loop">Solve the KS equation：Self-consistency loop</h2>
+<ol>
+  <li>initialize the density (you can take an arbitrary constant)</li>
+  <li>Calculate the Exchange and Hatree potentials</li>
+  <li>Calculate the Hamiltonian</li>
+  <li>Calculate the wavefunctions and eigen values</li>
+  <li>If not converged, calculate the density and back to 1.</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">print_log</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">log</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"step: {i:&lt;5} energy: {log['energy'][-1]:&lt;10.4f} energy_diff: {log['energy_diff'][-1]:.10f} ex_energy:{log['ex_energy'][-1]:10.4f} ha_energy:{log['ha_energy'][-1]:10.4f}"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span>
+<span class="n">energy_tolerance</span><span class="o">=</span><span class="mf">1e-2</span>
+<span class="n">log</span><span class="o">=</span><span class="p">{</span><span class="s">"energy"</span><span class="p">:[</span><span class="nb">float</span><span class="p">(</span><span class="s">"inf"</span><span class="p">)],</span> <span class="s">"energy_diff"</span><span class="p">:[</span><span class="nb">float</span><span class="p">(</span><span class="s">"inf"</span><span class="p">)],</span><span class="s">"ex_energy"</span><span class="p">:[</span><span class="nb">float</span><span class="p">(</span><span class="s">"inf"</span><span class="p">)],</span><span class="s">"ha_energy"</span><span class="p">:[</span><span class="nb">float</span><span class="p">(</span><span class="s">"inf"</span><span class="p">)]}</span>
+<span class="n">nxy</span><span class="o">=</span><span class="n">get_nxy</span><span class="p">(</span><span class="n">num_electrons</span><span class="p">,</span><span class="n">psi_harm</span><span class="p">,</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="c1">#initial guess of density from harmonic oscillator orbitals
+</span></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
+    <span class="n">ex_energy</span><span class="p">,</span> <span class="n">ex_potential</span><span class="o">=</span><span class="n">get_exchange</span><span class="p">(</span><span class="n">nxy</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">ha_energy</span><span class="p">,</span> <span class="n">ha_potential</span><span class="o">=</span><span class="n">get_hatree</span><span class="p">(</span><span class="n">nxy</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">)</span>
+    
+    <span class="c1"># Hamiltonian
+</span>    <span class="n">H</span><span class="o">=-</span><span class="p">(</span><span class="n">Dx2</span><span class="o">+</span><span class="n">Dy2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">diagflat</span><span class="p">(</span><span class="n">ex_potential</span><span class="o">+</span><span class="n">ha_potential</span><span class="o">+</span><span class="n">zflat</span><span class="p">)</span>
+    
+    <span class="n">energy</span><span class="p">,</span> <span class="n">psi</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+    
+    <span class="c1"># log
+</span>    <span class="n">log</span><span class="p">[</span><span class="s">"energy"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]))</span>
+    <span class="n">energy_diff</span><span class="o">=</span><span class="n">log</span><span class="p">[</span><span class="s">'energy'</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">log</span><span class="p">[</span><span class="s">"energy"</span><span class="p">][</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">log</span><span class="p">[</span><span class="s">"energy_diff"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">energy_diff</span><span class="p">)</span>
+    <span class="n">log</span><span class="p">[</span><span class="s">"ex_energy"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ex_energy</span><span class="p">)</span>
+    <span class="n">log</span><span class="p">[</span><span class="s">"ha_energy"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ha_energy</span><span class="p">)</span>
+    <span class="n">print_log</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">log</span><span class="p">)</span>
+    
+    <span class="c1"># convergence
+</span>    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">energy_diff</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">energy_tolerance</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"converged!"</span><span class="p">)</span>
+        <span class="k">break</span>
+    
+    <span class="c1"># update density
+</span>    <span class="n">nxy</span><span class="o">=</span><span class="n">get_nxy</span><span class="p">(</span><span class="n">num_electrons</span><span class="p">,</span><span class="n">psi</span><span class="p">,</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"not converged"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>step: 0     energy: 44.4184    energy_diff: -inf ex_energy:   -7.8061 ha_energy:  432.1177
+step: 1     energy: 14.6156    energy_diff: -29.8028384140 ex_energy:   -6.6493 ha_energy:  263.6352
+step: 2     energy: 37.8110    energy_diff: 23.1954345982 ex_energy:   -8.3220 ha_energy:  505.1288
+step: 3     energy: 15.3811    energy_diff: -22.4298710104 ex_energy:   -6.7967 ha_energy:  283.3608
+step: 4     energy: 34.8808    energy_diff: 19.4997188205 ex_energy:   -8.6937 ha_energy:  567.1628
+step: 5     energy: 16.1166    energy_diff: -18.7642063113 ex_energy:   -6.8942 ha_energy:  296.1298
+step: 6     energy: 33.0641    energy_diff: 16.9474400037 ex_energy:   -8.9819 ha_energy:  619.7562
+step: 7     energy: 16.7758    energy_diff: -16.2882768968 ex_energy:   -6.9604 ha_energy:  304.7379
+step: 8     energy: 31.8323    energy_diff: 15.0564921222 ex_energy:   -9.2078 ha_energy:  663.6417
+step: 9     energy: 17.3440    energy_diff: -14.4882807442 ex_energy:   -7.0070 ha_energy:  310.8159
+step: 10    energy: 30.9577    energy_diff: 13.6137184277 ex_energy:   -9.3855 ha_energy:  699.7995
+step: 11    energy: 17.8217    energy_diff: -13.1360522801 ex_energy:   -7.0408 ha_energy:  315.2560
+step: 12    energy: 30.3205    energy_diff: 12.4988176835 ex_energy:   -9.5254 ha_energy:  729.2841
+step: 13    energy: 18.2162    energy_diff: -12.1043183946 ex_energy:   -7.0658 ha_energy:  318.5614
+step: 14    energy: 29.8466    energy_diff: 11.6304483976 ex_energy:   -9.6355 ha_energy:  753.1256
+step: 15    energy: 18.5379    energy_diff: -11.3087229492 ex_energy:   -7.0847 ha_energy:  321.0764
+step: 16    energy: 29.4893    energy_diff: 10.9513887061 ex_energy:   -9.7221 ha_energy:  772.2735
+step: 17    energy: 18.7977    energy_diff: -10.6916428429 ex_energy:   -7.0992 ha_energy:  323.0072
+step: 18    energy: 29.2180    energy_diff: 10.4203220018 ex_energy:   -9.7901 ha_energy:  787.5565
+step: 19    energy: 19.0056    energy_diff: -10.2123731107 ex_energy:   -7.1102 ha_energy:  324.4906
+step: 20    energy: 29.0111    energy_diff: 10.0054652121 ex_energy:   -9.8434 ha_energy:  799.6864
+step: 21    energy: 19.1710    energy_diff: -9.8400668928 ex_energy:   -7.1187 ha_energy:  325.6342
+step: 22    energy: 28.8526    energy_diff: 9.6816041679 ex_energy:   -9.8851 ha_energy:  809.2710
+step: 23    energy: 19.3019    energy_diff: -9.5506593666 ex_energy:   -7.1253 ha_energy:  326.5222
+step: 24    energy: 28.7307    energy_diff: 9.4287753282 ex_energy:   -9.9177 ha_energy:  816.8205
+step: 25    energy: 19.4053    energy_diff: -9.3254348194 ex_energy:   -7.1304 ha_energy:  327.2178
+step: 26    energy: 28.6366    energy_diff: 9.2313172092 ex_energy:   -9.9432 ha_energy:  822.7545
+step: 27    energy: 19.4867    energy_diff: -9.1499368432 ex_energy:   -7.1345 ha_energy:  327.7674
+step: 28    energy: 28.5637    energy_diff: 9.0770158075 ex_energy:   -9.9631 ha_energy:  827.4117
+step: 29    energy: 19.5507    energy_diff: -9.0130241980 ex_energy:   -7.1376 ha_energy:  328.2059
+step: 30    energy: 28.5070    energy_diff: 8.9563669019 ex_energy:   -9.9786 ha_energy:  831.0630
+step: 31    energy: 19.6009    energy_diff: -8.9061017556 ex_energy:   -7.1402 ha_energy:  328.5593
+step: 32    energy: 28.4629    energy_diff: 8.8619759352 ex_energy:   -9.9908 ha_energy:  833.9229
+step: 33    energy: 19.6404    energy_diff: -8.8225235502 ex_energy:   -7.1422 ha_energy:  328.8477
+step: 34    energy: 28.4285    energy_diff: 8.7880854810 ex_energy:  -10.0002 ha_energy:  836.1611
+step: 35    energy: 19.6713    energy_diff: -8.7571382323 ex_energy:   -7.1439 ha_energy:  329.0867
+step: 36    energy: 28.4015    energy_diff: 8.7302083715 ex_energy:  -10.0076 ha_energy:  837.9109
+step: 37    energy: 19.6956    energy_diff: -8.7059443019 ex_energy:   -7.1453 ha_energy:  329.2884
+step: 38    energy: 28.3804    energy_diff: 8.6848441555 ex_energy:  -10.0134 ha_energy:  839.2772
+step: 39    energy: 19.7146    energy_diff: -8.6658279672 ex_energy:   -7.1465 ha_energy:  329.4625
+step: 40    energy: 28.3639    energy_diff: 8.6492599968 ex_energy:  -10.0179 ha_energy:  840.3424
+step: 41    energy: 19.7295    energy_diff: -8.6343629250 ex_energy:   -7.1475 ha_energy:  329.6164
+step: 42    energy: 28.3508    energy_diff: 8.6213211045 ex_energy:  -10.0214 ha_energy:  841.1711
+step: 43    energy: 19.7412    energy_diff: -8.6096567086 ex_energy:   -7.1484 ha_energy:  329.7564
+step: 44    energy: 28.3405    energy_diff: 8.5993592362 ex_energy:  -10.0241 ha_energy:  841.8137
+step: 45    energy: 19.7503    energy_diff: -8.5902322816 ex_energy:   -7.1492 ha_energy:  329.8873
+step: 46    energy: 28.3324    energy_diff: 8.5820705358 ex_energy:  -10.0262 ha_energy:  842.3098
+step: 47    energy: 19.7574    energy_diff: -8.5749364836 ex_energy:   -7.1500 ha_energy:  330.0133
+step: 48    energy: 28.3259    energy_diff: 8.5684360435 ex_energy:  -10.0278 ha_energy:  842.6902
+step: 49    energy: 19.7630    energy_diff: -8.5628690587 ex_energy:   -7.1507 ha_energy:  330.1378
+step: 50    energy: 28.3207    energy_diff: 8.5576597834 ex_energy:  -10.0290 ha_energy:  842.9790
+step: 51    energy: 19.7673    energy_diff: -8.5533275408 ex_energy:   -7.1514 ha_energy:  330.2637
+step: 52    energy: 28.3164    energy_diff: 8.5491205109 ex_energy:  -10.0299 ha_energy:  843.1948
+step: 53    energy: 19.7707    energy_diff: -8.5457644075 ex_energy:   -7.1522 ha_energy:  330.3938
+step: 54    energy: 28.3130    energy_diff: 8.5423341041 ex_energy:  -10.0305 ha_energy:  843.3520
+step: 55    energy: 19.7733    energy_diff: -8.5397537573 ex_energy:   -7.1530 ha_energy:  330.5303
+step: 56    energy: 28.3102    energy_diff: 8.5369242617 ex_energy:  -10.0310 ha_energy:  843.4616
+step: 57    energy: 19.7752    energy_diff: -8.5349654033 ex_energy:   -7.1538 ha_energy:  330.6756
+step: 58    energy: 28.3078    energy_diff: 8.5325996967 ex_energy:  -10.0313 ha_energy:  843.5320
+step: 59    energy: 19.7767    energy_diff: -8.5311447554 ex_energy:   -7.1546 ha_energy:  330.8320
+step: 60    energy: 28.3058    energy_diff: 8.5291364178 ex_energy:  -10.0314 ha_energy:  843.5694
+step: 61    energy: 19.7777    energy_diff: -8.5280972315 ex_energy:   -7.1556 ha_energy:  331.0018
+step: 62    energy: 28.3041    energy_diff: 8.5263640013 ex_energy:  -10.0314 ha_energy:  843.5783
+step: 63    energy: 19.7784    energy_diff: -8.5256762209 ex_energy:   -7.1566 ha_energy:  331.1874
+step: 64    energy: 28.3026    energy_diff: 8.5241549970 ex_energy:  -10.0314 ha_energy:  843.5616
+step: 65    energy: 19.7788    energy_diff: -8.5237738350 ex_energy:   -7.1577 ha_energy:  331.3916
+step: 66    energy: 28.3012    energy_diff: 8.5224167974 ex_energy:  -10.0312 ha_energy:  843.5213
+step: 67    energy: 19.7789    energy_diff: -8.5223138520 ex_energy:   -7.1589 ha_energy:  331.6172
+step: 68    energy: 28.3000    energy_diff: 8.5210854411 ex_energy:  -10.0309 ha_energy:  843.4580
+step: 69    energy: 19.7787    energy_diff: -8.5212463797 ex_energy:   -7.1603 ha_energy:  331.8675
+step: 70    energy: 28.2988    energy_diff: 8.5201209272 ex_energy:  -10.0305 ha_energy:  843.3717
+step: 71    energy: 19.7783    energy_diff: -8.5205438606 ex_energy:   -7.1618 ha_energy:  332.1464
+step: 72    energy: 28.2978    energy_diff: 8.5195036987 ex_energy:  -10.0300 ha_energy:  843.2612
+step: 73    energy: 19.7776    energy_diff: -8.5201981032 ex_energy:   -7.1635 ha_energy:  332.4581
+step: 74    energy: 28.2968    energy_diff: 8.5192320021 ex_energy:  -10.0294 ha_energy:  843.1247
+step: 75    energy: 19.7766    energy_diff: -8.5202180688 ex_energy:   -7.1654 ha_energy:  332.8077
+step: 76    energy: 28.2959    energy_diff: 8.5193198675 ex_energy:  -10.0287 ha_energy:  842.9595
+step: 77    energy: 19.7753    energy_diff: -8.5206281622 ex_energy:   -7.1676 ha_energy:  333.2012
+step: 78    energy: 28.2951    energy_diff: 8.5197954624 ex_energy:  -10.0278 ha_energy:  842.7619
+step: 79    energy: 19.7736    energy_diff: -8.5214667766 ex_energy:   -7.1700 ha_energy:  333.6455
+step: 80    energy: 28.2943    energy_diff: 8.5206995721 ex_energy:  -10.0268 ha_energy:  842.5275
+step: 81    energy: 19.7716    energy_diff: -8.5227848314 ex_energy:   -7.1728 ha_energy:  334.1487
+step: 82    energy: 28.2936    energy_diff: 8.5220839485 ex_energy:  -10.0255 ha_energy:  842.2507
+step: 83    energy: 19.7690    energy_diff: -8.5246440237 ex_energy:   -7.1760 ha_energy:  334.7206
+step: 84    energy: 28.2930    energy_diff: 8.5240092556 ex_energy:  -10.0241 ha_energy:  841.9249
+step: 85    energy: 19.7659    energy_diff: -8.5271145118 ex_energy:   -7.1796 ha_energy:  335.3724
+step: 86    energy: 28.2924    energy_diff: 8.5265423616 ex_energy:  -10.0224 ha_energy:  841.5425
+step: 87    energy: 19.7622    energy_diff: -8.5302717952 ex_energy:   -7.1837 ha_energy:  336.1176
+step: 88    energy: 28.2919    energy_diff: 8.5297527992 ex_energy:  -10.0205 ha_energy:  841.0946
+step: 89    energy: 19.7577    energy_diff: -8.5341927066 ex_energy:   -7.1885 ha_energy:  336.9717
+step: 90    energy: 28.2914    energy_diff: 8.5337084091 ex_energy:  -10.0182 ha_energy:  840.5711
+step: 91    energy: 19.7525    energy_diff: -8.5389507466 ex_energy:   -7.1940 ha_energy:  337.9530
+step: 92    energy: 28.2910    energy_diff: 8.5384705252 ex_energy:  -10.0155 ha_energy:  839.9605
+step: 93    energy: 19.7463    energy_diff: -8.5446115211 ex_energy:   -7.2003 ha_energy:  339.0827
+step: 94    energy: 28.2904    energy_diff: 8.5440895676 ex_energy:  -10.0124 ha_energy:  839.2503
+step: 95    energy: 19.7392    energy_diff: -8.5512297200 ex_energy:   -7.2077 ha_energy:  340.3851
+step: 96    energy: 28.2898    energy_diff: 8.5506024544 ex_energy:  -10.0087 ha_energy:  838.4259
+step: 97    energy: 19.7310    energy_diff: -8.5588496352 ex_energy:   -7.2163 ha_energy:  341.8884
+step: 98    energy: 28.2890    energy_diff: 8.5580335052 ex_energy:  -10.0046 ha_energy:  837.4708
+step: 99    energy: 19.7215    energy_diff: -8.5675110882 ex_energy:   -7.2262 ha_energy:  343.6254
+not converged
+</code></pre></div></div>
+
+<h2 id="now-get-the-electron-density">Now get the electron density</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">xflat</span><span class="p">,</span><span class="n">yflat</span><span class="p">,</span><span class="n">get_nxy</span><span class="p">(</span><span class="n">num_electrons</span><span class="p">,</span> <span class="n">psi</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">get_nxy</span><span class="p">(</span><span class="n">num_electrons</span><span class="p">,</span> <span class="n">psi</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span><span class="n">n_grid</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'RdGy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">nxy</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span> <span class="n">n_grid</span><span class="p">)[:,</span><span class="n">n_grid</span><span class="o">//</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">get_nxy</span><span class="p">(</span><span class="n">num_electrons</span><span class="p">,</span> <span class="n">psi_harm</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_grid</span><span class="p">,</span> <span class="n">n_grid</span><span class="p">)[:,</span><span class="n">n_grid</span><span class="o">//</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'x coordinate'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'electron density'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'cross section of 2D electron density at y = 0'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">((</span><span class="s">'with elec-elec interaction'</span><span class="p">,</span><span class="s">'no interaction'</span><span class="p">),</span><span class="n">loc</span><span class="o">=</span><span class="s">'upper right'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p><img src="/assets/img/output_37_0.png" alt="png" /></p>
+
+<p><img src="/assets/img/output_37_1.png" alt="png" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1.17029678 2.5939502  2.6092069  4.26769901 4.37000567 4.71031507
+ 6.2792591  6.35870905 7.1566507  7.25873633]
+</code></pre></div></div>
+
+<p><img src="/assets/img/output_37_3.png" alt="png" /></p>
+
+<p>We can see that the electron density actually gets more compact. The elec-elec repulsion just cause the <strong>total energy</strong> increase. The repulsion effect on density is actually been <strong>reversed</strong> by elec-elec exchange, which is attractive (in the equation there is a negative sign)</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+</code></pre></div></div>
+
+</div>
+<a href="https://twitter.com/share" class="twitter-share-button " data-size="small" data-count="none">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<ul class="pager">
+
+  <li class="previous"><a href="/2019/05/14/leetcode971.html">&larr; Older</a></li>
+
+
+</ul>
+<div id="disqus_thread">
+
+  <script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+      var disqus_shortname = 'wenx'; // required: replace example with your forum shortname
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>
+    Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+
+  <a href="http://disqus.com" class="dsq-brlink">
+    comments powered by <span class="logo-disqus">Disqus</span>
+  </a>
+
+</div>
+
+		  </div>
+      <div class="container">
+  <footer>
+    <p class="text-muted credit">
+      &copy; 2019 Based on Herring Cove &middot; Build with
+      	<a href="https://jekyllrb.com"> Jekyll </a>
+      	2019-05-16 20:58:04 -0400
+    </p>
+  </footer>
+</div>
+    </div>
+	</div>
+  </body>
+</html>
