@@ -1,0 +1,1579 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<title>Python implementation of Hartree Fock (H2O 3-21G basis set)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A website for Tech and Life">
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+<link href="/assets/css/styles.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif] d-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-47234019-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-47234019-2');
+</script>
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="/assets/js/mysite.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <body>
+  	<div class="wrapper">
+  	<div id="sidebar-wrapper">
+<nav class="sidebar-nav">
+	<div class="active">
+		<ul>
+		
+			<li>
+			<a href="/" >
+				Home
+			</a>
+			</li>
+		
+			<li>
+			<a href="/research.html" >
+				Research
+			</a>
+			</li>
+		
+			<li>
+			<a href="/blog.html" >
+				Blog
+			</a>
+			</li>
+		
+			<li>
+			<a href="/projects.html" >
+				Projects
+			</a>
+			</li>
+		
+			<li>
+			<a href="/about.html" >
+				About
+			</a>
+			</li>
+		
+		<hr />
+    	<div id="social-wrapper">
+      		<li> <a href="http://twitter.com"><i class="fa fa-twitter-square"></i> @twitter</a></li>
+      		<li> <a href="https://www.linkedin.com/in/wxutamu/"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
+      		<li> <a href="http://facebook.com"><i class="fa fa-facebook-square"></i> facebook</a></li>
+      		<li> <a href="https://github.com/dragonrider1024"><i class="fa fa-github-square"></i> github</a> </li>
+      		<li> <a href="mailto:xuzhiwen1024@gmail.com"><i class="fa fa-envelope"></i> email</a></li>
+    	</div>
+		</ul>
+	</div>
+</nav>
+</div>
+    <div class="content">
+      <button type="button" id="sidebarCollapse" class="navbar-btn">
+      <span></span>
+      <span></span>
+      <span></span>
+      </button>
+      <hr/>
+  		<div class="container">
+    	 <div class="article-title"> Python implementation of Hartree Fock (H2O 3-21G basis set)</div>
+<p class="meta">
+	<small>
+      &nbsp;<i class="fa fa-calendar-o"></i> 20 May 2019
+    </small>
+</p>
+<p> By 
+	
+  	
+    <a href="/authors/wen.html">Wen Xu</a>
+  	
+</p>
+<p>
+ 	
+ 		<a href="/tags/hartree fock.html">hartree fock</a>
+ 	
+ 		<a href="/tags/computational chemistry.html">computational chemistry</a>
+ 	
+ 		<a href="/tags/quantum mechanics.html">quantum mechanics</a>
+ 	
+</p>
+<div class="post">
+<h1 id="computational-chemistry-is-always-fascinating">Computational chemistry is always fascinating.</h1>
+<p>Being able to predict molecular properties, such as (dipole, charge distribution, geometry, vibrational frequencies, Infra-red spectrum, Raman spectrum, NMR spectrum, polarizability, … and so on) from the first principle exemplifies the powerfulness of modern computational chemistry / physics.</p>
+
+<p>Hartree Fock is the most important and fundmental algorithm in computational chemistry. Be able to implement it from scratch is imperative to the understanding of the basics.</p>
+
+<p>Modern computational chemistry is mostly written in C++ or Fortran, which is hard to understand for a typical person. Nowadays, Python has become a very popular programming language and there are also many useful packages written in python, such as numpy and matplotlib.</p>
+
+<p>Below I will demostrate the implementation of Hartree Fock on a H2O molecule on a relatively small basis set 3-21G.</p>
+
+<h2 id="hartree-fock-calculation-of-h2o-system-in-python">Hartree Fock calculation of H2O system in Python</h2>
+<ol>
+  <li>This tutorial shows how hartree fock calculation is done typically. This does not intend to be the most efficient algorithmic implementation of HF. But a pedagogical tutorial on what is Hartree Fock and what is the mathematical equations behind it.</li>
+  <li>We also visualize the Atomic orbitla and Molecular Orbitals, showing how the linear combination of atomic orbitals (LCAO) gave molecular orbitals (MO)</li>
+  <li>We implemented the McMurchie-Davidson algorithm (using recursion) to calculate the 1-electron and 2-electron integrals (this integrals are saved in Memory, I didn’t try to save it on the disk and read them later)</li>
+  <li>Scipy linear algebra package is used to solve the Hartree Fock Roothaan-Hall equation (generalized eigenvalue-eigenvector problem) (FC=SCe)</li>
+</ol>
+
+<h3 id="import-libraries">Import libraries</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">comb</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">factorial2</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">factorial</span>
+</code></pre></div></div>
+
+<h3 id="define-atomic-orbital-object-molecular-orbital-object-and-gaussian-primitive-object-give-two-functions-that-convert-between-s-p-d-f-to-000100-200">Define Atomic Orbital object, Molecular Orbital object, and Gaussian Primitive object. Give two functions that convert between “S, P, D, F” to “(0,0,0),(1,0,0), (2,0,0)….”</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">getAngularQuanta</span><span class="p">(</span><span class="n">orbitaltype</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">orbitaltype</span> <span class="o">==</span> <span class="s">"S"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">orbitaltype</span> <span class="o">==</span> <span class="s">"Px"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">orbitaltype</span> <span class="o">==</span> <span class="s">"Py"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">orbitaltype</span> <span class="o">==</span> <span class="s">"Pz"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">orbitaltype</span> <span class="o">==</span> <span class="s">"Dx2"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">orbitaltype</span> <span class="o">==</span> <span class="s">"Dy2"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">orbitaltype</span> <span class="o">==</span> <span class="s">"Dz2"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">orbitaltype</span> <span class="o">==</span> <span class="s">"Dxy"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">orbitaltype</span> <span class="o">==</span> <span class="s">"Dyz"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">orbitaltype</span> <span class="o">==</span> <span class="s">"Dzx"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+    
+<span class="k">def</span> <span class="nf">getorbitalType</span><span class="p">(</span><span class="n">angular</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">angular</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">"S"</span>
+    <span class="k">if</span> <span class="n">angular</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">"Px"</span>
+    <span class="k">if</span> <span class="n">angular</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">"Py"</span>
+    <span class="k">if</span> <span class="n">angular</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">"Pz"</span>
+    <span class="k">if</span> <span class="n">angular</span> <span class="o">==</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">"Dx2"</span>
+    <span class="k">if</span> <span class="n">angular</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">"Dy2"</span>
+    <span class="k">if</span> <span class="n">angular</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">"Dz2"</span>
+    <span class="k">if</span> <span class="n">angular</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">"Dxy"</span>
+    <span class="k">if</span> <span class="n">angular</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">"Dyz"</span>
+    <span class="k">if</span> <span class="n">angular</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">"Dzx"</span>
+    
+<span class="k">class</span> <span class="nc">Gprimitive</span><span class="p">:</span> <span class="c1">#gaussian primitive class for only one variable. The total will be product of gprimitive(x)*gprimitive(y)*gprimitive(z)
+</span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angular</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">exponent</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angular</span> <span class="o">=</span> <span class="n">angular</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="n">center</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exponent</span> <span class="o">=</span> <span class="n">exponent</span>
+    
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">)</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">exponent</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">)</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="p">)</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exponent</span><span class="p">)</span>
+        
+    
+<span class="k">class</span> <span class="nc">Ao</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span> <span class="c1">#atomic orbital
+</span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">angular</span><span class="p">,</span> <span class="n">contract_num</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="n">center</span> <span class="c1"># the center of the atomic orbital
+</span>        <span class="bp">self</span><span class="o">.</span><span class="n">exponents</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">contract_num</span><span class="p">)]</span> <span class="c1">#list of gaussian primitive exponents
+</span>        <span class="bp">self</span><span class="o">.</span><span class="n">coeffs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">contract_num</span><span class="p">)]</span> <span class="c1">#list of gaussian primivite coeffs
+</span>        <span class="bp">self</span><span class="o">.</span><span class="n">angular</span> <span class="o">=</span> <span class="n">angular</span> <span class="c1">#angular momentum could be S, Px, Py, Pz, Dx2, Dy2, Dz2, Dxy, Dyz, Dzx, ... (0,0,0), (1,0,0),(0,1,0)...
+</span>        
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">getorbitalType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exponents</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">z0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span>
+        <span class="n">l</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)):</span>
+            <span class="n">exponent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">gprimitivex</span> <span class="o">=</span> <span class="n">Gprimitive</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">exponent</span><span class="p">)</span>
+            <span class="n">gprimitivey</span> <span class="o">=</span> <span class="n">Gprimitive</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">exponent</span><span class="p">)</span>
+            <span class="n">gprimitivez</span> <span class="o">=</span> <span class="n">Gprimitive</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">z0</span><span class="p">,</span> <span class="n">exponent</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">gprimitivex</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">gprimitivey</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">gprimitivez</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+            
+    
+        
+<span class="k">class</span> <span class="nc">Mo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span> <span class="c1">#molecular orbital-&gt;linear combination of atomic orbitals
+</span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aolist</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aolist</span> <span class="o">=</span> <span class="n">aolist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coeffs</span> <span class="o">=</span> <span class="n">coeffs</span>
+        
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aolist</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aolist</span><span class="p">)):</span>
+            <span class="n">ao</span> <span class="o">=</span> <span class="n">aolist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">ao</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+    
+    
+</code></pre></div></div>
+
+<h1 id="read-basis-set-information-from-basis-set-data-the-data-is-in-gaussian-94-format-and-downloaded-from-emsl-basis-set-exchange">Read Basis Set Information from Basis set data. The data is in Gaussian 94 Format and downloaded from EMSL basis set exchange</h1>
+<p>Gaussian Format and Basis Set downloaded from EMSL Basis Set Exchange. In this tutorial 6-311++G(2d,2p) is used.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">"basis.dat"</span><span class="p">)</span>
+<span class="n">aodict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+<span class="n">newatomtype</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">contract_num</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">origin</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">orbitalType</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">"****"</span><span class="p">:</span>
+        <span class="n">newatomtype</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">linecount</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s">"****"</span> <span class="ow">and</span> <span class="n">newatomtype</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">linecount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">atomtype</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">linecount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">atomtype</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">linecount</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">orbitalType</span><span class="p">,</span> <span class="n">contract_num</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">contract_num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">contract_num</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">orbitalType</span> <span class="o">==</span> <span class="s">"S"</span><span class="p">:</span>
+                <span class="n">aos</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aos</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">orbitalType</span> <span class="o">==</span> <span class="s">"P"</span><span class="p">:</span>
+                <span class="n">aopx</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aopy</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aopz</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aopx</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aopy</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aopz</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">orbitalType</span> <span class="o">==</span> <span class="s">"D"</span><span class="p">:</span>
+                <span class="n">aodx2</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aody2</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aodz2</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aodxy</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aodyz</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aodzx</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aodx2</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aody2</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aodz2</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aodxy</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aodyz</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aodzx</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">orbitalType</span> <span class="o">==</span> <span class="s">"SP"</span><span class="p">:</span>
+                <span class="n">aos</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aos</span><span class="p">)</span>
+                <span class="n">aopx</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aopy</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aopz</span> <span class="o">=</span> <span class="n">Ao</span><span class="p">(</span><span class="n">origin</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">contract_num</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aopx</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aopy</span><span class="p">)</span>
+                <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aopz</span><span class="p">)</span>
+            <span class="n">linecount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">orbitalType</span><span class="p">,</span> <span class="n">contract_num</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">contract_num</span> <span class="ow">and</span> <span class="mi">1</span> <span class="o">&lt;</span><span class="n">linecount</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">contract_num</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">orbitalType</span> <span class="o">==</span> <span class="s">"S"</span> <span class="ow">or</span> <span class="n">orbitalType</span> <span class="o">==</span> <span class="s">"P"</span> <span class="ow">or</span> <span class="n">orbitalType</span> <span class="o">==</span> <span class="s">"D"</span><span class="p">:</span>
+                <span class="n">exponent</span><span class="p">,</span> <span class="n">coeff</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">exponent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span>
+                <span class="n">coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">orbitalType</span> <span class="o">==</span> <span class="s">"S"</span><span class="p">:</span>
+                    <span class="n">aos</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                    <span class="n">aos</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff</span>
+                <span class="k">elif</span> <span class="n">orbitalType</span> <span class="o">==</span> <span class="s">"P"</span><span class="p">:</span>
+                    <span class="n">aopx</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                    <span class="n">aopy</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                    <span class="n">aopz</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                    <span class="n">aopx</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff</span>
+                    <span class="n">aopy</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff</span>
+                    <span class="n">aopz</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff</span>
+                <span class="k">elif</span> <span class="n">orbitalType</span> <span class="o">==</span> <span class="s">"D"</span><span class="p">:</span>
+                    <span class="n">aodx2</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                    <span class="n">aody2</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                    <span class="n">aodz2</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                    <span class="n">aodxy</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                    <span class="n">aodyz</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                    <span class="n">aodzx</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                    <span class="n">aodx2</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff</span>
+                    <span class="n">aody2</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff</span>
+                    <span class="n">aodz2</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff</span>
+                    <span class="n">aodxy</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff</span>
+                    <span class="n">aodyz</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff</span>
+                    <span class="n">aodzx</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">exponent</span><span class="p">,</span> <span class="n">coeff</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">orbitalType</span> <span class="o">==</span> <span class="s">"SP"</span><span class="p">:</span>
+                <span class="n">exponent</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">coeffp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">exponent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span>
+                <span class="n">coeffs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">coeffs</span><span class="p">)</span>
+                <span class="n">coeffp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">coeffp</span><span class="p">)</span>
+                <span class="n">aos</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                <span class="n">aos</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeffs</span>
+                <span class="n">aopx</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                <span class="n">aopy</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                <span class="n">aopz</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponent</span>
+                <span class="n">aopx</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeffp</span>
+                <span class="n">aopy</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeffp</span>
+                <span class="n">aopz</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">linecount</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeffp</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">exponent</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">coeffp</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">linecount</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">contract_num</span><span class="p">):</span>
+                <span class="n">linecount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">linecount</span> <span class="o">=</span> <span class="mi">1</span>
+                
+<span class="k">print</span><span class="p">(</span><span class="n">aodict</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>H
+S 2
+5.447178 0.156285
+0.824547 0.904691
+S 1
+0.183192 1.0
+O
+S 3
+322.037 0.0592394
+48.4308 0.3515
+10.4206 0.707658
+SP 2
+7.40294 -0.404453 0.244586
+1.5762 1.22156 0.853955
+SP 1
+0.373684 1.0 1.0
+defaultdict(&lt;class 'list'&gt;, {'H': [S(0, 0, 0)[5.447178, 0.824547][0.156285, 0.904691], S(0, 0, 0)[0.183192][1.0]], 'O': [S(0, 0, 0)[322.037, 48.4308, 10.4206][0.0592394, 0.3515, 0.707658], S(0, 0, 0)[7.40294, 1.5762][-0.404453, 1.22156], Px(0, 0, 0)[7.40294, 1.5762][0.244586, 0.853955], Py(0, 0, 0)[7.40294, 1.5762][0.244586, 0.853955], Pz(0, 0, 0)[7.40294, 1.5762][0.244586, 0.853955], S(0, 0, 0)[0.373684][1.0], Px(0, 0, 0)[0.373684][1.0], Py(0, 0, 0)[0.373684][1.0], Pz(0, 0, 0)[0.373684][1.0]]})
+</code></pre></div></div>
+
+<h2 id="read-geometry-information">Read Geometry information</h2>
+<p>Read Geometry information in Cartesian Coordinate. The unit is in Angstrom and the full molecule is used. No symmetry is used. In this tutorial H2O is used as illustration.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">geomfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">"geom.dat"</span><span class="p">)</span>
+<span class="n">aolist</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">atomlist</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">geomfile</span><span class="p">:</span>
+    <span class="n">atomtype</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="mf">1.8897261339213</span> <span class="c1"># from Angstrom to atomic unit
+</span>    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="mf">1.8897261339213</span> <span class="c1"># from Angstrom to atomic unit
+</span>    <span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">*</span> <span class="mf">1.8897261339213</span> <span class="c1"># ....
+</span>    <span class="n">atomlist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">atomtype</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">atomtype</span> <span class="ow">in</span> <span class="n">aodict</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ao</span> <span class="ow">in</span> <span class="n">aodict</span><span class="p">[</span><span class="n">atomtype</span><span class="p">]:</span>
+            <span class="n">aonew</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">ao</span><span class="p">)</span>
+            <span class="n">aonew</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">]</span>
+            <span class="n">aolist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aonew</span><span class="p">)</span>
+            
+<span class="k">print</span><span class="p">(</span><span class="n">aolist</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">aolist</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[S[-0.0963760328299863, -0.5801459231138391, -0.4875493425516954][322.037, 48.4308, 10.4206][0.0592394, 0.3515, 0.707658], S[-0.0963760328299863, -0.5801459231138391, -0.4875493425516954][7.40294, 1.5762][-0.404453, 1.22156], Px[-0.0963760328299863, -0.5801459231138391, -0.4875493425516954][7.40294, 1.5762][0.244586, 0.853955], Py[-0.0963760328299863, -0.5801459231138391, -0.4875493425516954][7.40294, 1.5762][0.244586, 0.853955], Pz[-0.0963760328299863, -0.5801459231138391, -0.4875493425516954][7.40294, 1.5762][0.244586, 0.853955], S[-0.0963760328299863, -0.5801459231138391, -0.4875493425516954][0.373684][1.0], Px[-0.0963760328299863, -0.5801459231138391, -0.4875493425516954][0.373684][1.0], Py[-0.0963760328299863, -0.5801459231138391, -0.4875493425516954][0.373684][1.0], Pz[-0.0963760328299863, -0.5801459231138391, -0.4875493425516954][0.373684][1.0], S[-0.7540007274345988, 1.1565123939598356, -0.9297452578892796][5.447178, 0.824547][0.156285, 0.904691], S[-0.7540007274345988, 1.1565123939598356, -0.9297452578892796][0.183192][1.0], S[-0.6557349684706911, -0.5763664708459965, -1.417294600440975][5.447178, 0.824547][0.156285, 0.904691], S[-0.6557349684706911, -0.5763664708459965, -1.417294600440975][0.183192][1.0]]
+13
+</code></pre></div></div>
+
+<h3 id="define-a-function-that-do-implicit-plot-of-3d-surfaces-to-visualize-the-atomic-and-molecular-orbtials">Define a Function that do implicit plot of 3D surfaces to visualize the Atomic and Molecular orbtials.</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">axes3d</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="k">def</span> <span class="nf">plot_implicit</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">isovalue</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">),</span><span class="n">elev</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">azim</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+    <span class="s">''' create a plot of an implicit function
+    fn  ...implicit function (plot where fn==0)
+    bbox ..the x,y,and z limits of plotted interval'''</span>
+    <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">*</span><span class="mi">3</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="c1"># resolution of the contour
+</span>    <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span> <span class="c1"># number of slices
+</span>    <span class="n">A1</span><span class="p">,</span><span class="n">A2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">A</span><span class="p">)</span> <span class="c1"># grid on which the contour is plotted
+</span>
+    <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">B</span><span class="p">:</span> <span class="c1"># plot contours in the XY plane
+</span>        <span class="n">X</span><span class="p">,</span><span class="n">Y</span> <span class="o">=</span> <span class="n">A1</span><span class="p">,</span><span class="n">A2</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span> <span class="o">-</span> <span class="n">isovalue</span>
+        <span class="n">cset</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="o">+</span><span class="n">z</span><span class="p">,</span> <span class="p">[</span><span class="n">z</span><span class="p">],</span> <span class="n">zdir</span><span class="o">=</span><span class="s">'z'</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s">'red'</span><span class="p">)</span>
+        <span class="c1"># [z] defines the only level to plot for this contour for this value of z
+</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">B</span><span class="p">:</span> <span class="c1"># plot contours in the XZ plane
+</span>        <span class="n">X</span><span class="p">,</span><span class="n">Z</span> <span class="o">=</span> <span class="n">A1</span><span class="p">,</span><span class="n">A2</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span> <span class="o">-</span> <span class="n">isovalue</span>
+        <span class="n">cset</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="o">+</span><span class="n">y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="p">[</span><span class="n">y</span><span class="p">],</span> <span class="n">zdir</span><span class="o">=</span><span class="s">'y'</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s">'red'</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">B</span><span class="p">:</span> <span class="c1"># plot contours in the YZ plane
+</span>        <span class="n">Y</span><span class="p">,</span><span class="n">Z</span> <span class="o">=</span> <span class="n">A1</span><span class="p">,</span><span class="n">A2</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span> <span class="o">-</span> <span class="n">isovalue</span>
+        <span class="n">cset</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X</span><span class="o">+</span><span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">zdir</span><span class="o">=</span><span class="s">'x'</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s">'red'</span><span class="p">)</span>
+        
+<span class="c1">## now plot the negative part
+</span>    <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">B</span><span class="p">:</span> <span class="c1"># plot contours in the XY plane
+</span>        <span class="n">X</span><span class="p">,</span><span class="n">Y</span> <span class="o">=</span> <span class="n">A1</span><span class="p">,</span><span class="n">A2</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="n">isovalue</span>
+        <span class="n">cset</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="o">+</span><span class="n">z</span><span class="p">,</span> <span class="p">[</span><span class="n">z</span><span class="p">],</span> <span class="n">zdir</span><span class="o">=</span><span class="s">'z'</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s">'blue'</span><span class="p">)</span>
+        <span class="c1"># [z] defines the only level to plot for this contour for this value of z
+</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">B</span><span class="p">:</span> <span class="c1"># plot contours in the XZ plane
+</span>        <span class="n">X</span><span class="p">,</span><span class="n">Z</span> <span class="o">=</span> <span class="n">A1</span><span class="p">,</span><span class="n">A2</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span> <span class="o">+</span> <span class="n">isovalue</span>
+        <span class="n">cset</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="o">+</span><span class="n">y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="p">[</span><span class="n">y</span><span class="p">],</span> <span class="n">zdir</span><span class="o">=</span><span class="s">'y'</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s">'blue'</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">B</span><span class="p">:</span> <span class="c1"># plot contours in the YZ plane
+</span>        <span class="n">Y</span><span class="p">,</span><span class="n">Z</span> <span class="o">=</span> <span class="n">A1</span><span class="p">,</span><span class="n">A2</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span> <span class="o">+</span> <span class="n">isovalue</span>
+        <span class="n">cset</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X</span><span class="o">+</span><span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">zdir</span><span class="o">=</span><span class="s">'x'</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s">'blue'</span><span class="p">)</span>
+
+    <span class="c1"># must set plot limits because the contour will likely extend
+</span>    <span class="c1"># way beyond the displayed level.  Otherwise matplotlib extends the plot limits
+</span>    <span class="c1"># to encompass all values in the contour.
+</span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_zlim3d</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span><span class="n">zmax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim3d</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span><span class="n">xmax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim3d</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span><span class="n">ymax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">view_init</span><span class="p">(</span><span class="n">elev</span><span class="p">,</span> <span class="n">azim</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="now-start-visualize-some-of-the-atomic-orbitals">Now Start visualize some of the atomic orbitals</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">aolist</span><span class="p">)):</span>
+    <span class="n">ao</span> <span class="o">=</span> <span class="n">aolist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">getorbitalType</span><span class="p">(</span><span class="n">ao</span><span class="o">.</span><span class="n">angular</span><span class="p">))</span>
+<span class="n">plot_implicit</span><span class="p">(</span><span class="n">aolist</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="mf">0.05</span><span class="p">,[</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">90</span><span class="p">)</span> <span class="c1">#Pz orbital on Oxygen.
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0 S
+1 S
+2 Px
+3 Py
+4 Pz
+5 S
+6 Px
+7 Py
+8 Pz
+9 S
+10 S
+11 S
+12 S
+</code></pre></div></div>
+
+<p><img src="/assets/img/ao.png" alt="png" /></p>
+
+<h3 id="the-major-work-horse-of-the-scf--in-this-section-we-define-the-function-that-calculates-1-electron-and-2-electron-integrals-using-boys-function-and-mcmurchie-davidson-recurrence-formulation">The major work horse of the SCF.  In this section, we define the function that calculates 1-electron and 2-electron integrals using Boys Function and McMurchie-Davidson recurrence formulation.</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">gint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">center1</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">center2</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">):</span> <span class="c1">#calculate one electron integral of two gaussian primitives
+</span>    <span class="n">newcenter</span> <span class="o">=</span> <span class="p">(</span><span class="n">exponent1</span> <span class="o">*</span> <span class="n">center1</span> <span class="o">+</span> <span class="n">exponent2</span> <span class="o">*</span> <span class="n">center2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">exponent1</span> <span class="o">+</span> <span class="n">exponent2</span><span class="p">)</span>
+    <span class="n">newexponent</span> <span class="o">=</span> <span class="n">exponent1</span> <span class="o">+</span> <span class="n">exponent2</span>
+    <span class="n">tempexponent</span> <span class="o">=</span> <span class="n">exponent1</span> <span class="o">*</span> <span class="n">exponent2</span> <span class="o">/</span> <span class="p">(</span><span class="n">exponent1</span> <span class="o">+</span> <span class="n">exponent2</span><span class="p">)</span>
+    <span class="n">e12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">tempexponent</span><span class="o">*</span><span class="p">(</span><span class="n">center1</span> <span class="o">-</span> <span class="n">center2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">newexponent</span><span class="p">)</span><span class="o">*</span><span class="n">comb</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">comb</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span><span class="o">*</span>
+                        <span class="n">factorial2</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">newexponent</span><span class="p">)</span><span class="o">**</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span>
+                        <span class="p">(</span><span class="n">newcenter</span> <span class="o">-</span> <span class="n">center1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">newcenter</span> <span class="o">-</span> <span class="n">center2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">j</span><span class="p">)</span>
+                       <span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">e12</span> <span class="o">*</span> <span class="n">res</span>
+    <span class="k">return</span> <span class="n">res</span>
+                        
+
+<span class="k">def</span> <span class="nf">E</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">center1</span><span class="p">,</span> <span class="n">center2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">):</span><span class="c1">#calculate the gaussian-hermite expansion coefficient using recurence
+</span>    <span class="n">newcenter</span> <span class="o">=</span> <span class="p">(</span><span class="n">exponent1</span> <span class="o">*</span> <span class="n">center1</span> <span class="o">+</span> <span class="n">exponent2</span> <span class="o">*</span> <span class="n">center2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">exponent1</span> <span class="o">+</span> <span class="n">exponent2</span><span class="p">)</span>
+    <span class="n">sumexponent</span> <span class="o">=</span> <span class="n">exponent1</span> <span class="o">+</span> <span class="n">exponent2</span>
+    <span class="n">diffcenter</span> <span class="o">=</span> <span class="n">center1</span> <span class="o">-</span> <span class="n">center2</span>
+    <span class="n">redexponent</span> <span class="o">=</span> <span class="n">exponent1</span> <span class="o">*</span> <span class="n">exponent2</span> <span class="o">/</span> <span class="p">(</span><span class="n">exponent1</span> <span class="o">+</span> <span class="n">exponent2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="n">l1</span> <span class="o">+</span> <span class="n">l2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">l1</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">l2</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">l1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">l2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">redexponent</span><span class="o">*</span><span class="n">diffcenter</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">l1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sumexponent</span><span class="p">)</span><span class="o">*</span><span class="n">E</span><span class="p">(</span><span class="n">l1</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span><span class="n">center1</span><span class="p">,</span><span class="n">center2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span>
+                <span class="o">+</span><span class="p">(</span><span class="n">newcenter</span> <span class="o">-</span> <span class="n">center1</span><span class="p">)</span><span class="o">*</span><span class="n">E</span><span class="p">(</span><span class="n">l1</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">l2</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">center1</span><span class="p">,</span><span class="n">center2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span>
+                <span class="o">+</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">E</span><span class="p">(</span><span class="n">l1</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">l2</span><span class="p">,</span> <span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">center1</span><span class="p">,</span><span class="n">center2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">l1</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sumexponent</span><span class="p">)</span><span class="o">*</span><span class="n">E</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span><span class="n">center1</span><span class="p">,</span><span class="n">center2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span>
+                <span class="o">+</span><span class="p">(</span><span class="n">newcenter</span> <span class="o">-</span> <span class="n">center2</span><span class="p">)</span><span class="o">*</span><span class="n">E</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span><span class="n">l2</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">center1</span><span class="p">,</span><span class="n">center2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span>
+                <span class="o">+</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">E</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span><span class="n">l2</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">center1</span><span class="p">,</span><span class="n">center2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">S</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">center1</span><span class="p">,</span> <span class="n">center2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">):</span> <span class="c1">#calculate overlap type integral
+</span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="p">(</span><span class="n">exponent1</span> <span class="o">+</span> <span class="n">exponent2</span><span class="p">))</span><span class="o">*</span><span class="n">E</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">center1</span><span class="p">,</span> <span class="n">center2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">T</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">center1</span><span class="p">,</span> <span class="n">center2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">):</span> <span class="c1">#calculate kinetic type integral
+</span>    <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">res</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">exponent2</span><span class="o">*</span><span class="n">S</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">center1</span><span class="p">,</span> <span class="n">center2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">+=</span> <span class="n">exponent2</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">m2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">S</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">center1</span><span class="p">,</span> <span class="n">center2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">m2</span><span class="o">*</span><span class="p">(</span><span class="n">m2</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">S</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="n">center1</span><span class="p">,</span> <span class="n">center2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+    
+
+<span class="k">def</span> <span class="nf">F</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="c1">#calculate Boys function value by numerical integration
+</span>    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mf">1e-7</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="n">res1</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1">#if x &lt; 1e-7:
+</span>        <span class="c1">#    return res1
+</span>        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">11</span><span class="p">):</span>
+            <span class="n">res1</span> <span class="o">+=</span> <span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="n">factorial</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">res2</span> <span class="o">=</span> <span class="n">factorial2</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">res1</span><span class="p">,</span> <span class="n">res2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">F</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">R</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">u</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">u</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="o">*</span><span class="n">F</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">p</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">R</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span><span class="o">+</span><span class="n">x</span><span class="o">*</span><span class="n">R</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">u</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">u</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">R</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">u</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span><span class="o">+</span><span class="n">y</span><span class="o">*</span><span class="n">R</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">u</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">v</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">R</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span><span class="o">+</span><span class="n">z</span><span class="o">*</span><span class="n">R</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+    
+    
+<span class="k">def</span> <span class="nf">overlap</span><span class="p">(</span><span class="n">ao1</span><span class="p">,</span> <span class="n">ao2</span><span class="p">):</span> <span class="c1">#calculate overlap matrix &lt;psi|phi&gt;
+</span>    <span class="n">l1</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">ao1</span><span class="o">.</span><span class="n">angular</span>
+    <span class="n">l2</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">ao2</span><span class="o">.</span><span class="n">angular</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">z1</span> <span class="o">=</span> <span class="n">ao1</span><span class="o">.</span><span class="n">center</span>
+    <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">z2</span> <span class="o">=</span> <span class="n">ao2</span><span class="o">.</span><span class="n">center</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ao1</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ao2</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)):</span>
+            <span class="n">exponent1</span> <span class="o">=</span> <span class="n">ao1</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">exponent2</span> <span class="o">=</span> <span class="n">ao2</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="c1">#res += (ao1.coeffs[i]*ao2.coeffs[j]*
+</span>            <span class="c1">#        gint(l1, x1, exponent1, l2, x2, exponent2)*
+</span>            <span class="c1">#        gint(m1, y1, exponent1, m2, y2, exponent2)*
+</span>            <span class="c1">#        gint(n1, z1, exponent1, n2, z2, exponent2))
+</span>            <span class="n">res</span> <span class="o">+=</span> <span class="p">(</span><span class="n">ao1</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">ao2</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span>
+                    <span class="n">S</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">)</span><span class="o">*</span>
+                    <span class="n">S</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">)</span><span class="o">*</span>
+                    <span class="n">S</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">z1</span><span class="p">,</span> <span class="n">z2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+
+
+
+<span class="k">def</span> <span class="nf">kinetic</span><span class="p">(</span><span class="n">ao1</span><span class="p">,</span> <span class="n">ao2</span><span class="p">):</span> <span class="c1">#calculate kinetic integral &lt;psi|-1/2*del^2|phi&gt;
+</span>    <span class="n">l1</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">ao1</span><span class="o">.</span><span class="n">angular</span>
+    <span class="n">l2</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">ao2</span><span class="o">.</span><span class="n">angular</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">z1</span> <span class="o">=</span> <span class="n">ao1</span><span class="o">.</span><span class="n">center</span>
+    <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">z2</span> <span class="o">=</span> <span class="n">ao2</span><span class="o">.</span><span class="n">center</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ao1</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ao2</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)):</span>
+            <span class="n">exponent1</span> <span class="o">=</span> <span class="n">ao1</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">exponent2</span> <span class="o">=</span> <span class="n">ao2</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="p">(</span><span class="n">ao1</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">ao2</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span>
+                    <span class="p">(</span><span class="n">T</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span><span class="n">l2</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span><span class="o">*</span><span class="n">S</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span><span class="n">m2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span><span class="o">*</span><span class="n">S</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="n">n2</span><span class="p">,</span><span class="n">z1</span><span class="p">,</span><span class="n">z2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span> <span class="o">+</span>
+                     <span class="n">S</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span><span class="n">l2</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span><span class="n">m2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span><span class="o">*</span><span class="n">S</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="n">n2</span><span class="p">,</span><span class="n">z1</span><span class="p">,</span><span class="n">z2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span> <span class="o">+</span>
+                     <span class="n">S</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span><span class="n">l2</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span><span class="o">*</span><span class="n">S</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span><span class="n">m2</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span><span class="o">*</span><span class="n">T</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="n">n2</span><span class="p">,</span><span class="n">z1</span><span class="p">,</span><span class="n">z2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">))</span>
+                   <span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="k">def</span> <span class="nf">oneelectron</span><span class="p">(</span><span class="n">ao1</span><span class="p">,</span> <span class="n">centerC</span><span class="p">,</span> <span class="n">ao2</span><span class="p">):</span>
+    <span class="n">l1</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">ao1</span><span class="o">.</span><span class="n">angular</span>
+    <span class="n">l2</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">ao2</span><span class="o">.</span><span class="n">angular</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">l1</span> <span class="o">+</span> <span class="n">m1</span> <span class="o">+</span> <span class="n">n1</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">l2</span> <span class="o">+</span> <span class="n">m2</span> <span class="o">+</span> <span class="n">n2</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">z1</span> <span class="o">=</span> <span class="n">ao1</span><span class="o">.</span><span class="n">center</span>
+    <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">z2</span> <span class="o">=</span> <span class="n">ao2</span><span class="o">.</span><span class="n">center</span>
+    <span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">,</span> <span class="n">zc</span> <span class="o">=</span> <span class="n">centerC</span> <span class="c1"># coordinate of atom with charge Z
+</span>    <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ao1</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ao2</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)):</span>
+            <span class="n">exponent1</span> <span class="o">=</span> <span class="n">ao1</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">exponent2</span> <span class="o">=</span> <span class="n">ao2</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">exponent1</span> <span class="o">+</span> <span class="n">exponent2</span>
+            <span class="n">xp</span> <span class="o">=</span> <span class="p">(</span><span class="n">exponent1</span><span class="o">*</span><span class="n">x1</span><span class="o">+</span><span class="n">exponent2</span><span class="o">*</span><span class="n">x2</span><span class="p">)</span><span class="o">/</span><span class="n">p</span>
+            <span class="n">yp</span> <span class="o">=</span> <span class="p">(</span><span class="n">exponent1</span><span class="o">*</span><span class="n">y1</span><span class="o">+</span><span class="n">exponent2</span><span class="o">*</span><span class="n">y2</span><span class="p">)</span><span class="o">/</span><span class="n">p</span>
+            <span class="n">zp</span> <span class="o">=</span> <span class="p">(</span><span class="n">exponent1</span><span class="o">*</span><span class="n">z1</span><span class="o">+</span><span class="n">exponent2</span><span class="o">*</span><span class="n">z2</span><span class="p">)</span><span class="o">/</span><span class="n">p</span>
+            <span class="n">xpc</span> <span class="o">=</span> <span class="n">xp</span> <span class="o">-</span> <span class="n">xc</span>
+            <span class="n">ypc</span> <span class="o">=</span> <span class="n">yp</span> <span class="o">-</span> <span class="n">yc</span>
+            <span class="n">zpc</span> <span class="o">=</span> <span class="n">zp</span> <span class="o">-</span> <span class="n">zc</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                        <span class="n">res</span> <span class="o">+=</span> <span class="p">(</span><span class="n">ao1</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">ao2</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span>
+                                <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">p</span><span class="o">*</span><span class="n">E</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span><span class="n">l2</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span><span class="o">*</span>
+                                <span class="n">E</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span><span class="n">m2</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span><span class="o">*</span>
+                                <span class="n">E</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="n">n2</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">z1</span><span class="p">,</span><span class="n">z2</span><span class="p">,</span><span class="n">exponent1</span><span class="p">,</span><span class="n">exponent2</span><span class="p">)</span><span class="o">*</span>
+                                <span class="n">R</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">xpc</span><span class="p">,</span><span class="n">ypc</span><span class="p">,</span><span class="n">zpc</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">res</span>
+                  
+    
+<span class="k">def</span> <span class="nf">twoelectron</span><span class="p">(</span><span class="n">ao1</span><span class="p">,</span> <span class="n">ao2</span><span class="p">,</span> <span class="n">ao3</span><span class="p">,</span> <span class="n">ao4</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">l1</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">ao1</span><span class="o">.</span><span class="n">angular</span>
+    <span class="n">l2</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">ao2</span><span class="o">.</span><span class="n">angular</span>
+    <span class="n">l3</span><span class="p">,</span> <span class="n">m3</span><span class="p">,</span> <span class="n">n3</span> <span class="o">=</span> <span class="n">ao3</span><span class="o">.</span><span class="n">angular</span>
+    <span class="n">l4</span><span class="p">,</span> <span class="n">m4</span><span class="p">,</span> <span class="n">n4</span> <span class="o">=</span> <span class="n">ao4</span><span class="o">.</span><span class="n">angular</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">z1</span> <span class="o">=</span> <span class="n">ao1</span><span class="o">.</span><span class="n">center</span>
+    <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">z2</span> <span class="o">=</span> <span class="n">ao2</span><span class="o">.</span><span class="n">center</span>
+    <span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">,</span> <span class="n">z3</span> <span class="o">=</span> <span class="n">ao3</span><span class="o">.</span><span class="n">center</span>
+    <span class="n">x4</span><span class="p">,</span> <span class="n">y4</span><span class="p">,</span> <span class="n">z4</span> <span class="o">=</span> <span class="n">ao4</span><span class="o">.</span><span class="n">center</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">l1</span> <span class="o">+</span> <span class="n">m1</span> <span class="o">+</span> <span class="n">n1</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">l2</span> <span class="o">+</span> <span class="n">m2</span> <span class="o">+</span> <span class="n">n2</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">l3</span> <span class="o">+</span> <span class="n">m3</span> <span class="o">+</span> <span class="n">n3</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">l4</span> <span class="o">+</span> <span class="n">m4</span> <span class="o">+</span> <span class="n">n4</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ao1</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ao2</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ao3</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ao4</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)):</span>
+                    <span class="n">exponent1</span> <span class="o">=</span> <span class="n">ao1</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">exponent2</span> <span class="o">=</span> <span class="n">ao2</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                    <span class="n">exponent3</span> <span class="o">=</span> <span class="n">ao3</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                    <span class="n">exponent4</span> <span class="o">=</span> <span class="n">ao4</span><span class="o">.</span><span class="n">exponents</span><span class="p">[</span><span class="n">l</span><span class="p">]</span>
+                    <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="n">exponent1</span> <span class="o">+</span> <span class="n">exponent2</span><span class="p">)</span>
+                    <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">exponent3</span> <span class="o">+</span> <span class="n">exponent4</span><span class="p">)</span>
+                    <span class="n">alpha</span> <span class="o">=</span> <span class="n">p</span><span class="o">*</span><span class="n">q</span><span class="o">/</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">q</span><span class="p">)</span>
+                    <span class="n">xp</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="n">exponent1</span><span class="o">+</span><span class="n">x2</span><span class="o">*</span><span class="n">exponent2</span><span class="p">)</span><span class="o">/</span><span class="n">p</span>
+                    <span class="n">yp</span> <span class="o">=</span> <span class="p">(</span><span class="n">y1</span><span class="o">*</span><span class="n">exponent1</span><span class="o">+</span><span class="n">y2</span><span class="o">*</span><span class="n">exponent2</span><span class="p">)</span><span class="o">/</span><span class="n">p</span>
+                    <span class="n">zp</span> <span class="o">=</span> <span class="p">(</span><span class="n">z1</span><span class="o">*</span><span class="n">exponent1</span><span class="o">+</span><span class="n">z2</span><span class="o">*</span><span class="n">exponent2</span><span class="p">)</span><span class="o">/</span><span class="n">p</span>
+                    <span class="n">xq</span> <span class="o">=</span> <span class="p">(</span><span class="n">x3</span><span class="o">*</span><span class="n">exponent3</span><span class="o">+</span><span class="n">x4</span><span class="o">*</span><span class="n">exponent4</span><span class="p">)</span><span class="o">/</span><span class="n">q</span>
+                    <span class="n">yq</span> <span class="o">=</span> <span class="p">(</span><span class="n">y3</span><span class="o">*</span><span class="n">exponent3</span><span class="o">+</span><span class="n">y4</span><span class="o">*</span><span class="n">exponent4</span><span class="p">)</span><span class="o">/</span><span class="n">q</span>
+                    <span class="n">zq</span> <span class="o">=</span> <span class="p">(</span><span class="n">z3</span><span class="o">*</span><span class="n">exponent3</span><span class="o">+</span><span class="n">z4</span><span class="o">*</span><span class="n">exponent4</span><span class="p">)</span><span class="o">/</span><span class="n">q</span>
+                    <span class="n">xpq</span> <span class="o">=</span> <span class="n">xp</span> <span class="o">-</span> <span class="n">xq</span>
+                    <span class="n">ypq</span> <span class="o">=</span> <span class="n">yp</span> <span class="o">-</span> <span class="n">yq</span>
+                    <span class="n">zpq</span> <span class="o">=</span> <span class="n">zp</span> <span class="o">-</span> <span class="n">zq</span>
+                    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                                <span class="k">for</span> <span class="n">tau</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                                    <span class="k">for</span> <span class="n">miu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                                        <span class="k">for</span> <span class="n">phi</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                                            <span class="n">res</span> <span class="o">+=</span> <span class="p">(</span><span class="n">ao1</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">ao2</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">ao3</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">ao4</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">*</span>
+                                                    <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">q</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="n">q</span><span class="p">)</span><span class="o">*</span>
+                                                    <span class="n">E</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">)</span><span class="o">*</span>
+                                                    <span class="n">E</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">)</span><span class="o">*</span>
+                                                    <span class="n">E</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">z1</span><span class="p">,</span> <span class="n">z2</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">)</span><span class="o">*</span>
+                                                    <span class="n">E</span><span class="p">(</span><span class="n">l3</span><span class="p">,</span> <span class="n">l4</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">x3</span><span class="p">,</span> <span class="n">x4</span><span class="p">,</span> <span class="n">exponent3</span><span class="p">,</span> <span class="n">exponent4</span><span class="p">)</span><span class="o">*</span>
+                                                    <span class="n">E</span><span class="p">(</span><span class="n">m3</span><span class="p">,</span> <span class="n">m4</span><span class="p">,</span> <span class="n">miu</span><span class="p">,</span> <span class="n">y3</span><span class="p">,</span> <span class="n">y4</span><span class="p">,</span> <span class="n">exponent3</span><span class="p">,</span> <span class="n">exponent4</span><span class="p">)</span><span class="o">*</span>
+                                                    <span class="n">E</span><span class="p">(</span><span class="n">n3</span><span class="p">,</span> <span class="n">n4</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">z3</span><span class="p">,</span> <span class="n">z4</span><span class="p">,</span> <span class="n">exponent3</span><span class="p">,</span> <span class="n">exponent4</span><span class="p">)</span><span class="o">*</span>
+                                                    <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">tau</span> <span class="o">+</span> <span class="n">miu</span> <span class="o">+</span> <span class="n">phi</span><span class="p">)</span><span class="o">*</span>
+                                                    <span class="n">R</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="n">tau</span><span class="p">,</span> <span class="n">u</span><span class="o">+</span><span class="n">miu</span><span class="p">,</span> <span class="n">v</span><span class="o">+</span><span class="n">phi</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">xpq</span><span class="p">,</span> <span class="n">ypq</span><span class="p">,</span> <span class="n">zpq</span><span class="p">)</span>
+                                                    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+                            
+    
+    
+<span class="k">def</span> <span class="nf">atomtype2Charge</span><span class="p">(</span><span class="n">atomtype</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">atomtype</span> <span class="o">==</span> <span class="s">"O"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">8</span>
+    <span class="k">if</span> <span class="n">atomtype</span> <span class="o">==</span> <span class="s">"H"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">atomtype</span> <span class="o">==</span> <span class="s">"C"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">6</span>
+    <span class="k">if</span> <span class="n">atomtype</span> <span class="o">==</span> <span class="s">"N"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">7</span>
+    <span class="k">if</span> <span class="n">atomtype</span> <span class="o">==</span> <span class="s">"S"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">16</span>
+    
+<span class="k">def</span> <span class="nf">coulombicAttraction</span><span class="p">(</span><span class="n">ao1</span><span class="p">,</span> <span class="n">atomlist</span><span class="p">,</span> <span class="n">ao2</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atomlist</span><span class="p">)):</span>
+        <span class="n">atomtype</span><span class="p">,</span> <span class="n">centerC</span> <span class="o">=</span> <span class="n">atomlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">atomtype2Charge</span><span class="p">(</span><span class="n">atomtype</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="p">(</span><span class="o">-</span><span class="n">Z</span><span class="p">)</span><span class="o">*</span><span class="n">oneelectron</span><span class="p">(</span><span class="n">ao1</span><span class="p">,</span> <span class="n">centerC</span><span class="p">,</span> <span class="n">ao2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+
+</code></pre></div></div>
+
+<h2 id="now-build-s-matrix-using-the-overlap-integral">Now Build S Matrix using the overlap integral</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">aolist</span><span class="p">)</span>
+<span class="n">Smatrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">Smatrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">overlap</span><span class="p">(</span><span class="n">aolist</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">aolist</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+    
+<span class="k">print</span><span class="p">(</span><span class="n">Smatrix</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[[ 3.62762722e-02  9.95722893e-02  1.93673973e-19  5.37206593e-21
+   4.47877187e-19  1.16908729e-01  1.54276710e-18  1.23358108e-17
+   5.84923568e-18  6.10913341e-03  6.22165339e-02  4.05905413e-02
+   9.70264391e-02]
+ [ 9.95722893e-02  1.29603405e+00  1.42684721e-17 -1.07089068e-18
+   0.00000000e+00  2.39434572e+00  0.00000000e+00  0.00000000e+00
+  -1.38677717e-16  2.24970293e-01  1.54657288e+00  8.51936046e-01
+   2.31527171e+00]
+ [ 1.93673973e-19  1.42684721e-17  1.20081274e-01  1.33198625e-34
+   0.00000000e+00  0.00000000e+00  4.51862346e-01  0.00000000e+00
+   0.00000000e+00 -3.67968817e-02 -7.72600583e-02 -1.22819876e-01
+  -9.85352674e-02]
+ [ 5.37206593e-21 -1.07089068e-18  1.33198625e-34  1.20081274e-01
+   0.00000000e+00  0.00000000e+00  0.00000000e+00  4.51862346e-01
+   0.00000000e+00  9.71733744e-02  2.04028717e-01  8.29864027e-04
+   6.65778834e-04]
+ [ 4.47877187e-19  0.00000000e+00  0.00000000e+00  0.00000000e+00
+   1.20081274e-01 -9.69453238e-17  0.00000000e+00  0.00000000e+00
+   4.51862346e-01 -2.47427308e-02 -5.19507288e-02 -2.04146551e-01
+  -1.63781593e-01]
+ [ 1.16908729e-01  2.39434572e+00  0.00000000e+00  0.00000000e+00
+  -9.69453238e-17  8.61832884e+00 -1.19603339e-16  0.00000000e+00
+   4.78413356e-16  1.52207840e+00  8.56140029e+00  2.87854472e+00
+   1.15939955e+01]
+ [ 1.54276710e-18  0.00000000e+00  4.51862346e-01  0.00000000e+00
+   0.00000000e+00 -1.19603339e-16  5.76578663e+00  0.00000000e+00
+  -6.63931903e-33 -6.91617246e-01 -1.85212767e+00 -1.11368404e+00
+  -2.13339716e+00]
+ [ 1.23358108e-17  0.00000000e+00  0.00000000e+00  4.51862346e-01
+   0.00000000e+00  0.00000000e+00  0.00000000e+00  5.76578663e+00
+   0.00000000e+00  1.82642600e+00  4.89110726e+00  7.52489217e-03
+   1.44148456e-02]
+ [ 5.84923568e-18 -1.38677717e-16  0.00000000e+00  0.00000000e+00
+   4.51862346e-01  4.78413356e-16 -6.63931903e-33  0.00000000e+00
+   5.76578663e+00 -4.65052976e-01 -1.24539619e+00 -1.85112347e+00
+  -3.54605203e+00]
+ [ 6.10913341e-03  2.24970293e-01 -3.67968817e-02  9.71733744e-02
+  -2.47427308e-02  1.52207840e+00 -6.91617246e-01  1.82642600e+00
+  -4.65052976e-01  2.25610819e+00  5.04483605e+00  5.73298304e-01
+   3.09593009e+00]
+ [ 6.22165339e-02  1.54657288e+00 -7.72600583e-02  2.04028717e-01
+  -5.19507288e-02  8.56140029e+00 -1.85212767e+00  4.89110726e+00
+  -1.24539619e+00  5.04483605e+00  2.51084590e+01  3.09593009e+00
+   1.86434852e+01]
+ [ 4.05905413e-02  8.51936046e-01 -1.22819876e-01  8.29864027e-04
+  -2.04146551e-01  2.87854472e+00 -1.11368404e+00  7.52489217e-03
+  -1.85112347e+00  5.73298304e-01  3.09593009e+00  2.25610819e+00
+   5.04483605e+00]
+ [ 9.70264391e-02  2.31527171e+00 -9.85352674e-02  6.65778834e-04
+  -1.63781593e-01  1.15939955e+01 -2.13339716e+00  1.44148456e-02
+  -3.54605203e+00  3.09593009e+00  1.86434852e+01  5.04483605e+00
+   2.51084590e+01]]
+</code></pre></div></div>
+
+<h2 id="now-build-t-matrix-using-the-kinetic-integral">Now build T Matrix using the kinetic integral</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Tmatrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">Tmatrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">kinetic</span><span class="p">(</span><span class="n">aolist</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">aolist</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">Tmatrix</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[[ 1.56594600e+00  4.78962978e-02  6.78908861e-18  4.22064249e-20
+   2.27868157e-17  1.19389138e-01  2.61562630e-18  2.09132274e-17
+   9.87340471e-18 -1.78867914e-02 -4.92373005e-02  2.50637951e-02
+   8.01241472e-03]
+ [ 3.43169953e+00  2.67653865e+00  9.87769972e-17  1.70224326e-16
+   0.00000000e+00  1.26286244e+00  0.00000000e+00  0.00000000e+00
+  -1.26224305e-16 -2.40376917e-01 -1.29261541e+00  6.87680289e-01
+  -2.67661699e-01]
+ [ 7.28176557e-18  1.74603270e-17  7.22034552e-01  2.52382758e-33
+   0.00000000e+00  0.00000000e+00  4.14183613e-01  0.00000000e+00
+   0.00000000e+00 -8.77758511e-03 -7.40780850e-02 -2.85476643e-01
+  -1.66050624e-01]
+ [ 5.16328248e-18 -1.17093707e-16  2.52382758e-33  7.22034552e-01
+   0.00000000e+00  0.00000000e+00  0.00000000e+00  4.14183613e-01
+   0.00000000e+00  2.31798871e-02  1.95625747e-01  1.92889623e-03
+   1.12196368e-03]
+ [-1.74215738e-17  0.00000000e+00  0.00000000e+00  0.00000000e+00
+   7.22034552e-01 -1.57856939e-17  0.00000000e+00  0.00000000e+00
+   4.14183613e-01 -5.90216930e-03 -4.98111261e-02 -4.74508474e-01
+  -2.76003065e-01]
+ [ 4.02359929e+00  3.74486998e+00  0.00000000e+00  0.00000000e+00
+  -3.72194533e-16 -3.26589848e+00  7.55390768e-17  0.00000000e+00
+  -3.02156307e-16 -3.19847345e-02 -8.89098584e+00  1.17885250e+00
+  -7.32217219e+00]
+ [ 4.15219877e-17  0.00000000e+00  1.84953755e+00  0.00000000e+00
+   0.00000000e+00  1.64926785e-16 -3.64155552e+00  0.00000000e+00
+   1.08325801e-32 -4.49357986e-01 -5.62261276e-01 -1.21442179e+00
+  -1.51582970e+00]
+ [ 3.26095844e-16  0.00000000e+00  0.00000000e+00  1.84953755e+00
+   0.00000000e+00  0.00000000e+00  0.00000000e+00 -3.64155552e+00
+   0.00000000e+00  1.18666664e+00  1.48482216e+00  8.20555263e-03
+   1.02420926e-02]
+ [ 1.18328784e-16 -9.52467827e-17  0.00000000e+00  0.00000000e+00
+   1.84953755e+00 -6.59707140e-16  1.08325801e-32  0.00000000e+00
+  -3.64155552e+00 -3.02154508e-01 -3.78072238e-01 -2.01856595e+00
+  -2.51955477e+00]
+ [ 2.04383059e-01  2.11458960e-01 -1.25157853e-01  3.30517433e-01
+  -8.41578665e-02 -1.68671733e+00  6.76615664e-01 -1.78680976e+00
+   4.54965705e-01  2.94423220e+00  5.04572120e-02 -1.51881931e-01
+  -2.45033733e+00]
+ [ 2.12607292e+00  1.98995307e+00 -2.68742014e-01  7.09695146e-01
+  -1.80705837e-01 -1.01604601e+01  3.29952851e+00 -8.71341006e+00
+   2.21864848e+00  9.70000310e-01 -2.38636820e+01  6.94714612e-03
+  -2.32695311e+01]
+ [ 1.39374740e+00  1.35463291e+00 -5.47657338e-01  3.70038742e-03
+  -9.10295305e-01 -6.49531399e-01  1.00773990e-01 -6.80905340e-04
+   1.67502714e-01 -1.51881931e-01 -2.45033733e+00  2.94423220e+00
+   5.04572120e-02]
+ [ 3.32042071e+00  3.12403406e+00 -3.51732442e-01  2.37657055e-03
+  -5.84636356e-01 -1.14464781e+01  3.37499366e+00 -2.28040112e-02
+   5.60978677e+00  6.94714612e-03 -2.32695311e+01  9.70000310e-01
+  -2.38636820e+01]]
+</code></pre></div></div>
+
+<h2 id="now-build-1-electron-coulombic-attraction-matrix-using-1-electron-integral">Now build 1-Electron Coulombic Attraction Matrix using 1-electron integral</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">coulombAttractionMatrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">coulombAttractionMatrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">coulombicAttraction</span><span class="p">(</span><span class="n">aolist</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">atomlist</span><span class="p">,</span> <span class="n">aolist</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">coulombAttractionMatrix</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[[-1.77274472e+00 -3.36133464e+00  3.46788189e-03 -9.67761921e-04
+   5.40934821e-03 -3.93525332e+00  4.96477720e-03 -1.33033155e-03
+   7.76499514e-03 -1.96486391e-01 -2.07083435e+00 -1.36749327e+00
+  -3.23813099e+00]
+ [-3.36133464e+00 -2.12738044e+01  9.79437480e-02 -8.20013141e-02
+   1.32234912e-01 -3.29727352e+01  3.14504890e-01 -2.58026151e-01
+   4.26602808e-01 -2.64177831e+00 -1.96403707e+01 -1.22258217e+01
+  -2.97687359e+01]
+ [ 3.46788189e-03  9.79437480e-02 -1.55033337e+00  5.00966826e-03
+  -1.71420855e-02  2.28346096e-01 -4.56891809e+00  2.51850126e-02
+  -7.02873816e-02  3.68067594e-01  8.70865432e-01  1.46549031e+00
+   1.15552947e+00]
+ [-9.67761921e-04 -8.20013141e-02  5.00966826e-03 -1.55196470e+00
+   3.43247294e-03 -1.82717143e-01  2.51850126e-02 -4.58683522e+00
+   1.71920073e-02 -9.33927806e-01 -1.98838526e+00 -8.60270673e-02
+  -1.35433954e-01]
+ [ 5.40934821e-03  1.32234912e-01 -1.71420855e-02  3.43247294e-03
+  -1.56615190e+00  3.11471674e-01 -7.02873816e-02  1.71920073e-02
+  -4.63155872e+00  2.61797394e-01  7.02591124e-01  2.40727839e+00
+   1.87272154e+00]
+ [-3.93525332e+00 -3.29727352e+01  2.28346096e-01 -1.82717143e-01
+   3.11471674e-01 -7.81590971e+01  1.41774279e+00 -1.24170553e+00
+   1.89354472e+00 -1.16705504e+01 -6.52346379e+01 -2.82900302e+01
+  -9.12349322e+01]
+ [ 4.96477720e-03  3.14504890e-01 -4.56891809e+00  2.51850126e-02
+  -7.02873816e-02  1.41774279e+00 -3.60903412e+01  3.33633657e-01
+  -5.59513719e-01  4.67632572e+00  1.16785306e+01  8.73784488e+00
+   1.38063811e+01]
+ [-1.33033155e-03 -2.58026151e-01  2.51850126e-02 -4.58683522e+00
+   1.71920073e-02 -1.24170553e+00  3.33633657e-01 -3.65549043e+01
+   2.26251190e-01 -1.20567202e+01 -2.83217459e+01 -4.11247894e-01
+  -2.22796124e+00]
+ [ 7.76499514e-03  4.26602808e-01 -7.02873816e-02  1.71920073e-02
+  -4.63155872e+00  1.89354472e+00 -5.59513719e-01  2.26251190e-01
+  -3.65253384e+01  3.25434920e+00  8.79931320e+00  1.43913722e+01
+   2.21463363e+01]
+ [-1.96486391e-01 -2.64177831e+00  3.68067594e-01 -9.33927806e-01
+   2.61797394e-01 -1.16705504e+01  4.67632572e+00 -1.20567202e+01
+   3.25434920e+00 -1.42921174e+01 -2.97382773e+01 -4.74408391e+00
+  -2.02964730e+01]
+ [-2.07083435e+00 -1.96403707e+01  8.70865432e-01 -1.98838526e+00
+   7.02591124e-01 -6.52346379e+01  1.16785306e+01 -2.83217459e+01
+   8.79931320e+00 -2.97382773e+01 -1.23833572e+02 -2.57019412e+01
+  -1.08193177e+02]
+ [-1.36749327e+00 -1.22258217e+01  1.46549031e+00 -8.60270673e-02
+   2.40727839e+00 -2.82900302e+01  8.73784488e+00 -4.11247894e-01
+   1.43913722e+01 -4.74408391e+00 -2.57019412e+01 -2.13191742e+01
+  -4.13050760e+01]
+ [-3.23813099e+00 -2.97687359e+01  1.15552947e+00 -1.35433954e-01
+   1.87272154e+00 -9.12349322e+01  1.38063811e+01 -2.22796124e+00
+   2.21463363e+01 -2.02964730e+01 -1.08193177e+02 -4.13050760e+01
+  -1.49144815e+02]]
+</code></pre></div></div>
+
+<h2 id="now-build-2-electron-coulombic-repulsion-tensor">Now Build 2-electron Coulombic Repulsion Tensor</h2>
+<h3 id="this-section-takes-the-longest-time-in-the-early-days-the-2-electron-integral-is-calculated-and-saved-on-disk-they-will-be-read-in-when-neccessary-nowadays-with-the-fast-computing-power-it-is-actually-faster-to-calculate-the-2-electron-integrals-than-read-from-disk">This Section takes the longest time. In the early days, the 2-electron integral is calculated and saved on disk. They will be read in when neccessary. Nowadays, with the fast computing power, it is actually faster to calculate the 2-electron integrals than read from disk.</h3>
+<h3 id="here-we-calculate-them-and-save-them-in-a-rank-4-tensor-in-memory-on4-the-2-electron-integral-make-the-hartree-fock-algorithm-to-be-on4-time-complexity-but-in-reality-most-of-the-2-electron-integrals-are-zero-it-can-be-optimized-to-be-on2">Here we calculate them and save them in a rank-4 tensor in memory (O(N<sup>4</sup>). The 2-electron integral make the Hartree Fock Algorithm to be O(N<sup>4</sup>) time complexity. But in reality, most of the 2-electron integrals are Zero. It can be optimized to be O(N<sup>2</sup>)</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">time</span><span class="p">,</span> <span class="n">sys</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">clear_output</span>
+<span class="k">def</span> <span class="nf">update_progress</span><span class="p">(</span><span class="n">progress</span><span class="p">):</span>
+    <span class="n">bar_length</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">progress</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">progress</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">progress</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">progress</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">progress</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">progress</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">progress</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">progress</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">progress</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">bar_length</span> <span class="o">*</span> <span class="n">progress</span><span class="p">))</span>
+    <span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s">"Progress: [{0}] {1:.1f}</span><span class="si">%</span><span class="s">"</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span> <span class="s">"#"</span> <span class="o">*</span> <span class="n">block</span> <span class="o">+</span> <span class="s">"-"</span> <span class="o">*</span> <span class="p">(</span><span class="n">bar_length</span> <span class="o">-</span> <span class="n">block</span><span class="p">),</span> <span class="n">progress</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    
+<span class="n">coulombRepulsionTensor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="n">coulombRepulsionTensor</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">][</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">twoelectron</span><span class="p">(</span><span class="n">aolist</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">aolist</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">aolist</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">aolist</span><span class="p">[</span><span class="n">l</span><span class="p">])</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">update_progress</span><span class="p">(</span><span class="n">count</span> <span class="o">/</span> <span class="n">n</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
+                
+<span class="n">update_progress</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">coulombRepulsionTensor</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Progress: [####################] 100.0%
+[[[[ 5.25865931e-03  1.14911426e-02  2.22135775e-20 ...  7.07882741e-03
+     4.64671403e-03  1.10598789e-02]
+   [ 1.14911426e-02  8.20034204e-02  6.88977021e-19 ...  7.67107360e-02
+     4.49946748e-02  1.16458608e-01]
+   [ 2.22135775e-20  6.88977021e-19  5.94422277e-03 ... -2.77337017e-03
+    -4.89744402e-03 -3.57050084e-03]
+   ...
+   [ 7.07882741e-03  7.67107360e-02 -2.77337017e-03 ...  4.27110568e-01
+     9.08275712e-02  3.83671838e-01]
+   [ 4.64671403e-03  4.49946748e-02 -4.89744402e-03 ...  9.08275712e-02
+     7.15552870e-02  1.46801848e-01]
+   [ 1.10598789e-02  1.16458608e-01 -3.57050084e-03 ...  3.83671838e-01
+     1.46801848e-01  5.40067365e-01]]
+
+  [[ 1.14911426e-02  2.70372687e-02  3.16023786e-20 ...  1.66912063e-02
+     1.09393747e-02  2.60657172e-02]
+   [ 2.70372687e-02  2.15524108e-01  1.67989285e-18 ...  2.04720415e-01
+     1.19661680e-01  3.10532067e-01]
+   [ 3.16023786e-20  1.67989285e-18  1.60557730e-02 ... -7.57262516e-03
+    -1.33448242e-02 -9.74746816e-03]
+   ...
+   [ 1.66912063e-02  2.04720415e-01 -7.57262516e-03 ...  1.16872315e+00
+     2.46923793e-01  1.04751554e+00]
+   [ 1.09393747e-02  1.19661680e-01 -1.33448242e-02 ...  2.46923793e-01
+     1.94158375e-01  3.99191612e-01]
+   [ 2.60657172e-02  3.10532067e-01 -9.74746816e-03 ...  1.04751554e+00
+     3.99191612e-01  1.47362662e+00]]
+
+  [[ 2.22135775e-20  3.16023786e-20  1.74187480e-04 ... -2.72777201e-05
+    -6.67469497e-05 -3.62691325e-05]
+   [ 3.16023786e-20  5.55697522e-19  1.84477971e-03 ... -5.52598476e-04
+    -1.13376852e-03 -7.21640607e-04]
+   [ 1.74187480e-04  1.84477971e-03  6.56129339e-20 ...  1.75820880e-03
+     1.01517268e-03  2.69725032e-03]
+   ...
+   [-2.72777201e-05 -5.52598476e-04  1.75820880e-03 ... -4.87442787e-03
+    -2.55311053e-03 -4.94096650e-03]
+   [-6.67469497e-05 -1.13376852e-03  1.01517268e-03 ... -2.55311053e-03
+    -2.56598185e-03 -3.96938994e-03]
+   [-3.62691325e-05 -7.21640607e-04  2.69725032e-03 ... -4.94096650e-03
+    -3.96938994e-03 -6.65773657e-03]]
+
+  ...
+
+  [[ 7.07882741e-03  1.66912063e-02 -2.72777201e-05 ...  1.03426213e-02
+     6.77656436e-03  1.61063851e-02]
+   [ 1.66912063e-02  1.33990425e-01 -3.14147778e-04 ...  1.28307748e-01
+     7.49098440e-02  1.93639497e-01]
+   [-2.72777201e-05 -3.14147778e-04  1.00044856e-02 ... -5.05203558e-03
+    -8.52006060e-03 -6.55455060e-03]
+   ...
+   [ 1.03426213e-02  1.28307748e-01 -5.05203558e-03 ...  7.37378880e-01
+     1.55655809e-01  6.59006666e-01]
+   [ 6.77656436e-03  7.49098440e-02 -8.52006060e-03 ...  1.55655809e-01
+     1.22161731e-01  2.50638198e-01]
+   [ 1.61063851e-02  1.93639497e-01 -6.55455060e-03 ...  6.59006666e-01
+     2.50638198e-01  9.22648331e-01]]
+
+  [[ 4.64671403e-03  1.09393747e-02 -6.67469497e-05 ...  6.77656436e-03
+     4.52503079e-03  1.06004080e-02]
+   [ 1.09393747e-02  8.75545747e-02 -7.57438929e-04 ...  8.37531150e-02
+     5.04803732e-02  1.27433073e-01]
+   [-6.67469497e-05 -7.57438929e-04  6.53017747e-03 ... -3.82688183e-03
+    -5.98314389e-03 -5.12386101e-03]
+   ...
+   [ 6.77656436e-03  8.37531150e-02 -3.82688183e-03 ...  4.80680164e-01
+     1.04397439e-01  4.32931520e-01]
+   [ 4.52503079e-03  5.04803732e-02 -5.98314389e-03 ...  1.04397439e-01
+     8.33704088e-02  1.69134443e-01]
+   [ 1.06004080e-02  1.27433073e-01 -5.12386101e-03 ...  4.32931520e-01
+     1.69134443e-01  6.11230192e-01]]
+
+  [[ 1.10598789e-02  2.60657172e-02 -3.62691325e-05 ...  1.61063851e-02
+     1.06004080e-02  2.51616024e-02]
+   [ 2.60657172e-02  2.09056153e-01 -4.17051940e-04 ...  1.99158533e-01
+     1.17199073e-01  3.02285989e-01]
+   [-3.62691325e-05 -4.17051940e-04  1.56084778e-02 ... -7.78106686e-03
+    -1.32814228e-02 -1.01210701e-02]
+   ...
+   [ 1.61063851e-02  1.99158533e-01 -7.78106686e-03 ...  1.14091024e+00
+     2.42430623e-01  1.02351250e+00]
+   [ 1.06004080e-02  1.17199073e-01 -1.32814228e-02 ...  2.42430623e-01
+     1.91322934e-01  3.92122425e-01]
+   [ 2.51616024e-02  3.02285989e-01 -1.01210701e-02 ...  1.02351250e+00
+     3.92122425e-01  1.44096056e+00]]]
+
+
+ [[[ 1.14911426e-02  2.70372687e-02  3.16023786e-20 ...  1.66912063e-02
+     1.09393747e-02  2.60657172e-02]
+   [ 2.70372687e-02  2.15524108e-01  1.67989285e-18 ...  2.04720415e-01
+     1.19661680e-01  3.10532067e-01]
+   [ 3.16023786e-20  1.67989285e-18  1.60557730e-02 ... -7.57262516e-03
+    -1.33448242e-02 -9.74746816e-03]
+   ...
+   [ 1.66912063e-02  2.04720415e-01 -7.57262516e-03 ...  1.16872315e+00
+     2.46923793e-01  1.04751554e+00]
+   [ 1.09393747e-02  1.19661680e-01 -1.33448242e-02 ...  2.46923793e-01
+     1.94158375e-01  3.99191612e-01]
+   [ 2.60657172e-02  3.10532067e-01 -9.74746816e-03 ...  1.04751554e+00
+     3.99191612e-01  1.47362662e+00]]
+
+  [[ 8.20034204e-02  2.15524108e-01  5.55697522e-19 ...  1.33990425e-01
+     8.75545747e-02  2.09056153e-01]
+   [ 2.15524108e-01  2.24526163e+00  2.52228894e-17 ...  2.29031800e+00
+     1.31760847e+00  3.46111779e+00]
+   [ 5.55697522e-19  2.52228894e-17  1.83409409e-01 ... -9.30600191e-02
+    -1.61108043e-01 -1.19604516e-01]
+   ...
+   [ 1.33990425e-01  2.29031800e+00 -9.30600191e-02 ...  1.49372356e+01
+     3.04110686e+00  1.32242040e+01]
+   [ 8.75545747e-02  1.31760847e+00 -1.61108043e-01 ...  3.04110686e+00
+     2.39284299e+00  4.92254063e+00]
+   [ 2.09056153e-01  3.46111779e+00 -1.19604516e-01 ...  1.32242040e+01
+     4.92254063e+00  1.85428598e+01]]
+
+  [[ 6.88977021e-19  1.67989285e-18  1.84477971e-03 ... -3.14147778e-04
+    -7.57438929e-04 -4.17051940e-04]
+   [ 1.67989285e-18  2.52228894e-17  3.95275468e-02 ... -1.53878780e-02
+    -2.94798027e-02 -1.99672557e-02]
+   [ 1.84477971e-03  3.95275468e-02  2.88172442e-18 ...  4.70667868e-02
+     2.58060369e-02  7.16660167e-02]
+   ...
+   [-3.14147778e-04 -1.53878780e-02  4.70667868e-02 ... -1.96175553e-01
+    -9.04079287e-02 -1.93566938e-01]
+   [-7.57438929e-04 -2.94798027e-02  2.58060369e-02 ... -9.04079287e-02
+    -8.83774235e-02 -1.40963460e-01]
+   [-4.17051940e-04 -1.99672557e-02  7.16660167e-02 ... -1.93566938e-01
+    -1.40963460e-01 -2.59195437e-01]]
+
+  ...
+
+  [[ 7.67107360e-02  2.04720415e-01 -5.52598476e-04 ...  1.28307748e-01
+     8.37531150e-02  1.99158533e-01]
+   [ 2.04720415e-01  2.29031800e+00 -1.53878780e-02 ...  2.48541276e+00
+     1.40932303e+00  3.67781488e+00]
+   [-5.52598476e-04 -1.53878780e-02  1.93715770e-01 ... -1.26896657e-01
+    -1.89009437e-01 -1.64879282e-01]
+   ...
+   [ 1.28307748e-01  2.48541276e+00 -1.26896657e-01 ...  1.85602186e+01
+     3.61251667e+00  1.59826239e+01]
+   [ 8.37531150e-02  1.40932303e+00 -1.89009437e-01 ...  3.61251667e+00
+     2.79252802e+00  5.73636678e+00]
+   [ 1.99158533e-01  3.67781488e+00 -1.64879282e-01 ...  1.59826239e+01
+     5.73636678e+00  2.17505430e+01]]
+
+  [[ 4.49946748e-02  1.19661680e-01 -1.13376852e-03 ...  7.49098440e-02
+     5.04803732e-02  1.17199073e-01]
+   [ 1.19661680e-01  1.31760847e+00 -2.94798027e-02 ...  1.40932303e+00
+     8.85899346e-01  2.14951900e+00]
+   [-1.13376852e-03 -2.94798027e-02  1.10395758e-01 ... -9.77854055e-02
+    -1.30895504e-01 -1.36727518e-01]
+   ...
+   [ 7.49098440e-02  1.40932303e+00 -9.77854055e-02 ...  1.00883647e+01
+     2.24785841e+00  9.08204180e+00]
+   [ 5.04803732e-02  8.85899346e-01 -1.30895504e-01 ...  2.24785841e+00
+     1.86750910e+00  3.67719192e+00]
+   [ 1.17199073e-01  2.14951900e+00 -1.36727518e-01 ...  9.08204180e+00
+     3.67719192e+00  1.29328073e+01]]
+
+  [[ 1.16458608e-01  3.10532067e-01 -7.21640607e-04 ...  1.93639497e-01
+     1.27433073e-01  3.02285989e-01]
+   [ 3.10532067e-01  3.46111779e+00 -1.99672557e-02 ...  3.67781488e+00
+     2.14951900e+00  5.56211761e+00]
+   [-7.21640607e-04 -1.99672557e-02  2.92589671e-01 ... -1.83264236e-01
+    -2.85638744e-01 -2.42279707e-01]
+   ...
+   [ 1.93639497e-01  3.67781488e+00 -1.83264236e-01 ...  2.65548390e+01
+     5.39528232e+00  2.34166450e+01]
+   [ 1.27433073e-01  2.14951900e+00 -2.85638744e-01 ...  5.39528232e+00
+     4.28860356e+00  8.76246465e+00]
+   [ 3.02285989e-01  5.56211761e+00 -2.42279707e-01 ...  2.34166450e+01
+     8.76246465e+00  3.28996857e+01]]]
+
+
+ [[[ 2.22135775e-20  3.16023786e-20  1.74187480e-04 ... -2.72777201e-05
+    -6.67469497e-05 -3.62691325e-05]
+   [ 3.16023786e-20  5.55697522e-19  1.84477971e-03 ... -5.52598476e-04
+    -1.13376852e-03 -7.21640607e-04]
+   [ 1.74187480e-04  1.84477971e-03  6.56129339e-20 ...  1.75820880e-03
+     1.01517268e-03  2.69725032e-03]
+   ...
+   [-2.72777201e-05 -5.52598476e-04  1.75820880e-03 ... -4.87442787e-03
+    -2.55311053e-03 -4.94096650e-03]
+   [-6.67469497e-05 -1.13376852e-03  1.01517268e-03 ... -2.55311053e-03
+    -2.56598185e-03 -3.96938994e-03]
+   [-3.62691325e-05 -7.21640607e-04  2.69725032e-03 ... -4.94096650e-03
+    -3.96938994e-03 -6.65773657e-03]]
+
+  [[ 6.88977021e-19  1.67989285e-18  1.84477971e-03 ... -3.14147778e-04
+    -7.57438929e-04 -4.17051940e-04]
+   [ 1.67989285e-18  2.52228894e-17  3.95275468e-02 ... -1.53878780e-02
+    -2.94798027e-02 -1.99672557e-02]
+   [ 1.84477971e-03  3.95275468e-02  2.88172442e-18 ...  4.70667868e-02
+     2.58060369e-02  7.16660167e-02]
+   ...
+   [-3.14147778e-04 -1.53878780e-02  4.70667868e-02 ... -1.96175553e-01
+    -9.04079287e-02 -1.93566938e-01]
+   [-7.57438929e-04 -2.94798027e-02  2.58060369e-02 ... -9.04079287e-02
+    -8.83774235e-02 -1.40963460e-01]
+   [-4.17051940e-04 -1.99672557e-02  7.16660167e-02 ... -1.93566938e-01
+    -1.40963460e-01 -2.59195437e-01]]
+
+  [[ 5.94422277e-03  1.60557730e-02  6.56129339e-20 ...  1.00044856e-02
+     6.53017747e-03  1.56084778e-02]
+   [ 1.60557730e-02  1.83409409e-01  2.88172442e-18 ...  1.93715770e-01
+     1.10395758e-01  2.92589671e-01]
+   [ 6.56129339e-20  2.88172442e-18  1.69240556e-02 ... -8.88922831e-03
+    -1.51586306e-02 -1.14348051e-02]
+   ...
+   [ 1.00044856e-02  1.93715770e-01 -8.88922831e-03 ...  1.35884581e+00
+     2.71310098e-01  1.19967636e+00]
+   [ 6.53017747e-03  1.10395758e-01 -1.51586306e-02 ...  2.71310098e-01
+     2.12056439e-01  4.38730120e-01]
+   [ 1.56084778e-02  2.92589671e-01 -1.14348051e-02 ...  1.19967636e+00
+     4.38730120e-01  1.68030330e+00]]
+
+  ...
+
+  [[-2.77337017e-03 -7.57262516e-03  1.75820880e-03 ... -5.05203558e-03
+    -3.82688183e-03 -7.78106686e-03]
+   [-7.57262516e-03 -9.30600191e-02  4.70667868e-02 ... -1.26896657e-01
+    -9.77854055e-02 -1.83264236e-01]
+   [ 1.75820880e-03  4.70667868e-02 -8.88922831e-03 ...  7.10845480e-02
+     4.28028255e-02  1.03400107e-01]
+   ...
+   [-5.05203558e-03 -1.26896657e-01  7.10845480e-02 ... -1.28684924e+00
+    -3.21954906e-01 -1.12856819e+00]
+   [-3.82688183e-03 -9.77854055e-02  4.28028255e-02 ... -3.21954906e-01
+    -2.69705680e-01 -4.98720634e-01]
+   [-7.78106686e-03 -1.83264236e-01  1.03400107e-01 ... -1.12856819e+00
+    -4.98720634e-01 -1.50104004e+00]]
+
+  [[-4.89744402e-03 -1.33448242e-02  1.01517268e-03 ... -8.52006060e-03
+    -5.98314389e-03 -1.32814228e-02]
+   [-1.33448242e-02 -1.61108043e-01  2.58060369e-02 ... -1.89009437e-01
+    -1.30895504e-01 -2.85638744e-01]
+   [ 1.01517268e-03  2.58060369e-02 -1.51586306e-02 ...  4.28028255e-02
+     3.59909013e-02  6.41591509e-02]
+   ...
+   [-8.52006060e-03 -1.89009437e-01  4.28028255e-02 ... -1.56940767e+00
+    -3.82136493e-01 -1.42219149e+00]
+   [-5.98314389e-03 -1.30895504e-01  3.59909013e-02 ... -3.82136493e-01
+    -3.31307425e-01 -6.21155534e-01]
+   [-1.32814228e-02 -2.85638744e-01  6.41591509e-02 ... -1.42219149e+00
+    -6.21155534e-01 -2.01349114e+00]]
+
+  [[-3.57050084e-03 -9.74746816e-03  2.69725032e-03 ... -6.55455060e-03
+    -5.12386101e-03 -1.01210701e-02]
+   [-9.74746816e-03 -1.19604516e-01  7.16660167e-02 ... -1.64879282e-01
+    -1.36727518e-01 -2.42279707e-01]
+   [ 2.69725032e-03  7.16660167e-02 -1.14348051e-02 ...  1.03400107e-01
+     6.41591509e-02  1.56017821e-01]
+   ...
+   [-6.55455060e-03 -1.64879282e-01  1.03400107e-01 ... -1.63275740e+00
+    -4.45122125e-01 -1.48188582e+00]
+   [-5.12386101e-03 -1.36727518e-01  6.41591509e-02 ... -4.45122125e-01
+    -3.91984565e-01 -7.10111521e-01]
+   [-1.01210701e-02 -2.42279707e-01  1.56017821e-01 ... -1.48188582e+00
+    -7.10111521e-01 -2.04561942e+00]]]
+
+
+ ...
+
+
+ [[[ 7.07882741e-03  1.66912063e-02 -2.72777201e-05 ...  1.03426213e-02
+     6.77656436e-03  1.61063851e-02]
+   [ 1.66912063e-02  1.33990425e-01 -3.14147778e-04 ...  1.28307748e-01
+     7.49098440e-02  1.93639497e-01]
+   [-2.72777201e-05 -3.14147778e-04  1.00044856e-02 ... -5.05203558e-03
+    -8.52006060e-03 -6.55455060e-03]
+   ...
+   [ 1.03426213e-02  1.28307748e-01 -5.05203558e-03 ...  7.37378880e-01
+     1.55655809e-01  6.59006666e-01]
+   [ 6.77656436e-03  7.49098440e-02 -8.52006060e-03 ...  1.55655809e-01
+     1.22161731e-01  2.50638198e-01]
+   [ 1.61063851e-02  1.93639497e-01 -6.55455060e-03 ...  6.59006666e-01
+     2.50638198e-01  9.22648331e-01]]
+
+  [[ 7.67107360e-02  2.04720415e-01 -5.52598476e-04 ...  1.28307748e-01
+     8.37531150e-02  1.99158533e-01]
+   [ 2.04720415e-01  2.29031800e+00 -1.53878780e-02 ...  2.48541276e+00
+     1.40932303e+00  3.67781488e+00]
+   [-5.52598476e-04 -1.53878780e-02  1.93715770e-01 ... -1.26896657e-01
+    -1.89009437e-01 -1.64879282e-01]
+   ...
+   [ 1.28307748e-01  2.48541276e+00 -1.26896657e-01 ...  1.85602186e+01
+     3.61251667e+00  1.59826239e+01]
+   [ 8.37531150e-02  1.40932303e+00 -1.89009437e-01 ...  3.61251667e+00
+     2.79252802e+00  5.73636678e+00]
+   [ 1.99158533e-01  3.67781488e+00 -1.64879282e-01 ...  1.59826239e+01
+     5.73636678e+00  2.17505430e+01]]
+
+  [[-2.77337017e-03 -7.57262516e-03  1.75820880e-03 ... -5.05203558e-03
+    -3.82688183e-03 -7.78106686e-03]
+   [-7.57262516e-03 -9.30600191e-02  4.70667868e-02 ... -1.26896657e-01
+    -9.77854055e-02 -1.83264236e-01]
+   [ 1.75820880e-03  4.70667868e-02 -8.88922831e-03 ...  7.10845480e-02
+     4.28028255e-02  1.03400107e-01]
+   ...
+   [-5.05203558e-03 -1.26896657e-01  7.10845480e-02 ... -1.28684924e+00
+    -3.21954906e-01 -1.12856819e+00]
+   [-3.82688183e-03 -9.77854055e-02  4.28028255e-02 ... -3.21954906e-01
+    -2.69705680e-01 -4.98720634e-01]
+   [-7.78106686e-03 -1.83264236e-01  1.03400107e-01 ... -1.12856819e+00
+    -4.98720634e-01 -1.50104004e+00]]
+
+  ...
+
+  [[ 4.27110568e-01  1.16872315e+00 -4.87442787e-03 ...  7.37378880e-01
+     4.80680164e-01  1.14091024e+00]
+   [ 1.16872315e+00  1.49372356e+01 -1.96175553e-01 ...  1.85602186e+01
+     1.00883647e+01  2.65548390e+01]
+   [-4.87442787e-03 -1.96175553e-01  1.35884581e+00 ... -1.28684924e+00
+    -1.56940767e+00 -1.63275740e+00]
+   ...
+   [ 7.37378880e-01  1.85602186e+01 -1.28684924e+00 ...  3.04472750e+02
+     3.79663128e+01  2.15342738e+02]
+   [ 4.80680164e-01  1.00883647e+01 -1.56940767e+00 ...  3.79663128e+01
+     2.63506241e+01  5.72175314e+01]
+   [ 1.14091024e+00  2.65548390e+01 -1.63275740e+00 ...  2.15342738e+02
+     5.72175314e+01  2.53468612e+02]]
+
+  [[ 9.08275712e-02  2.46923793e-01 -2.55311053e-03 ...  1.55655809e-01
+     1.04397439e-01  2.42430623e-01]
+   [ 2.46923793e-01  3.04110686e+00 -9.04079287e-02 ...  3.61251667e+00
+     2.24785841e+00  5.39528232e+00]
+   [-2.55311053e-03 -9.04079287e-02  2.71310098e-01 ... -3.21954906e-01
+    -3.82136493e-01 -4.45122125e-01]
+   ...
+   [ 1.55655809e-01  3.61251667e+00 -3.21954906e-01 ...  3.79663128e+01
+     7.72809053e+00  3.28204336e+01]
+   [ 1.04397439e-01  2.24785841e+00 -3.82136493e-01 ...  7.72809053e+00
+     6.17915516e+00  1.23819197e+01]
+   [ 2.42430623e-01  5.39528232e+00 -4.45122125e-01 ...  3.28204336e+01
+     1.23819197e+01  4.51089103e+01]]
+
+  [[ 3.83671838e-01  1.04751554e+00 -4.94096650e-03 ...  6.59006666e-01
+     4.32931520e-01  1.02351250e+00]
+   [ 1.04751554e+00  1.32242040e+01 -1.93566938e-01 ...  1.59826239e+01
+     9.08204180e+00  2.34166450e+01]
+   [-4.94096650e-03 -1.93566938e-01  1.19967636e+00 ... -1.12856819e+00
+    -1.42219149e+00 -1.48188582e+00]
+   ...
+   [ 6.59006666e-01  1.59826239e+01 -1.12856819e+00 ...  2.15342738e+02
+     3.28204336e+01  1.67865912e+02]
+   [ 4.32931520e-01  9.08204180e+00 -1.42219149e+00 ...  3.28204336e+01
+     2.40911149e+01  5.13305925e+01]
+   [ 1.02351250e+00  2.34166450e+01 -1.48188582e+00 ...  1.67865912e+02
+     5.13305925e+01  2.15342738e+02]]]
+
+
+ [[[ 4.64671403e-03  1.09393747e-02 -6.67469497e-05 ...  6.77656436e-03
+     4.52503079e-03  1.06004080e-02]
+   [ 1.09393747e-02  8.75545747e-02 -7.57438929e-04 ...  8.37531150e-02
+     5.04803732e-02  1.27433073e-01]
+   [-6.67469497e-05 -7.57438929e-04  6.53017747e-03 ... -3.82688183e-03
+    -5.98314389e-03 -5.12386101e-03]
+   ...
+   [ 6.77656436e-03  8.37531150e-02 -3.82688183e-03 ...  4.80680164e-01
+     1.04397439e-01  4.32931520e-01]
+   [ 4.52503079e-03  5.04803732e-02 -5.98314389e-03 ...  1.04397439e-01
+     8.33704088e-02  1.69134443e-01]
+   [ 1.06004080e-02  1.27433073e-01 -5.12386101e-03 ...  4.32931520e-01
+     1.69134443e-01  6.11230192e-01]]
+
+  [[ 4.49946748e-02  1.19661680e-01 -1.13376852e-03 ...  7.49098440e-02
+     5.04803732e-02  1.17199073e-01]
+   [ 1.19661680e-01  1.31760847e+00 -2.94798027e-02 ...  1.40932303e+00
+     8.85899346e-01  2.14951900e+00]
+   [-1.13376852e-03 -2.94798027e-02  1.10395758e-01 ... -9.77854055e-02
+    -1.30895504e-01 -1.36727518e-01]
+   ...
+   [ 7.49098440e-02  1.40932303e+00 -9.77854055e-02 ...  1.00883647e+01
+     2.24785841e+00  9.08204180e+00]
+   [ 5.04803732e-02  8.85899346e-01 -1.30895504e-01 ...  2.24785841e+00
+     1.86750910e+00  3.67719192e+00]
+   [ 1.17199073e-01  2.14951900e+00 -1.36727518e-01 ...  9.08204180e+00
+     3.67719192e+00  1.29328073e+01]]
+
+  [[-4.89744402e-03 -1.33448242e-02  1.01517268e-03 ... -8.52006060e-03
+    -5.98314389e-03 -1.32814228e-02]
+   [-1.33448242e-02 -1.61108043e-01  2.58060369e-02 ... -1.89009437e-01
+    -1.30895504e-01 -2.85638744e-01]
+   [ 1.01517268e-03  2.58060369e-02 -1.51586306e-02 ...  4.28028255e-02
+     3.59909013e-02  6.41591509e-02]
+   ...
+   [-8.52006060e-03 -1.89009437e-01  4.28028255e-02 ... -1.56940767e+00
+    -3.82136493e-01 -1.42219149e+00]
+   [-5.98314389e-03 -1.30895504e-01  3.59909013e-02 ... -3.82136493e-01
+    -3.31307425e-01 -6.21155534e-01]
+   [-1.32814228e-02 -2.85638744e-01  6.41591509e-02 ... -1.42219149e+00
+    -6.21155534e-01 -2.01349114e+00]]
+
+  ...
+
+  [[ 9.08275712e-02  2.46923793e-01 -2.55311053e-03 ...  1.55655809e-01
+     1.04397439e-01  2.42430623e-01]
+   [ 2.46923793e-01  3.04110686e+00 -9.04079287e-02 ...  3.61251667e+00
+     2.24785841e+00  5.39528232e+00]
+   [-2.55311053e-03 -9.04079287e-02  2.71310098e-01 ... -3.21954906e-01
+    -3.82136493e-01 -4.45122125e-01]
+   ...
+   [ 1.55655809e-01  3.61251667e+00 -3.21954906e-01 ...  3.79663128e+01
+     7.72809053e+00  3.28204336e+01]
+   [ 1.04397439e-01  2.24785841e+00 -3.82136493e-01 ...  7.72809053e+00
+     6.17915516e+00  1.23819197e+01]
+   [ 2.42430623e-01  5.39528232e+00 -4.45122125e-01 ...  3.28204336e+01
+     1.23819197e+01  4.51089103e+01]]
+
+  [[ 7.15552870e-02  1.94158375e-01 -2.56598185e-03 ...  1.22161731e-01
+     8.33704088e-02  1.91322934e-01]
+   [ 1.94158375e-01  2.39284299e+00 -8.83774235e-02 ...  2.79252802e+00
+     1.86750910e+00  4.28860356e+00]
+   [-2.56598185e-03 -8.83774235e-02  2.12056439e-01 ... -2.69705680e-01
+    -3.31307425e-01 -3.91984565e-01]
+   ...
+   [ 1.22161731e-01  2.79252802e+00 -2.69705680e-01 ...  2.63506241e+01
+     6.17915516e+00  2.40911149e+01]
+   [ 8.33704088e-02  1.86750910e+00 -3.31307425e-01 ...  6.17915516e+00
+     5.34563196e+00  1.03009602e+01]
+   [ 1.91322934e-01  4.28860356e+00 -3.91984565e-01 ...  2.40911149e+01
+     1.03009602e+01  3.51186004e+01]]
+
+  [[ 1.46801848e-01  3.99191612e-01 -3.96938994e-03 ...  2.50638198e-01
+     1.69134443e-01  3.92122425e-01]
+   [ 3.99191612e-01  4.92254063e+00 -1.40963460e-01 ...  5.73636678e+00
+     3.67719192e+00  8.76246465e+00]
+   [-3.96938994e-03 -1.40963460e-01  4.38730120e-01 ... -4.98720634e-01
+    -6.21155534e-01 -7.10111521e-01]
+   ...
+   [ 2.50638198e-01  5.73636678e+00 -4.98720634e-01 ...  5.72175314e+01
+     1.23819197e+01  5.13305925e+01]
+   [ 1.69134443e-01  3.67719192e+00 -6.21155534e-01 ...  1.23819197e+01
+     1.03009602e+01  2.05466755e+01]
+   [ 3.92122425e-01  8.76246465e+00 -7.10111521e-01 ...  5.13305925e+01
+     2.05466755e+01  7.42144278e+01]]]
+
+
+ [[[ 1.10598789e-02  2.60657172e-02 -3.62691325e-05 ...  1.61063851e-02
+     1.06004080e-02  2.51616024e-02]
+   [ 2.60657172e-02  2.09056153e-01 -4.17051940e-04 ...  1.99158533e-01
+     1.17199073e-01  3.02285989e-01]
+   [-3.62691325e-05 -4.17051940e-04  1.56084778e-02 ... -7.78106686e-03
+    -1.32814228e-02 -1.01210701e-02]
+   ...
+   [ 1.61063851e-02  1.99158533e-01 -7.78106686e-03 ...  1.14091024e+00
+     2.42430623e-01  1.02351250e+00]
+   [ 1.06004080e-02  1.17199073e-01 -1.32814228e-02 ...  2.42430623e-01
+     1.91322934e-01  3.92122425e-01]
+   [ 2.51616024e-02  3.02285989e-01 -1.01210701e-02 ...  1.02351250e+00
+     3.92122425e-01  1.44096056e+00]]
+
+  [[ 1.16458608e-01  3.10532067e-01 -7.21640607e-04 ...  1.93639497e-01
+     1.27433073e-01  3.02285989e-01]
+   [ 3.10532067e-01  3.46111779e+00 -1.99672557e-02 ...  3.67781488e+00
+     2.14951900e+00  5.56211761e+00]
+   [-7.21640607e-04 -1.99672557e-02  2.92589671e-01 ... -1.83264236e-01
+    -2.85638744e-01 -2.42279707e-01]
+   ...
+   [ 1.93639497e-01  3.67781488e+00 -1.83264236e-01 ...  2.65548390e+01
+     5.39528232e+00  2.34166450e+01]
+   [ 1.27433073e-01  2.14951900e+00 -2.85638744e-01 ...  5.39528232e+00
+     4.28860356e+00  8.76246465e+00]
+   [ 3.02285989e-01  5.56211761e+00 -2.42279707e-01 ...  2.34166450e+01
+     8.76246465e+00  3.28996857e+01]]
+
+  [[-3.57050084e-03 -9.74746816e-03  2.69725032e-03 ... -6.55455060e-03
+    -5.12386101e-03 -1.01210701e-02]
+   [-9.74746816e-03 -1.19604516e-01  7.16660167e-02 ... -1.64879282e-01
+    -1.36727518e-01 -2.42279707e-01]
+   [ 2.69725032e-03  7.16660167e-02 -1.14348051e-02 ...  1.03400107e-01
+     6.41591509e-02  1.56017821e-01]
+   ...
+   [-6.55455060e-03 -1.64879282e-01  1.03400107e-01 ... -1.63275740e+00
+    -4.45122125e-01 -1.48188582e+00]
+   [-5.12386101e-03 -1.36727518e-01  6.41591509e-02 ... -4.45122125e-01
+    -3.91984565e-01 -7.10111521e-01]
+   [-1.01210701e-02 -2.42279707e-01  1.56017821e-01 ... -1.48188582e+00
+    -7.10111521e-01 -2.04561942e+00]]
+
+  ...
+
+  [[ 3.83671838e-01  1.04751554e+00 -4.94096650e-03 ...  6.59006666e-01
+     4.32931520e-01  1.02351250e+00]
+   [ 1.04751554e+00  1.32242040e+01 -1.93566938e-01 ...  1.59826239e+01
+     9.08204180e+00  2.34166450e+01]
+   [-4.94096650e-03 -1.93566938e-01  1.19967636e+00 ... -1.12856819e+00
+    -1.42219149e+00 -1.48188582e+00]
+   ...
+   [ 6.59006666e-01  1.59826239e+01 -1.12856819e+00 ...  2.15342738e+02
+     3.28204336e+01  1.67865912e+02]
+   [ 4.32931520e-01  9.08204180e+00 -1.42219149e+00 ...  3.28204336e+01
+     2.40911149e+01  5.13305925e+01]
+   [ 1.02351250e+00  2.34166450e+01 -1.48188582e+00 ...  1.67865912e+02
+     5.13305925e+01  2.15342738e+02]]
+
+  [[ 1.46801848e-01  3.99191612e-01 -3.96938994e-03 ...  2.50638198e-01
+     1.69134443e-01  3.92122425e-01]
+   [ 3.99191612e-01  4.92254063e+00 -1.40963460e-01 ...  5.73636678e+00
+     3.67719192e+00  8.76246465e+00]
+   [-3.96938994e-03 -1.40963460e-01  4.38730120e-01 ... -4.98720634e-01
+    -6.21155534e-01 -7.10111521e-01]
+   ...
+   [ 2.50638198e-01  5.73636678e+00 -4.98720634e-01 ...  5.72175314e+01
+     1.23819197e+01  5.13305925e+01]
+   [ 1.69134443e-01  3.67719192e+00 -6.21155534e-01 ...  1.23819197e+01
+     1.03009602e+01  2.05466755e+01]
+   [ 3.92122425e-01  8.76246465e+00 -7.10111521e-01 ...  5.13305925e+01
+     2.05466755e+01  7.42144278e+01]]
+
+  [[ 5.40067365e-01  1.47362662e+00 -6.65773657e-03 ...  9.22648331e-01
+     6.11230192e-01  1.44096056e+00]
+   [ 1.47362662e+00  1.85428598e+01 -2.59195437e-01 ...  2.17505430e+01
+     1.29328073e+01  3.28996857e+01]
+   [-6.65773657e-03 -2.59195437e-01  1.68030330e+00 ... -1.50104004e+00
+    -2.01349114e+00 -2.04561942e+00]
+   ...
+   [ 9.22648331e-01  2.17505430e+01 -1.50104004e+00 ...  2.53468612e+02
+     4.51089103e+01  2.15342738e+02]
+   [ 6.11230192e-01  1.29328073e+01 -2.01349114e+00 ...  4.51089103e+01
+     3.51186004e+01  7.42144278e+01]
+   [ 1.44096056e+00  3.28996857e+01 -2.04561942e+00 ...  2.15342738e+02
+     7.42144278e+01  3.04472750e+02]]]]
+</code></pre></div></div>
+
+<h2 id="now-we-can-build-fock-matrix-and-solve-the-generalized-eigenvalue-problem">Now we can build Fock Matrix and Solve the generalized eigenvalue problem</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">eigh</span>
+<span class="n">nelectrons</span> <span class="o">=</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="mi">8</span> <span class="c1">#H H O for H2O
+</span><span class="n">norb</span> <span class="o">=</span> <span class="n">nelectrons</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">maxiter</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="c1">#coeffcient matrix
+</span><span class="n">prev</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">'inf'</span><span class="p">)</span>
+<span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-7</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxiter</span><span class="p">):</span>
+    <span class="c1">#start building Fock matrix
+</span>    <span class="n">JK</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span> 
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">norb</span><span class="p">):</span>
+                        <span class="n">JK</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="n">o</span><span class="p">]</span><span class="o">*</span><span class="n">C</span><span class="p">[</span><span class="n">m</span><span class="p">][</span><span class="n">o</span><span class="p">]</span> <span class="o">*</span> 
+                                    <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">coulombRepulsionTensor</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">][</span><span class="n">l</span><span class="p">][</span><span class="n">m</span><span class="p">]</span><span class="o">-</span>
+                                     <span class="n">coulombRepulsionTensor</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">m</span><span class="p">][</span><span class="n">k</span><span class="p">][</span><span class="n">l</span><span class="p">]</span>
+                                    <span class="p">))</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">Tmatrix</span> <span class="o">+</span> <span class="n">coulombAttractionMatrix</span> <span class="o">+</span> <span class="n">JK</span> <span class="c1">#add kinetic integral and coulomb attraction integeral
+</span>    <span class="n">S</span> <span class="o">=</span> <span class="n">Smatrix</span> <span class="c1">#overlap matrix
+</span>    <span class="c1">#now solve the FC=SCe (Hartree Fock Roothaan-Hall Equation)
+</span>    <span class="n">energy</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">eigh</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">S</span><span class="p">)</span>
+    <span class="n">EHF</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">norb</span><span class="p">):</span>
+        <span class="n">EHF</span> <span class="o">+=</span> <span class="mi">2</span><span class="o">*</span><span class="n">energy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">JK</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">EHF</span> <span class="o">-</span> <span class="n">prev</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'SCF Converged'</span><span class="p">)</span>
+        <span class="k">break</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">EHF</span> <span class="o">-</span> <span class="n">prev</span>
+    <span class="n">prev</span> <span class="o">=</span> <span class="n">EHF</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'EHF:'</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">EHF</span><span class="p">)</span><span class="o">+</span><span class="s">" "</span><span class="o">+</span><span class="s">'prev:'</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span><span class="o">+</span><span class="s">' '</span><span class="o">+</span><span class="s">'delta:'</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>EHF:-89.0867859100989 prev:-89.0867859100989 delta:-inf
+EHF:-67.12761944636007 prev:-67.12761944636007 delta:21.959166463738825
+EHF:-67.6195916882164 prev:-67.6195916882164 delta:-0.49197224185633104
+EHF:-67.66855653433281 prev:-67.66855653433281 delta:-0.04896484611640517
+EHF:-67.67630737732246 prev:-67.67630737732246 delta:-0.007750842989651119
+EHF:-67.67778511136507 prev:-67.67778511136507 delta:-0.0014777340426093133
+EHF:-67.67810581339319 prev:-67.67810581339319 delta:-0.00032070202811951276
+EHF:-67.67817983523364 prev:-67.67817983523364 delta:-7.402184044735804e-05
+EHF:-67.67819739475206 prev:-67.67819739475206 delta:-1.7559518425969145e-05
+EHF:-67.67820161464026 prev:-67.67820161464026 delta:-4.219888197098953e-06
+EHF:-67.67820263601112 prev:-67.67820263601112 delta:-1.0213708634410068e-06
+EHF:-67.67820288436762 prev:-67.67820288436762 delta:-2.4835649981014285e-07
+SCF Converged
+</code></pre></div></div>
+
+<h2 id="now-lets-visualize-the-mo">Now let’s visualize the MO</h2>
+<ol>
+  <li>First Build MO List from Converged C</li>
+  <li>Normalize the MO</li>
+  <li>Visualize MO (HOMO)</li>
+</ol>
+
+<p>We can see for water, the homo is mainly Oxygen’s P orbital.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">molist</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">coeffs</span> <span class="o">=</span> <span class="n">C</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">newmo</span> <span class="o">=</span> <span class="n">Mo</span><span class="p">(</span><span class="n">aolist</span><span class="p">,</span><span class="n">coeffs</span><span class="p">)</span>
+    <span class="n">molist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newmo</span><span class="p">)</span>
+<span class="n">plot_implicit</span><span class="p">(</span><span class="n">molist</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="mf">0.01</span><span class="p">,[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">90</span><span class="p">)</span> <span class="c1">#choose HOMO
+</span></code></pre></div></div>
+
+<p><img src="/assets/img/homo.png" alt="png" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+</code></pre></div></div>
+
+</div>
+<a href="https://twitter.com/share" class="twitter-share-button " data-size="small" data-count="none">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<ul class="pager">
+
+  <li class="previous"><a href="/2019/05/16/dft.html">&larr; Older</a></li>
+
+
+</ul>
+<div id="disqus_thread">
+
+  <script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+      var disqus_shortname = 'wenx'; // required: replace example with your forum shortname
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>
+    Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+
+  <a href="http://disqus.com" class="dsq-brlink">
+    comments powered by <span class="logo-disqus">Disqus</span>
+  </a>
+
+</div>
+
+		  </div>
+      <div class="container">
+  <footer>
+    <p class="text-muted credit">
+      &copy; 2019 Based on Herring Cove &middot; Build with
+      	<a href="https://jekyllrb.com"> Jekyll </a>
+      	2019-05-20 12:52:46 -0400
+    </p>
+  </footer>
+</div>
+    </div>
+	</div>
+  </body>
+</html>

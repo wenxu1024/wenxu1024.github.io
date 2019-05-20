@@ -2,7 +2,7 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>/authors/wen.html</loc>
-<lastmod>2019-05-16T20:58:04-04:00</lastmod>
+<lastmod>2019-05-20T12:52:46-04:00</lastmod>
 </url>
 <url>
 <loc>/2018/08/20/test.html</loc>
@@ -121,20 +121,24 @@
 <lastmod>2019-05-16T00:00:00-04:00</lastmod>
 </url>
 <url>
+<loc>/2019/05/20/hartreefock.html</loc>
+<lastmod>2019-05-20T00:00:00-04:00</lastmod>
+</url>
+<url>
 <loc>/projects/Computational-Chemistry.html</loc>
-<lastmod>2019-05-16T20:58:04-04:00</lastmod>
+<lastmod>2019-05-20T12:52:46-04:00</lastmod>
 </url>
 <url>
 <loc>/projects/convnn.html</loc>
-<lastmod>2019-05-16T20:58:04-04:00</lastmod>
+<lastmod>2019-05-20T12:52:46-04:00</lastmod>
 </url>
 <url>
 <loc>/projects/mass-spectrometry-java.html</loc>
-<lastmod>2019-05-16T20:58:04-04:00</lastmod>
+<lastmod>2019-05-20T12:52:46-04:00</lastmod>
 </url>
 <url>
 <loc>/projects/tag.html</loc>
-<lastmod>2019-05-16T20:58:04-04:00</lastmod>
+<lastmod>2019-05-20T12:52:46-04:00</lastmod>
 </url>
 <url>
 <loc>/about.html</loc>
@@ -158,6 +162,9 @@
 <loc>/tags/breadth%20first%20search.html</loc>
 </url>
 <url>
+<loc>/tags/computational%20chemistry.html</loc>
+</url>
+<url>
 <loc>/tags/density%20functional%20theory.html</loc>
 </url>
 <url>
@@ -168,6 +175,9 @@
 </url>
 <url>
 <loc>/tags/foo.html</loc>
+</url>
+<url>
+<loc>/tags/hartree%20fock.html</loc>
 </url>
 <url>
 <loc>/</loc>
