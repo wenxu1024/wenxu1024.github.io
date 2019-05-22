@@ -1,0 +1,315 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<title>Vibronic Spectra from First-Principle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A website for Tech and Life">
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+<link href="/assets/css/styles.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif] d-->
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-47234019-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-47234019-2');
+</script>
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="/assets/js/mysite.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <body>
+  	<div class="wrapper">
+  	<div id="sidebar-wrapper">
+<nav class="sidebar-nav">
+	<div class="active">
+		<ul>
+		
+			<li>
+			<a href="/" >
+				Home
+			</a>
+			</li>
+		
+			<li>
+			<a href="/research.html" >
+				Research
+			</a>
+			</li>
+		
+			<li>
+			<a href="/blog.html" >
+				Blog
+			</a>
+			</li>
+		
+			<li>
+			<a href="/projects.html" >
+				Projects
+			</a>
+			</li>
+		
+			<li>
+			<a href="/about.html" >
+				About
+			</a>
+			</li>
+		
+		<hr />
+    	<div id="social-wrapper">
+      		<li> <a href="http://twitter.com"><i class="fa fa-twitter-square"></i> @twitter</a></li>
+      		<li> <a href="https://www.linkedin.com/in/wxutamu/"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
+      		<li> <a href="http://facebook.com"><i class="fa fa-facebook-square"></i> facebook</a></li>
+      		<li> <a href="https://github.com/dragonrider1024"><i class="fa fa-github-square"></i> github</a> </li>
+      		<li> <a href="mailto:xuzhiwen1024@gmail.com"><i class="fa fa-envelope"></i> email</a></li>
+    	</div>
+		</ul>
+	</div>
+</nav>
+</div>
+    <div class="content">
+      <button type="button" id="sidebarCollapse" class="navbar-btn">
+      <span></span>
+      <span></span>
+      <span></span>
+      </button>
+      <hr/>
+  		<div class="container">
+    	 <div class="article-title"> Vibronic Spectra from First-Principle</div>
+<p class="meta">
+	<small>
+      &nbsp;<i class="fa fa-calendar-o"></i> 22 May 2019
+    </small>
+</p>
+<p> By 
+	
+  	
+    <a href="/authors/wen.html">Wen Xu</a>
+  	
+</p>
+<p>
+ 	
+ 		<a href="/tags/Franck Condon Factor.html">Franck Condon Factor</a>
+ 	
+ 		<a href="/tags/Quantum Mechanics.html">Quantum Mechanics</a>
+ 	
+ 		<a href="/tags/Computational Chemistry.html">Computational Chemistry</a>
+ 	
+ 		<a href="/tags/Gaussian.html">Gaussian</a>
+ 	
+</p>
+<div class="post">
+<h2 id="vibronic-spectra-of-molecules-used-to-be-hot-research-area-of-molecular-science">Vibronic spectra of molecules used to be hot research area of molecular science.</h2>
+
+<p>The intensity of the <a href="https://en.wikipedia.org/wiki/Vibronic_spectroscopy">vibronic transition</a> is governed by the <a href="https://en.wikipedia.org/wiki/Franck–Condon_principle">Franck Condon principle</a></p>
+
+<p>In this tutorial, we will use Gaussian 09 to calculate the vibronic transition intensity for a very small molecule (NH3). For larger molecules, the TD-DFT calculation of Hessian is very slow. But the user can try on their own supercomputer.</p>
+
+<p><em>Second derivitive of the energy with respect to the molecular coordinates are very slow on my personal compute, with a Supercomputer, it will be feasible. And In Gaussian 09, the second derivative is done Numerically. There are 3N cartesian coordinates. For a centeral difference method (F’‘(x) = F(x+dx)+F(x-dx)-2F(x)/(2dx)) There are 6N calculations (plus one central coordinate x0). When the number of atoms in a molecular is getting large, it can be slow.</em></p>
+
+<p>There are three input files for the Franck Condon Factor calculation in Gaussian</p>
+<ol>
+  <li><a href="#step1">The Geometry and Frequency / Normal Mode calculation of the Ground State</a></li>
+  <li><a href="#step2">The Geometry and Frequency / Normal Mode calculation of the Excited State (using TD-DFT  or TD-HF or CIS etc)</a></li>
+  <li><a href="#step3">Calculation of Franck Condon Factor using results from 1 and 2.</a></li>
+</ol>
+
+<p>As a result, in 1 and 2 check point file must be saved for step 3.</p>
+
+<p><a href="#step4">In the last step we will visualize the emission and absorption vibronic spetra of NH<sub>3</sub></a></p>
+
+<h2 id="ground-state">Ground State</h2>
+<h3 id="input">Input</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>%NProcShared=4 
+%Chk=nh3_ground.chk 
+#P PW91PW91/6-311G(d,p) Opt(Z-Matrix) Freq PoP=Full 
+ 
+ Title 
+ 
+0 1 
+N          0    0.93818       -0.02838       -0.07054 
+H          0    0.62658        0.80372        0.42833 
+H          0    0.62658        0.08845       -1.03367 
+H          0    1.95550        0.02404       -0.09618 
+ 
+</code></pre></div></div>
+<h3 id="output">Output</h3>
+<p>The Frequency section will look like this</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> Harmonic frequencies (cm**-1), IR intensities (KM/Mole), Raman scattering
+ activities (A**4/AMU), depolarization ratios for plane and unpolarized
+ incident light, reduced masses (AMU), force constants (mDyne/A),
+ and normal coordinates:
+                      1                      2                      3
+                      A                      A                      A
+ Frequencies --   1055.4278              1640.7715              1640.9691
+ Red. masses --      1.1804                 1.0648                 1.0648
+ Frc consts  --      0.7747                 1.6890                 1.6894
+ IR Inten    --    149.9965                17.3644                17.3672
+  Atom  AN      X      Y      Z        X      Y      Z        X      Y      Z
+     1   7     0.00   0.00   0.12     0.03  -0.06   0.00     0.06   0.03   0.00
+     2   1     0.20   0.07  -0.53    -0.22   0.72  -0.04     0.17  -0.07  -0.26
+     3   1    -0.04  -0.21  -0.53    -0.49  -0.02  -0.20    -0.56   0.21   0.16
+     4   1    -0.16   0.14  -0.53     0.28   0.11   0.24    -0.43  -0.57   0.09
+                      4                      5                      6
+                      A                      A                      A
+ Frequencies --   3384.1564              3508.9423              3509.1236
+ Red. masses --      1.0269                 1.0880                 1.0880
+ Frc consts  --      6.9291                 7.8929                 7.8938
+ IR Inten    --      1.9437                 0.4603                 0.4606
+  Atom  AN      X      Y      Z        X      Y      Z        X      Y      Z
+     1   7     0.00   0.00  -0.04     0.07  -0.04   0.00     0.04   0.07   0.00
+     2   1     0.52   0.18   0.18    -0.50  -0.19  -0.22    -0.51  -0.15  -0.22
+     3   1    -0.11  -0.54   0.18     0.06   0.19  -0.08    -0.14  -0.71   0.30
+     4   1    -0.41   0.36   0.18    -0.54   0.49   0.30     0.16  -0.11  -0.08
+</code></pre></div></div>
+
+<h2 id="step2">First Excited State</h2>
+<h3 id="input-1">Input</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>%NProcShared=4 
+%Chk=nh3_excited.chk
+#P TD(Singlets) PW91PW91/6-311G(d,p) Opt(Z-Matrix) Freq=savenormalmodes PoP=Full 
+ 
+ Title 
+ 
+0 1 
+N          0    0.93818       -0.02838       -0.07054 
+H          0    0.62658        0.80372        0.42833 
+H          0    0.62658        0.08845       -1.03367 
+H          0    1.95550        0.02404       -0.09618
+
+</code></pre></div></div>
+<h3 id="output-1">Output</h3>
+<p>The frequency section will look like this</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> Harmonic frequencies (cm**-1), IR intensities (KM/Mole), Raman scattering
+ activities (A**4/AMU), depolarization ratios for plane and unpolarized
+ incident light, reduced masses (AMU), force constants (mDyne/A),
+ and normal coordinates:
+                      1                      2                      3     
+                      A                      A                      A     
+ Frequencies --    149.9133               957.7510               964.1658
+ Red. masses --      1.2065                 1.0368                 1.0372
+ Frc consts  --      0.0160                 0.5603                 0.5681
+ IR Inten    --     24.7349               817.2925               804.3170
+  Atom  AN      X      Y      Z        X      Y      Z        X      Y      Z     
+     1   7     0.00   0.00   0.12    -0.03   0.03   0.00    -0.04  -0.03   0.00  
+     2   1    -0.01   0.01  -0.57     0.12   0.37  -0.01     0.69   0.18   0.00  
+     3   1     0.01   0.00  -0.57    -0.30  -0.45   0.01    -0.13   0.60   0.01  
+     4   1    -0.01  -0.01  -0.57     0.62  -0.41   0.00    -0.08  -0.33  -0.01 
+                      4                      5                      6     
+                      A                      A                      A     
+ Frequencies --   2128.5194              2133.5390              2447.5687
+ Red. masses --      1.1669                 1.1675                 1.0079
+ Frc consts  --      3.1148                 3.1311                 3.5576
+ IR Inten    --   6063.8739              6049.2871                 0.8808
+  Atom  AN      X      Y      Z        X      Y      Z        X      Y      Z     
+     1   7     0.07   0.09   0.00     0.09  -0.07   0.00     0.00   0.00   0.00  
+     2   1    -0.06  -0.43  -0.01    -0.37   0.57   0.02    -0.22   0.54   0.01  
+     3   1    -0.41  -0.17  -0.01    -0.64   0.22  -0.02     0.58  -0.07   0.01  
+     4   1    -0.47  -0.61   0.02    -0.20   0.17   0.00    -0.35  -0.45   0.01  
+
+</code></pre></div></div>
+
+<h2 id="step3">Franck-Condon Factor Calculation</h2>
+<h3 id="input-2">Input</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>%NProcShared=4 
+%Chk=nh3_ground.chk
+#P Geom=AllCheck Freq=(ReadFC,FC,SaveNM) NoSymm
+
+nh3_excited.chk
+
+</code></pre></div></div>
+<p>For Emission Spectra Calculation, just add EMI to the Freq Tuple.</p>
+
+<h3 id="output-2">Output</h3>
+<p>The start section of the result will look like this</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>**********************************************************************
+
+             Generation of the Franck-Condon spectrum
+
+ **********************************************************************
+
+
+     ==================================================
+               Information on the Simulation
+     ==================================================
+
+ Type of Spectroscopy: ONE-PHOTON ABSORPTION         
+ Model applied to the transition: ADIABATIC HESSIAN
+ Approx. of the electronic transition dipole moment: FC
+ Temperature effect are not taken into account.
+
+     ==================================================
+                  Treatment of Input Data
+     ==================================================
+ Data for initial state taken from current calculation.
+ Normal modes recovered from file.
+
+ Data for   final state taken from checkpoint file "nh3_excited.chk"
+ Normal modes recovered from file.
+
+
+ Using excited electronic state number  1.
+
+ Initial state structure is set in Eckart orientation.
+ Final state structure is superposed to it.
+</code></pre></div></div>
+
+<h2 id="step4">Emission and Absorption Spectra of NH<sub>3</sub></h2>
+<p><img src="/assets/img/vibronic.png" alt="alt Vibronic Spectra" /></p>
+
+<p>Since the emission intensity is too small, we multiplied it by a factor of 10. It can clearly be seen that there is a wave length shift between the emission and absorption spectra. This shift is called <a href="https://en.wikipedia.org/wiki/Stokes_shift">Stokes Shift</a> which is due to the shift in equilibrium geometry between the ground and excited states.</p>
+
+</div>
+<a href="https://twitter.com/share" class="twitter-share-button " data-size="small" data-count="none">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<ul class="pager">
+
+  <li class="previous"><a href="/2019/05/20/hartreefock.html">&larr; Older</a></li>
+
+
+</ul>
+<div id="disqus_thread">
+
+  <script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+      var disqus_shortname = 'wenx'; // required: replace example with your forum shortname
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>
+    Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+
+  <a href="http://disqus.com" class="dsq-brlink">
+    comments powered by <span class="logo-disqus">Disqus</span>
+  </a>
+
+</div>
+
+		  </div>
+      <div class="container">
+  <footer>
+    <p class="text-muted credit">
+      &copy; 2019 Based on Herring Cove &middot; Build with
+      	<a href="https://jekyllrb.com"> Jekyll </a>
+      	2019-05-22 10:49:47 -0400
+    </p>
+  </footer>
+</div>
+    </div>
+	</div>
+  </body>
+</html>
