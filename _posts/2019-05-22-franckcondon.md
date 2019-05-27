@@ -3,10 +3,10 @@ title: Vibronic Spectra from First-Principle
 layout: post
 author: wen
 tags:
-- Franck Condon Factor
-- Quantum Mechanics
-- Computational Chemistry
-- Gaussian
+- franck condon factor
+- quantum mechanics
+- computational chemistry
+- gaussian
 ---
 
 ## Vibronic spectra of molecules used to be hot research area of molecular science.

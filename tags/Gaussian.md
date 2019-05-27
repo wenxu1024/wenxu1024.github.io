@@ -1,5 +1,5 @@
 ---
 layout: tagpage
-tag: Gaussian
+tag: gaussian
 ---
 

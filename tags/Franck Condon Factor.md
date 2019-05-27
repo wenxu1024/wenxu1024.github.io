@@ -1,5 +1,5 @@
 ---
 layout: tagpage
-tag: Franck Condon Factor
+tag: franck condon factor
 ---
 

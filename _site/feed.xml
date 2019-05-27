@@ -1,4 +1,84 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2019-05-25T08:43:23-04:00</updated><id>/feed.xml</id><title type="html">[“Wen Xu’s Personal Site”]</title><subtitle>[&quot;A website for Tech and Life&quot;]</subtitle><author><name>Wen Xu</name></author><entry><title type="html">Sum of Distances in Tree (LC834)</title><link href="/2019/05/25/leetcode834.html" rel="alternate" type="text/html" title="Sum of Distances in Tree (LC834)" /><published>2019-05-25T00:00:00-04:00</published><updated>2019-05-25T00:00:00-04:00</updated><id>/2019/05/25/leetcode834</id><content type="html" xml:base="/2019/05/25/leetcode834.html">&lt;h2 id=&quot;problem-description&quot;&gt;Problem description&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2019-05-27T16:28:26-04:00</updated><id>/feed.xml</id><title type="html">[“Wen Xu’s Personal Site”]</title><subtitle>[&quot;A website for Tech and Life&quot;]</subtitle><author><name>Wen Xu</name></author><entry><title type="html">All Nodes Distance K in Binary Tree (LC863)</title><link href="/2019/05/27/lc863.html" rel="alternate" type="text/html" title="All Nodes Distance K in Binary Tree (LC863)" /><published>2019-05-27T00:00:00-04:00</published><updated>2019-05-27T00:00:00-04:00</updated><id>/2019/05/27/lc863</id><content type="html" xml:base="/2019/05/27/lc863.html">&lt;h2 id=&quot;problem-description&quot;&gt;Problem description&lt;/h2&gt;
+&lt;p&gt;We are given a binary tree (with root node root), a target node, and an integer value K.&lt;/p&gt;
+
+&lt;p&gt;Return a list of the values of all nodes that have a distance K from the target node.  The answer can be returned in any order.&lt;/p&gt;
+
+&lt;p&gt;Example 1:&lt;/p&gt;
+
+&lt;p&gt;Input: root = [3,5,1,6,2,0,8,null,null,7,4], target = 5, K = 2&lt;/p&gt;
+
+&lt;p&gt;Output: [7,4,1]&lt;/p&gt;
+
+&lt;p&gt;Explanation: 
+The nodes that are a distance 2 from the target node (with value 5)
+have values 7, 4, and 1.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/sketch0.png&quot; alt=&quot;alt sketch 0&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Note that the inputs “root” and “target” are actually TreeNodes.
+The descriptions of the inputs above are just serializations of these objects.&lt;/p&gt;
+
+&lt;p&gt;Note:&lt;/p&gt;
+
+&lt;p&gt;The given tree is non-empty.
+Each node in the tree has unique values 0 &amp;lt;= node.val &amp;lt;= 500.
+The target node is a node in the tree.
+0 &amp;lt;= K &amp;lt;= 1000.&lt;/p&gt;
+
+&lt;h2 id=&quot;solution&quot;&gt;Solution&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;We can first use DFS to add a parent attr to all the tree nodes.&lt;/li&gt;
+  &lt;li&gt;Then we can use a second DFS to find all the nodes that have K distance from target.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Below is my python implementation&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Solution&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;distanceK&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;K&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+        :type root: TreeNode
+        :type target: TreeNode
+        :type K: int
+        :rtype: List[int]
+        &quot;&quot;&quot;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ans&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+        
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;dfs1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;parent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#add parent attr to the tree node
+&lt;/span&gt;            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;parent&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;dfs1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;left&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;dfs1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;right&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+        
+        &lt;span class=&quot;n&quot;&gt;visited&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;
+        
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;dfs2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;K&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;visited&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;K&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;ans&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;left&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visited&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;dfs2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;left&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;K&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;right&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visited&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;dfs2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;right&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;K&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parent&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visited&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;dfs2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;K&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+        
+        &lt;span class=&quot;n&quot;&gt;dfs1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;dfs2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;K&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ans&lt;/span&gt;
+				
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>wen</name></author><category term="leetcode" /><category term="algorithm" /><category term="depth first search" /><category term="binary tree" /><summary type="html">Problem description We are given a binary tree (with root node root), a target node, and an integer value K.</summary></entry><entry><title type="html">Sum of Distances in Tree (LC834)</title><link href="/2019/05/25/leetcode834.html" rel="alternate" type="text/html" title="Sum of Distances in Tree (LC834)" /><published>2019-05-25T00:00:00-04:00</published><updated>2019-05-25T00:00:00-04:00</updated><id>/2019/05/25/leetcode834</id><content type="html" xml:base="/2019/05/25/leetcode834.html">&lt;h2 id=&quot;problem-description&quot;&gt;Problem description&lt;/h2&gt;
 &lt;p&gt;An undirected, connected tree with N nodes labelled 0…N-1 and N-1 edges are given.&lt;/p&gt;
 
 &lt;p&gt;The ith edge connects nodes edges[i][0] and edges[i][1] together.&lt;/p&gt;
@@ -228,7 +308,7 @@ nh3_excited.chk
 &lt;h2 id=&quot;step4&quot;&gt;Emission and Absorption Spectra of NH&lt;sub&gt;3&lt;/sub&gt;&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&quot;/assets/img/vibronic.png&quot; alt=&quot;alt Vibronic Spectra&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Since the emission intensity is too small, we multiplied it by a factor of 10. It can clearly be seen that there is a wave length shift between the emission and absorption spectra. This shift is called &lt;a href=&quot;https://en.wikipedia.org/wiki/Stokes_shift&quot;&gt;Stokes Shift&lt;/a&gt; which is due to the shift in equilibrium geometry between the ground and excited states.&lt;/p&gt;</content><author><name>wen</name></author><category term="Franck Condon Factor" /><category term="Quantum Mechanics" /><category term="Computational Chemistry" /><category term="Gaussian" /><summary type="html">Vibronic spectra of molecules used to be hot research area of molecular science.</summary></entry><entry><title type="html">Python implementation of Hartree Fock (H2O 3-21G basis set)</title><link href="/2019/05/20/hartreefock.html" rel="alternate" type="text/html" title="Python implementation of Hartree Fock (H2O 3-21G basis set)" /><published>2019-05-20T00:00:00-04:00</published><updated>2019-05-20T00:00:00-04:00</updated><id>/2019/05/20/hartreefock</id><content type="html" xml:base="/2019/05/20/hartreefock.html">&lt;h1 id=&quot;computational-chemistry-is-always-fascinating&quot;&gt;Computational chemistry is always fascinating.&lt;/h1&gt;
+&lt;p&gt;Since the emission intensity is too small, we multiplied it by a factor of 10. It can clearly be seen that there is a wave length shift between the emission and absorption spectra. This shift is called &lt;a href=&quot;https://en.wikipedia.org/wiki/Stokes_shift&quot;&gt;Stokes Shift&lt;/a&gt; which is due to the shift in equilibrium geometry between the ground and excited states.&lt;/p&gt;</content><author><name>wen</name></author><category term="franck condon factor" /><category term="quantum mechanics" /><category term="computational chemistry" /><category term="gaussian" /><summary type="html">Vibronic spectra of molecules used to be hot research area of molecular science.</summary></entry><entry><title type="html">Python implementation of Hartree Fock (H2O 3-21G basis set)</title><link href="/2019/05/20/hartreefock.html" rel="alternate" type="text/html" title="Python implementation of Hartree Fock (H2O 3-21G basis set)" /><published>2019-05-20T00:00:00-04:00</published><updated>2019-05-20T00:00:00-04:00</updated><id>/2019/05/20/hartreefock</id><content type="html" xml:base="/2019/05/20/hartreefock.html">&lt;h1 id=&quot;computational-chemistry-is-always-fascinating&quot;&gt;Computational chemistry is always fascinating.&lt;/h1&gt;
 &lt;p&gt;Being able to predict molecular properties, such as (dipole, charge distribution, geometry, vibrational frequencies, Infra-red spectrum, Raman spectrum, NMR spectrum, polarizability, … and so on) from the first principle exemplifies the powerfulness of modern computational chemistry / physics.&lt;/p&gt;
 
 &lt;p&gt;Hartree Fock is the most important and fundmental algorithm in computational chemistry. Be able to implement it from scratch is imperative to the understanding of the basics.&lt;/p&gt;
@@ -2411,59 +2491,7 @@ The value of each node will only be 0 or 1.&lt;/p&gt;
         &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;right&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;right&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;
 				
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>wen</name></author><category term="leetcode" /><category term="algorithm" /><category term="binary tree" /><category term="depth first search" /><category term="post order traversal" /><summary type="html">Problem description We are given the head node root of a binary tree, where additionally every node’s value is either a 0 or a 1.</summary></entry><entry><title type="html">Minimum Distance Between BST Nodes (LC783)</title><link href="/2019/05/11/leetcode783.html" rel="alternate" type="text/html" title="Minimum Distance Between BST Nodes (LC783)" /><published>2019-05-11T00:00:00-04:00</published><updated>2019-05-11T00:00:00-04:00</updated><id>/2019/05/11/leetcode783</id><content type="html" xml:base="/2019/05/11/leetcode783.html">&lt;h2 id=&quot;problem-description&quot;&gt;Problem description&lt;/h2&gt;
-&lt;p&gt;Given a Binary Search Tree (BST) with the root node root, return the minimum difference between the values of any two different nodes in the tree.&lt;/p&gt;
-
-&lt;p&gt;Example :&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Input: root = [4,2,6,1,3,null,null]
-Output: 1
-Explanation:
-Note that root is a TreeNode object, not an array.
-
-The given tree [4,2,6,1,3,null,null] is represented by the following diagram:
-
-          4
-        /   \
-      2      6
-     / \    
-    1   3  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;while the minimum difference in this tree is 1, it occurs between node 1 and node 2, also between node 3 and node 2.
-Note:&lt;/p&gt;
-
-&lt;p&gt;The size of the BST will be between 2 and 100.
-The BST is always valid, each node’s value is an integer, and each node’s value is different.&lt;/p&gt;
-
-&lt;h2 id=&quot;solution&quot;&gt;Solution&lt;/h2&gt;
-&lt;ol&gt;
-  &lt;li&gt;We can do inorder traversal and keep record of current minimum difference and current node’s predecessor’s value&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Below is python implementation&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, x):
-#         self.val = x
-#         self.left = None
-#         self.right = None
-&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Solution&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;minDiffInBST&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TreeNode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prev&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'inf'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ans&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'inf'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;inorder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TreeNode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;inorder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;left&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-            &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ans&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ans&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prev&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-            &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prev&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;inorder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;right&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
-        
-        &lt;span class=&quot;n&quot;&gt;inorder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ans&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>wen</name></author><category term="leetcode" /><category term="algorithm" /><category term="in order traversal" /><category term="binary tree" /><summary type="html">Problem description Given a Binary Search Tree (BST) with the root node root, return the minimum difference between the values of any two different nodes in the tree.</summary></entry><entry><title type="html">Insert into Binary Search Tree (LC701)</title><link href="/2019/05/11/leetcode701.html" rel="alternate" type="text/html" title="Insert into Binary Search Tree (LC701)" /><published>2019-05-11T00:00:00-04:00</published><updated>2019-05-11T00:00:00-04:00</updated><id>/2019/05/11/leetcode701</id><content type="html" xml:base="/2019/05/11/leetcode701.html">&lt;h2 id=&quot;problem-description&quot;&gt;Problem description&lt;/h2&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>wen</name></author><category term="leetcode" /><category term="algorithm" /><category term="binary tree" /><category term="depth first search" /><category term="post order traversal" /><summary type="html">Problem description We are given the head node root of a binary tree, where additionally every node’s value is either a 0 or a 1.</summary></entry><entry><title type="html">Insert into Binary Search Tree (LC701)</title><link href="/2019/05/11/leetcode701.html" rel="alternate" type="text/html" title="Insert into Binary Search Tree (LC701)" /><published>2019-05-11T00:00:00-04:00</published><updated>2019-05-11T00:00:00-04:00</updated><id>/2019/05/11/leetcode701</id><content type="html" xml:base="/2019/05/11/leetcode701.html">&lt;h2 id=&quot;problem-description&quot;&gt;Problem description&lt;/h2&gt;
 &lt;p&gt;Given the root node of a binary search tree (BST) and a value to be inserted into the tree, insert the value into the BST. Return the root node of the BST after the insertion. It is guaranteed that the new value does not exist in the original BST.&lt;/p&gt;
 
 &lt;p&gt;Note that there may exist multiple valid ways for the insertion, as long as the tree remains a BST after insertion. You can return any of them.&lt;/p&gt;
