@@ -141,6 +141,12 @@ ul {
   position: fixed;
   padding-top: 40px; }
 
+@media (max-width: 768px) {
+  #sidebarCollapse {
+    margin-left: -250px; }
+
+  #sidebarCollapse.active {
+    margin-left: 0; } }
 .highlight .hll {
   background-color: #222222; }
 
