@@ -142,10 +142,10 @@ ul {
   padding-top: 40px; }
 
 @media (max-width: 768px) {
-  #sidebarCollapse {
+  #sidebar-wrapper {
     margin-left: -250px; }
 
-  #sidebarCollapse.active {
+  #sidebar-wrapper.active {
     margin-left: 0; } }
 .highlight .hll {
   background-color: #222222; }
