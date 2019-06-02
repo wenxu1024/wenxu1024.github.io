@@ -177,12 +177,3 @@ ul
   position: fixed;
   padding-top:40px;
 }
-
-@media (max-width: 768px) {
-    #sidebar-wrapper {
-    	margin-left: -20%;
-    }
-    #sidebar-wrapper.active {
-    	margin-left: 0;
-    }
-}
