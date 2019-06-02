@@ -143,10 +143,10 @@ ul {
 
 @media (max-width: 768px) {
   #sidebar-wrapper {
-    margin-left: -20%; }
+    margin-left: 0; }
 
   #sidebar-wrapper.active {
-    margin-left: 0; } }
+    margin-left: -20%; } }
 .highlight .hll {
   background-color: #222222; }
 
