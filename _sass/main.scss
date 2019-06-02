@@ -179,10 +179,9 @@ ul
 }
 
 @media (max-width: 768px) {
-    #sidebar-wrapper {
-        margin-left: 0;
+    #sidebarCollapse.active {
+
     }
     #sidebar-wrapper.active {
-        margin-left: -20%;
     }
 }
