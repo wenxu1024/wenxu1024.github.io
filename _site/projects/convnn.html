@@ -86,8 +86,162 @@
   		<div class="container">
     	 <h1> Image Recognition of Handwritten Digits </h1>
 <h2 id="convolutional-neural-network">Convolutional Neural Network</h2>
+<p><a href="https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53">Convolutional neural network</a> which invented by <a href="http://yann.lecun.com">Yann LeCun</a> <em>et al</em>. and later improved by many others has been proved to be very effective on image recognition tasks.</p>
 
-<p>Convolutional neural network</p>
+<p>In this tutorial I will show how to use <a href="https://keras.io">Keras</a> API to implement a simple Convolutional Neural Netwrok to do handwritten digit recognition, which could achieve an accuracy as high as 95%.</p>
+
+<h2 id="we-first-load-the-mnist-data-downloaded-from-the-internet">We first load the MNIST data downloaded from the internet</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="k">def</span> <span class="nf">read_idx</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">zero</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">dims</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">'&gt;HBB'</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">'&gt;I'</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dims</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="n">train_images_filename</span> <span class="o">=</span> <span class="s">"train-images-idx3-ubyte"</span>
+<span class="n">train_labels_filename</span> <span class="o">=</span> <span class="s">"train-labels-idx1-ubyte"</span>
+<span class="n">test_images_filename</span> <span class="o">=</span> <span class="s">"t10k-images-idx3-ubyte"</span>
+<span class="n">test_labels_filename</span> <span class="o">=</span> <span class="s">"t10k-labels-idx1-ubyte"</span>
+<span class="n">train_images</span> <span class="o">=</span> <span class="n">read_idx</span><span class="p">(</span><span class="n">train_images_filename</span><span class="p">)</span>
+<span class="n">train_labels</span> <span class="o">=</span> <span class="n">read_idx</span><span class="p">(</span><span class="n">train_labels_filename</span><span class="p">)</span>
+<span class="n">test_images</span> <span class="o">=</span> <span class="n">read_idx</span><span class="p">(</span><span class="n">test_images_filename</span><span class="p">)</span>
+<span class="n">test_labels</span> <span class="o">=</span> <span class="n">read_idx</span><span class="p">(</span><span class="n">test_labels_filename</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/usr/local/lib/python3.7/site-packages/ipykernel_launcher.py:7: DeprecationWarning: The binary mode of fromstring is deprecated, as it behaves surprisingly on unicode inputs. Use frombuffer instead
+  import sys
+</code></pre></div></div>
+
+<h2 id="now-we-reshape-the-data-to-make-it-appropriate-for-convnet">Now we reshape the data to make it appropriate for ConvNet.</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">keras.utils</span> <span class="kn">import</span> <span class="n">np_utils</span>
+<span class="k">print</span><span class="p">(</span><span class="n">train_images</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">train_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">test_images</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">test_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">train_images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">train_images</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">test_images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">test_images</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">train_labels</span> <span class="o">=</span> <span class="n">np_utils</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">train_labels</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">train_images</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">train_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">test_images</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">test_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Using TensorFlow backend.
+
+
+(60000, 28, 28) (60000,) (10000, 28, 28) (10000,)
+(60000, 28, 28, 1) (60000, 10) (10000, 28, 28, 1) (10000,)
+</code></pre></div></div>
+
+<h2 id="before-we-proceed-we-plot-one-example-train-data-out">Before we proceed, we plot one example train data out.</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">train_images</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:,</span><span class="mi">0</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">train_labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">())</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>5
+</code></pre></div></div>
+
+<p><img src="/assets/img/sampleImg.png" alt="png" /></p>
+
+<h2 id="now-we-build-a-sequential-convnet-using-keras-api">Now we build a sequential ConvNet using Keras API.</h2>
+<p>In our sequential mode, we have 3 Convolutional layers, 2 maxpooling layers, followed by 2 dense layers and a final softmax activation. Since the problem is multi-cateogorical imge recogonition, we used <strong>cateogorical cross entropy</strong> as our loss function. We used <strong>adam</strong> optimizer for parameter optimization.
+1 <strong>Epoch</strong> of optimization is good enough to acheive a 95% accuracy.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Conv2D</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">MaxPooling2D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">BatchNormalization</span>
+<span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
+<span class="kn">from</span> <span class="nn">keras.utils</span> <span class="kn">import</span> <span class="n">np_utils</span>
+
+
+<span class="n">mySimpleModel</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span> <span class="o">=</span> <span class="s">'same'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPooling2D</span><span class="p">(</span><span class="n">pool_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)))</span>
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">BatchNormalization</span><span class="p">())</span>
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="n">kernel_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span> <span class="o">=</span> <span class="s">'same'</span><span class="p">))</span>
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPooling2D</span><span class="p">(</span><span class="n">pool_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)))</span>
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">BatchNormalization</span><span class="p">())</span>
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">kernel_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span> <span class="o">=</span> <span class="s">'same'</span><span class="p">))</span>
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Flatten</span><span class="p">())</span>
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">BatchNormalization</span><span class="p">())</span>
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">64</span><span class="p">))</span>
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span> <span class="o">=</span> <span class="s">'softmax'</span><span class="p">))</span>
+
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s">'categorical_crossentropy'</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="s">'adam'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span> <span class="p">[</span><span class="s">'accuracy'</span><span class="p">])</span>
+
+<span class="n">mySimpleModel</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_images</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">,</span> <span class="n">epochs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>WARNING:tensorflow:From /usr/local/lib/python3.7/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+WARNING:tensorflow:From /usr/local/lib/python3.7/site-packages/tensorflow/python/ops/math_ops.py:3066: to_int32 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+Epoch 1/1
+60000/60000 [==============================] - 156s 3ms/step - loss: 0.4089 - acc: 0.9536
+
+
+
+
+
+&lt;keras.callbacks.History at 0x13242fc18&gt;
+</code></pre></div></div>
+
+<h2 id="now-we-use-the-trained-model-to-predict-some-test-images-and-calculate-the-ratio-of-misclassified-images-and-correctly-classified-images">Now we use the trained model to predict some test images and calculate the ratio of misclassified images and correctly classified images.</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">test_pred</span> <span class="o">=</span> <span class="n">mySimpleModel</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_images</span><span class="p">)</span>
+<span class="n">test_pred_cat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">test_pred</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">mismatch_labels</span> <span class="o">=</span> <span class="n">test_pred_cat</span><span class="p">[</span><span class="n">test_pred_cat</span> <span class="o">!=</span> <span class="n">test_labels</span><span class="p">]</span>
+<span class="n">mismatch_images</span> <span class="o">=</span> <span class="n">test_images</span><span class="p">[</span><span class="n">test_pred_cat</span> <span class="o">!=</span> <span class="n">test_labels</span><span class="p">]</span>
+<span class="n">mismatch_test</span> <span class="o">=</span> <span class="n">test_labels</span><span class="p">[</span><span class="n">test_pred_cat</span> <span class="o">!=</span> <span class="n">test_labels</span><span class="p">]</span>
+<span class="n">mismatch</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">mismatch_labels</span><span class="p">,</span> <span class="n">mismatch_images</span><span class="p">,</span> <span class="n">mismatch_test</span><span class="p">)</span>
+<span class="n">match_labels</span> <span class="o">=</span> <span class="n">test_pred_cat</span><span class="p">[</span><span class="n">test_pred_cat</span> <span class="o">==</span> <span class="n">test_labels</span><span class="p">]</span>
+<span class="n">match_images</span> <span class="o">=</span> <span class="n">test_images</span><span class="p">[</span><span class="n">test_pred_cat</span> <span class="o">==</span> <span class="n">test_labels</span><span class="p">]</span>
+<span class="n">match_test</span> <span class="o">=</span> <span class="n">test_labels</span><span class="p">[</span><span class="n">test_pred_cat</span> <span class="o">==</span> <span class="n">test_labels</span><span class="p">]</span>
+<span class="n">match</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">match_labels</span><span class="p">,</span> <span class="n">match_images</span><span class="p">,</span> <span class="n">match_test</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mismatch_test</span><span class="p">)</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">test_labels</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">match_test</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">test_labels</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0.0292
+0.9708
+</code></pre></div></div>
+
+<h2 id="now-we-randomly-choose-10-images-from-the-misclassified-set-and-plot-them">Now we randomly choose 10 images from the misclassified set and plot them.</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#random choose 10 from mismatches to display
+</span><span class="n">choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mismatch_labels</span><span class="p">)),</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">sharex</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">40</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">choices</span><span class="p">)):</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">choices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="o">//</span><span class="mi">2</span><span class="p">][</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">mismatch_images</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">mislabel</span> <span class="o">=</span> <span class="n">mismatch_labels</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">realLabel</span> <span class="o">=</span> <span class="n">mismatch_test</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">'mislabel:'</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">mislabel</span><span class="p">)</span><span class="o">+</span><span class="s">','</span><span class="o">+</span><span class="s">'realLabel:'</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">realLabel</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><img src="/assets/img/misclassified.png" alt="png" /></p>
+
+<h2 id="now-we-randomly-choose-10-images-from-the-correctly-classified-set-and-plot-them">Now we randomly choose 10 images from the correctly classified set and plot them.</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#random choose 10 from mismatches to display
+</span><span class="n">choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">match_labels</span><span class="p">)),</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">sharex</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">40</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">choices</span><span class="p">)):</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">choices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="o">//</span><span class="mi">2</span><span class="p">][</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">match_images</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">match_labels</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">realLabel</span> <span class="o">=</span> <span class="n">match_test</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">'mislabel:'</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">)</span><span class="o">+</span><span class="s">','</span><span class="o">+</span><span class="s">'realLabel:'</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">realLabel</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><img src="/assets/img/correctclassified.png" alt="png" /></p>
 
 		  </div>
       <div class="container">
@@ -95,7 +249,7 @@
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-02 15:37:08 -0400
+      	2019-06-02 22:35:09 -0400
     </p>
   </footer>
 </div>
