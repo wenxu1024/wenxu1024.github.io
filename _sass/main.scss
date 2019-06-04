@@ -151,7 +151,6 @@ ul
     display: flex;
     width: 100%;
     align-items: stretch;
-    perspective: 1500px;
 }
 
 #sidebar-wrapper {
@@ -176,4 +175,13 @@ ul
 .sidebar-nav {
   position: fixed;
   padding-top:40px;
+}
+
+@media (max-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: -20%;
+    }
+    #sidebar-wrapper.active {
+        margin-left: 0;
+    }
 }
