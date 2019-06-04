@@ -62,7 +62,7 @@ a, a:hover, a:focus {
 {
   font-size:1.9em;
   font-weight:700;
-  #color:#000000;
+  color:#000000;
   padding-top:15px
 }
 
@@ -192,6 +192,7 @@ ul
 .wrapper {
     display: flex;
     width: 100%;
+    perspective: 1500px;
 }
 
 #sidebar-nav {
@@ -217,7 +218,7 @@ ul
 
 #content {
     width: 80%;
-    padding: 40px;
+    padding: 20px;
     min-height: 100vh;
     transition: all 0.3s;
     position: absolute;
@@ -231,9 +232,47 @@ ul
 
 @media (max-width: 768px) {
     #sidebar-nav {
-        margin-left: -20%;
+      width:50%;
+      margin-left: -50%;
+      transform: rotateY(100deg)
     }
     #sidebar-nav.active {
-        margin-left: 0;
+      margin-left:0;
+      transform: rotateY(0deg)
     }
+
+    #content {
+      width:100%;
+    }
+
+    #content.active {
+      width:50%;
+    }
+
+    /* Reversing the behavior of the bars: 
+       Removing the rotation from the first,
+       last bars and reappear the second bar on default state, 
+       and giving them a vertical margin */
+    #sidebarCollapse span:first-of-type,
+    #sidebarCollapse span:nth-of-type(2),
+    #sidebarCollapse span:last-of-type {
+        transform: none;
+        opacity: 1;
+        margin: 5px auto;
+    }
+
+    /* Removing the vertical margin and make the first and last bars rotate again when the sidebar is open, hiding the second bar */
+    #sidebarCollapse.active span {
+        margin: 0 auto;
+    }
+    #sidebarCollapse.active span:first-of-type {
+        transform: rotate(45deg) translate(2px, 2px);
+    }
+    #sidebarCollapse.active span:nth-of-type(2) {
+        opacity: 0;
+    }
+    #sidebarCollapse.active span:last-of-type {
+        transform: rotate(-45deg) translate(1px, -1px);
+    }
+
 }
