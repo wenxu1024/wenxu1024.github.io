@@ -1,3 +1,35 @@
+/*
+    ADDITIONAL DEMO STYLE, NOT IMPORTANT TO MAKE THINGS WORK BUT TO MAKE IT A BIT NICER :)
+*/
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #fafafa; }
+
+p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5em;
+  font-weight: 300;
+  line-height: 1.7em;
+  color: #999; }
+
+#content p a {
+  font-size: 1.0em; }
+
+ul li a {
+  font-size: 1.1em; }
+
+ol li {
+  font-size: 1.4em; }
+
+a, a:hover, a:focus {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.3s; }
+
+.highlight {
+  font-size: 1.2em; }
+
 .current {
   color: green; }
 
@@ -15,7 +47,7 @@
   color: #cdcdcd; }
 
 .article-title {
-  font-size: 35px;
+  font-size: 1.9em;
   font-weight: 700;
   #color: #000000;
   padding-top: 15px; }
@@ -41,15 +73,6 @@ img {
   color: #5c646f;
   padding: 20px 0 0; }
 
-#social-wrapper a {
-  font-size: 15px;
-  text-indent: 0px; }
-
-#social-wrapper li {
-  font-size: 15px;
-  text-indent: 0;
-  word-spacing: 10px; }
-
 #social-wrapper a:hover {
   color: #2d1e18;
   transition: all 0.3s ease 0; }
@@ -63,6 +86,16 @@ img {
 
 ul {
   list-style: none; }
+
+#sidebar-nav ul li a {
+  padding: 10px;
+  font-size: 2.3em;
+  display: block; }
+
+#social-wrapper li a {
+  padding: 10px;
+  font-size: 2.3em;
+  display: block; }
 
 .text-justify {
   text-align: justify; }
@@ -114,42 +147,46 @@ ul {
 
 .wrapper {
   display: flex;
-  width: 100%;
-  align-items: stretch; }
+  width: 100%; }
 
-#sidebar-wrapper {
-  min-width: 20%;
-  max-width: 20%;
+#sidebar-nav {
+  width: 20%;
+  padding-top: 40px;
+  top: 0;
+  left: 0;
+  position: fixed;
   height: 100vh;
   background: #263651;
   z-index: 1000;
   border-width: 4px;
-  overflow-y: auto;
   margin-top: -4px;
   border-top: solid #d90006;
   transition: all 0.6s cubic-bezier(0.945, 0.02, 0.27, 0.665);
   transform-origin: center left;
   /* Set the transformed position of sidebar to center left side. */ }
 
-#sidebar-wrapper.active {
+#sidebar-nav.active {
   margin-left: -20%;
   transform: rotateY(100deg);
   /* Rotate sidebar vertically by 100 degrees. */ }
 
-.sidebar-nav {
-  padding-top: 40px; }
-
 #content {
-  width: 100%;
-  padding: 20px;
+  width: 80%;
+  padding: 40px;
   min-height: 100vh;
-  transition: all 0.3s; }
+  transition: all 0.3s;
+  position: absolute;
+  top: 0;
+  right: 0; }
+
+#content.active {
+  width: 100%; }
 
 @media (max-width: 768px) {
-  #sidebar-wrapper {
+  #sidebar-nav {
     margin-left: -20%; }
 
-  #sidebar-wrapper.active {
+  #sidebar-nav.active {
     margin-left: 0; } }
 .highlight .hll {
   background-color: #222222; }
