@@ -120,7 +120,7 @@ ul {
 #sidebar-wrapper {
   min-width: 20%;
   max-width: 20%;
-  min-height: 100vh;
+  height: 100vh;
   background: #263651;
   z-index: 1000;
   border-width: 4px;
@@ -137,8 +137,13 @@ ul {
   /* Rotate sidebar vertically by 100 degrees. */ }
 
 .sidebar-nav {
-  position: fixed;
   padding-top: 40px; }
+
+#content {
+  width: 100%;
+  padding: 20px;
+  min-height: 100vh;
+  transition: all 0.3s; }
 
 @media (max-width: 768px) {
   #sidebar-wrapper {

@@ -11,19 +11,19 @@
   </head>
   <body>
   	<div class="wrapper">
-  	{% include navigation.html %}
-    <div class="content">
-      <button type="button" id="sidebarCollapse" class="navbar-btn">
-      <span></span>
-      <span></span>
-      <span></span>
-      </button>
-      <hr/>
-  		<div class="container">
-    	 {{ content }}
-		  </div>
-      {% include footer.html %}
-    </div>
-	</div>
+  	 {% include navigation.html %}
+      <div id="content">
+        <button type="button" id="sidebarCollapse" class="navbar-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+        </button>
+        <hr/>
+  		  <div class="container">
+    	   {{ content }}
+		    </div>
+        {% include footer.html %}
+      </div>
+	  </div>
   </body>
 </html>
