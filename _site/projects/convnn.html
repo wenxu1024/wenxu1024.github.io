@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -98,12 +98,11 @@
         <hr/>
   		  <div class="container">
     	   <h1> Image Recognition of Handwritten Digits </h1>
-<h2 id="convolutional-neural-network">Convolutional Neural Network</h2>
-<p><a href="https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53">Convolutional neural network</a> which invented by <a href="http://yann.lecun.com">Yann LeCun</a> <em>et al</em>. and later improved by many others has been proved to be very effective on image recognition tasks.</p>
+<p><a href="https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53">Convolutional neural network</a> which is invented by <a href="http://yann.lecun.com">Yann LeCun</a> <em>et al</em>. and later improved by many others has been proved to be very effective on image recognition tasks.</p>
 
 <p>In this tutorial I will show how to use <a href="https://keras.io">Keras</a> API to implement a simple Convolutional Neural Netwrok to do handwritten digit recognition, which could achieve an accuracy as high as 95%.</p>
 
-<h2 id="we-first-load-the-mnist-data-downloaded-from-the-internet">We first load the MNIST data downloaded from the internet</h2>
+<h3 id="we-first-load-the-mnist-data-downloaded-from-the-internet">We first load the MNIST data downloaded from the internet</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">struct</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
@@ -127,7 +126,7 @@
   import sys
 </code></pre></div></div>
 
-<h2 id="now-we-reshape-the-data-to-make-it-appropriate-for-convnet">Now we reshape the data to make it appropriate for ConvNet.</h2>
+<h3 id="now-we-reshape-the-data-to-make-it-appropriate-for-convnet">Now we reshape the data to make it appropriate for ConvNet.</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">keras.utils</span> <span class="kn">import</span> <span class="n">np_utils</span>
 <span class="k">print</span><span class="p">(</span><span class="n">train_images</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">train_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">test_images</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">test_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -144,7 +143,7 @@
 (60000, 28, 28, 1) (60000, 10) (10000, 28, 28, 1) (10000,)
 </code></pre></div></div>
 
-<h2 id="before-we-proceed-we-plot-one-example-train-data-out">Before we proceed, we plot one example train data out.</h2>
+<h3 id="before-we-proceed-we-plot-one-example-train-data-out">Before we proceed, we plot one example train data out.</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
@@ -157,7 +156,7 @@
 
 <p><img src="/assets/img/sampleImg.png" alt="png" /></p>
 
-<h2 id="now-we-build-a-sequential-convnet-using-keras-api">Now we build a sequential ConvNet using Keras API.</h2>
+<h3 id="now-we-build-a-sequential-convnet-using-keras-api">Now we build a sequential ConvNet using Keras API.</h3>
 <p>In our sequential mode, we have 3 Convolutional layers, 2 maxpooling layers, followed by 2 dense layers and a final softmax activation. Since the problem is multi-cateogorical imge recogonition, we used <strong>cateogorical cross entropy</strong> as our loss function. We used <strong>adam</strong> optimizer for parameter optimization.
 1 <strong>Epoch</strong> of optimization is good enough to acheive a 95% accuracy.</p>
 
@@ -200,7 +199,7 @@ Epoch 1/1
 &lt;keras.callbacks.History at 0x13242fc18&gt;
 </code></pre></div></div>
 
-<h2 id="now-we-use-the-trained-model-to-predict-some-test-images-and-calculate-the-ratio-of-misclassified-images-and-correctly-classified-images">Now we use the trained model to predict some test images and calculate the ratio of misclassified images and correctly classified images.</h2>
+<h3 id="now-we-use-the-trained-model-to-predict-some-test-images-and-calculate-the-ratio-of-misclassified-images-and-correctly-classified-images">Now we use the trained model to predict some test images and calculate the ratio of misclassified images and correctly classified images.</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">test_pred</span> <span class="o">=</span> <span class="n">mySimpleModel</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_images</span><span class="p">)</span>
 <span class="n">test_pred_cat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">test_pred</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
@@ -220,7 +219,7 @@ Epoch 1/1
 0.9708
 </code></pre></div></div>
 
-<h2 id="now-we-randomly-choose-10-images-from-the-misclassified-set-and-plot-them">Now we randomly choose 10 images from the misclassified set and plot them.</h2>
+<h3 id="now-we-randomly-choose-10-images-from-the-misclassified-set-and-plot-them">Now we randomly choose 10 images from the misclassified set and plot them.</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#random choose 10 from mismatches to display
 </span><span class="n">choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mismatch_labels</span><span class="p">)),</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
@@ -238,7 +237,7 @@ Epoch 1/1
 
 <p><img src="/assets/img/misclassified.png" alt="png" /></p>
 
-<h2 id="now-we-randomly-choose-10-images-from-the-correctly-classified-set-and-plot-them">Now we randomly choose 10 images from the correctly classified set and plot them.</h2>
+<h3 id="now-we-randomly-choose-10-images-from-the-correctly-classified-set-and-plot-them">Now we randomly choose 10 images from the correctly classified set and plot them.</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#random choose 10 from mismatches to display
 </span><span class="n">choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">match_labels</span><span class="p">)),</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
@@ -262,7 +261,7 @@ Epoch 1/1
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -119,7 +119,7 @@
  	
 </p>
 <div class="post">
-<h1 id="computational-chemistry-is-always-fascinating">Computational chemistry is always fascinating.</h1>
+<h3 id="computational-chemistry-is-always-fascinating">Computational chemistry is always fascinating.</h3>
 <p>Being able to predict molecular properties, such as (dipole, charge distribution, geometry, vibrational frequencies, Infra-red spectrum, Raman spectrum, NMR spectrum, polarizability, … and so on) from the first principle exemplifies the powerfulness of modern computational chemistry / physics.</p>
 
 <p>Hartree Fock is the most important and fundmental algorithm in computational chemistry. Be able to implement it from scratch is imperative to the understanding of the basics.</p>
@@ -128,7 +128,7 @@
 
 <p>Below I will demostrate the implementation of Hartree Fock on a H2O molecule on a relatively small basis set 3-21G.</p>
 
-<h2 id="hartree-fock-calculation-of-h2o-system-in-python">Hartree Fock calculation of H2O system in Python</h2>
+<h4 id="hartree-fock-calculation-of-h2o-system-in-python">Hartree Fock calculation of H2O system in Python</h4>
 <ol>
   <li>This tutorial shows how hartree fock calculation is done typically. This does not intend to be the most efficient algorithmic implementation of HF. But a pedagogical tutorial on what is Hartree Fock and what is the mathematical equations behind it.</li>
   <li>We also visualize the Atomic orbitla and Molecular Orbitals, showing how the linear combination of atomic orbitals (LCAO) gave molecular orbitals (MO)</li>
@@ -136,7 +136,7 @@
   <li>Scipy linear algebra package is used to solve the Hartree Fock Roothaan-Hall equation (generalized eigenvalue-eigenvector problem) (FC=SCe)</li>
 </ol>
 
-<h3 id="import-libraries">Import libraries</h3>
+<h4 id="import-libraries">Import libraries</h4>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">import</span> <span class="nn">collections</span>
@@ -146,7 +146,7 @@
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">factorial</span>
 </code></pre></div></div>
 
-<h3 id="define-atomic-orbital-object-molecular-orbital-object-and-gaussian-primitive-object-give-two-functions-that-convert-between-s-p-d-f-to-000100-200">Define Atomic Orbital object, Molecular Orbital object, and Gaussian Primitive object. Give two functions that convert between “S, P, D, F” to “(0,0,0),(1,0,0), (2,0,0)….”</h3>
+<h4 id="define-atomic-orbital-object-molecular-orbital-object-and-gaussian-primitive-object-give-two-functions-that-convert-between-s-p-d-f-to-000100-200">Define Atomic Orbital object, Molecular Orbital object, and Gaussian Primitive object. Give two functions that convert between “S, P, D, F” to “(0,0,0),(1,0,0), (2,0,0)….”</h4>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">getAngularQuanta</span><span class="p">(</span><span class="n">orbitaltype</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">orbitaltype</span> <span class="o">==</span> <span class="s">"S"</span><span class="p">:</span>
@@ -247,8 +247,8 @@
     
 </code></pre></div></div>
 
-<h1 id="read-basis-set-information-from-basis-set-data-the-data-is-in-gaussian-94-format-and-downloaded-from-emsl-basis-set-exchange">Read Basis Set Information from Basis set data. The data is in Gaussian 94 Format and downloaded from EMSL basis set exchange</h1>
-<p>Gaussian Format and Basis Set downloaded from EMSL Basis Set Exchange. In this tutorial 6-311++G(2d,2p) is used.</p>
+<h2 id="read-basis-set-information-from-basis-set-data-the-data-is-in-gaussian-94-format-and-downloaded-from-emsl-basis-set-exchange">Read Basis Set Information from Basis set data. The data is in Gaussian 94 Format and downloaded from EMSL basis set exchange</h2>
+<p>Gaussian Format and Basis Set downloaded from EMSL Basis Set Exchange. In this tutorial 3-21G is used.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">"basis.dat"</span><span class="p">)</span>
 <span class="n">aodict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
@@ -372,7 +372,7 @@ SP 1
 defaultdict(&lt;class 'list'&gt;, {'H': [S(0, 0, 0)[5.447178, 0.824547][0.156285, 0.904691], S(0, 0, 0)[0.183192][1.0]], 'O': [S(0, 0, 0)[322.037, 48.4308, 10.4206][0.0592394, 0.3515, 0.707658], S(0, 0, 0)[7.40294, 1.5762][-0.404453, 1.22156], Px(0, 0, 0)[7.40294, 1.5762][0.244586, 0.853955], Py(0, 0, 0)[7.40294, 1.5762][0.244586, 0.853955], Pz(0, 0, 0)[7.40294, 1.5762][0.244586, 0.853955], S(0, 0, 0)[0.373684][1.0], Px(0, 0, 0)[0.373684][1.0], Py(0, 0, 0)[0.373684][1.0], Pz(0, 0, 0)[0.373684][1.0]]})
 </code></pre></div></div>
 
-<h2 id="read-geometry-information">Read Geometry information</h2>
+<h3 id="read-geometry-information">Read Geometry information</h3>
 <p>Read Geometry information in Cartesian Coordinate. The unit is in Angstrom and the full molecule is used. No symmetry is used. In this tutorial H2O is used as illustration.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">geomfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">"geom.dat"</span><span class="p">)</span>
@@ -401,7 +401,7 @@ defaultdict(&lt;class 'list'&gt;, {'H': [S(0, 0, 0)[5.447178, 0.824547][0.156285
 13
 </code></pre></div></div>
 
-<h3 id="define-a-function-that-do-implicit-plot-of-3d-surfaces-to-visualize-the-atomic-and-molecular-orbtials">Define a Function that do implicit plot of 3D surfaces to visualize the Atomic and Molecular orbtials.</h3>
+<h4 id="define-a-function-that-do-implicit-plot-of-3d-surfaces-to-visualize-the-atomic-and-molecular-orbtials">Define a Function that do implicit plot of 3D surfaces to visualize the Atomic and Molecular orbtials.</h4>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">axes3d</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
@@ -461,7 +461,7 @@ defaultdict(&lt;class 'list'&gt;, {'H': [S(0, 0, 0)[5.447178, 0.824547][0.156285
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div></div>
 
-<h2 id="now-start-visualize-some-of-the-atomic-orbitals">Now Start visualize some of the atomic orbitals</h2>
+<h3 id="now-start-visualize-some-of-the-atomic-orbitals">Now Start visualize some of the atomic orbitals</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">aolist</span><span class="p">)):</span>
     <span class="n">ao</span> <span class="o">=</span> <span class="n">aolist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -486,7 +486,7 @@ defaultdict(&lt;class 'list'&gt;, {'H': [S(0, 0, 0)[5.447178, 0.824547][0.156285
 
 <p><img src="/assets/img/ao.png" alt="png" /></p>
 
-<h3 id="the-major-work-horse-of-the-scf--in-this-section-we-define-the-function-that-calculates-1-electron-and-2-electron-integrals-using-boys-function-and-mcmurchie-davidson-recurrence-formulation">The major work horse of the SCF.  In this section, we define the function that calculates 1-electron and 2-electron integrals using Boys Function and McMurchie-Davidson recurrence formulation.</h3>
+<h4 id="the-major-work-horse-of-the-scf--in-this-section-we-define-the-function-that-calculates-1-electron-and-2-electron-integrals-using-boys-function-and-mcmurchie-davidson-recurrence-formulation">The major work horse of the SCF.  In this section, we define the function that calculates 1-electron and 2-electron integrals using Boys Function and McMurchie-Davidson recurrence formulation.</h4>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">gint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">center1</span><span class="p">,</span> <span class="n">exponent1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">center2</span><span class="p">,</span> <span class="n">exponent2</span><span class="p">):</span> <span class="c1">#calculate one electron integral of two gaussian primitives
 </span>    <span class="n">newcenter</span> <span class="o">=</span> <span class="p">(</span><span class="n">exponent1</span> <span class="o">*</span> <span class="n">center1</span> <span class="o">+</span> <span class="n">exponent2</span> <span class="o">*</span> <span class="n">center2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">exponent1</span> <span class="o">+</span> <span class="n">exponent2</span><span class="p">)</span>
@@ -718,7 +718,7 @@ defaultdict(&lt;class 'list'&gt;, {'H': [S(0, 0, 0)[5.447178, 0.824547][0.156285
 
 </code></pre></div></div>
 
-<h2 id="now-build-s-matrix-using-the-overlap-integral">Now Build S Matrix using the overlap integral</h2>
+<h3 id="now-build-s-matrix-using-the-overlap-integral">Now Build S Matrix using the overlap integral</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">aolist</span><span class="p">)</span>
 <span class="n">Smatrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
@@ -783,7 +783,7 @@ defaultdict(&lt;class 'list'&gt;, {'H': [S(0, 0, 0)[5.447178, 0.824547][0.156285
    2.51084590e+01]]
 </code></pre></div></div>
 
-<h2 id="now-build-t-matrix-using-the-kinetic-integral">Now build T Matrix using the kinetic integral</h2>
+<h3 id="now-build-t-matrix-using-the-kinetic-integral">Now build T Matrix using the kinetic integral</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Tmatrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
@@ -846,7 +846,7 @@ defaultdict(&lt;class 'list'&gt;, {'H': [S(0, 0, 0)[5.447178, 0.824547][0.156285
   -2.38636820e+01]]
 </code></pre></div></div>
 
-<h2 id="now-build-1-electron-coulombic-attraction-matrix-using-1-electron-integral">Now build 1-Electron Coulombic Attraction Matrix using 1-electron integral</h2>
+<h3 id="now-build-1-electron-coulombic-attraction-matrix-using-1-electron-integral">Now build 1-Electron Coulombic Attraction Matrix using 1-electron integral</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">coulombAttractionMatrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
@@ -909,9 +909,9 @@ defaultdict(&lt;class 'list'&gt;, {'H': [S(0, 0, 0)[5.447178, 0.824547][0.156285
   -1.49144815e+02]]
 </code></pre></div></div>
 
-<h2 id="now-build-2-electron-coulombic-repulsion-tensor">Now Build 2-electron Coulombic Repulsion Tensor</h2>
-<h3 id="this-section-takes-the-longest-time-in-the-early-days-the-2-electron-integral-is-calculated-and-saved-on-disk-they-will-be-read-in-when-neccessary-nowadays-with-the-fast-computing-power-it-is-actually-faster-to-calculate-the-2-electron-integrals-than-read-from-disk">This Section takes the longest time. In the early days, the 2-electron integral is calculated and saved on disk. They will be read in when neccessary. Nowadays, with the fast computing power, it is actually faster to calculate the 2-electron integrals than read from disk.</h3>
-<h3 id="here-we-calculate-them-and-save-them-in-a-rank-4-tensor-in-memory-on4-the-2-electron-integral-make-the-hartree-fock-algorithm-to-be-on4-time-complexity-but-in-reality-most-of-the-2-electron-integrals-are-zero-it-can-be-optimized-to-be-on2">Here we calculate them and save them in a rank-4 tensor in memory (O(N<sup>4</sup>). The 2-electron integral make the Hartree Fock Algorithm to be O(N<sup>4</sup>) time complexity. But in reality, most of the 2-electron integrals are Zero. It can be optimized to be O(N<sup>2</sup>)</h3>
+<h3 id="now-build-2-electron-coulombic-repulsion-tensor">Now Build 2-electron Coulombic Repulsion Tensor</h3>
+<h4 id="this-section-takes-the-longest-time-in-the-early-days-the-2-electron-integral-is-calculated-and-saved-on-disk-they-will-be-read-in-when-neccessary-nowadays-with-the-fast-computing-power-it-is-actually-faster-to-calculate-the-2-electron-integrals-than-read-from-disk">This Section takes the longest time. In the early days, the 2-electron integral is calculated and saved on disk. They will be read in when neccessary. Nowadays, with the fast computing power, it is actually faster to calculate the 2-electron integrals than read from disk.</h4>
+<h4 id="here-we-calculate-them-and-save-them-in-a-rank-4-tensor-in-memory-on4-the-2-electron-integral-make-the-hartree-fock-algorithm-to-be-on4-time-complexity-but-in-reality-most-of-the-2-electron-integrals-are-zero-it-can-be-optimized-to-be-on2">Here we calculate them and save them in a rank-4 tensor in memory (O(N<sup>4</sup>). The 2-electron integral make the Hartree Fock Algorithm to be O(N<sup>4</sup>) time complexity. But in reality, most of the 2-electron integrals are Zero. It can be optimized to be O(N<sup>2</sup>)</h4>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">time</span><span class="p">,</span> <span class="n">sys</span>
 <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">clear_output</span>
@@ -1523,7 +1523,7 @@ EHF:-67.67820288436762 prev:-67.67820288436762 delta:-2.4835649981014285e-07
 SCF Converged
 </code></pre></div></div>
 
-<h2 id="now-lets-visualize-the-mo">Now let’s visualize the MO</h2>
+<h3 id="now-lets-visualize-the-mo">Now let’s visualize the MO</h3>
 <ol>
   <li>First Build MO List from Converged C</li>
   <li>Normalize the MO</li>
@@ -1584,7 +1584,7 @@ SCF Converged
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

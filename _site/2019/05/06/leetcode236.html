@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -121,7 +121,7 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem description</h2>
+<h3 id="problem-description">Problem description</h3>
 <p>Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.</p>
 
 <p>According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes p and q as the lowest node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”</p>
@@ -144,7 +144,7 @@ Explanation: The LCA of nodes 5 and 4 is 5, since a node can be a descendant of 
 <p>All of the nodes’ values will be unique.
 p and q are different and both values will exist in the binary tree.</p>
 
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <ol>
   <li>Notice this time, it is only binary tree (not binary search tree) so we need to check whether p and q are in the same subtree. If they both in left subtree, then recursive to left, if both are in right subtree recursive to right. Otherwise, return root.</li>
   <li>We check quickly return if q is descendant of p or p is descendant of q.</li>
@@ -221,7 +221,7 @@ p and q are different and both values will exist in the binary tree.</p>
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

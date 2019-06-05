@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -119,7 +119,7 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem description</h2>
+<h3 id="problem-description">Problem description</h3>
 <p>Given a string s and a string t, check if s is subsequence of t.</p>
 
 <p>You may assume that there is only lower case English letters in both s and t. t is potentially a very long (length ~= 500,000) string, and s is a short string (&lt;=100).</p>
@@ -136,7 +136,7 @@ s = “axc”, t = “ahbgdc”</p>
 
 <p>Return false.</p>
 
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <ol>
   <li>Since we can not change order for subseuqnces, we can employ greedy linear scan from the head of string t for the current char in s. If we find it in t, we move to the next position in s and scan from the position next to the match position in t.</li>
   <li>If for some char in s, we can not find it in t, we reach then end of t and output False</li>
@@ -207,7 +207,7 @@ s = “axc”, t = “ahbgdc”</p>
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

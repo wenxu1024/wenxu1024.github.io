@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -121,7 +121,7 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem description</h2>
+<h3 id="problem-description">Problem description</h3>
 <p>An undirected, connected tree with N nodes labelled 0…N-1 and N-1 edges are given.</p>
 
 <p>The ith edge connects nodes edges[i][0] and edges[i][1] together.</p>
@@ -143,7 +143,7 @@ equals 1 + 1 + 2 + 2 + 2 = 8.  Hence, answer[0] = 8, and so on.
 Note: 1 &lt;= N &lt;= 10000
 </code></pre></div></div>
 
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <ol>
   <li>If there are two nodes separated by an edge x, y. Then the distance from node x can be calculated using the distance from y. Let f(x) be the subtree nodes from node x (including x itself). Then the distance from x : dist(x) = dist(y) - f(x) + (N - f(x)).</li>
   <li>The equation is because when we move from node y to x, the decrease distance by 1 for each node in subtree rooted at x. There are f(x) nodes in that tree, so we need to subtract 1xf(x).</li>
@@ -234,7 +234,7 @@ Note: 1 &lt;= N &lt;= 10000
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

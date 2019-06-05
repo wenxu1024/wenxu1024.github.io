@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -98,18 +98,17 @@
         <hr/>
   		  <div class="container">
     	   <h1> Credit Card Spend Anomaly Detection </h1>
-<h2 id="credit-card-spend-anomaly-detection">Credit card spend anomaly detection</h2>
 <p>The dataset for credict card spend anomaly is highly skewed (i.e. We have very few positive (fradulent) examples in the dataset).</p>
 
 <p>In this tutorial we will build a <strong>Dense</strong> model with class weighted loss function to fit the skewed data and apply our model to make predictions.</p>
 
-<h2 id="first-we-import-pandas-and-read-in-the-credit-card-spend-data-set">First we import pandas and read in the credit card spend data set</h2>
+<h3 id="first-we-import-pandas-and-read-in-the-credit-card-spend-data-set">First we import pandas and read in the credit card spend data set</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
 <span class="n">raw_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"creditcard.csv"</span><span class="p">)</span>
 </code></pre></div></div>
 
-<h2 id="we-show-the-first-5-row-of-the-data-set">We show the first 5 row of the data set</h2>
+<h3 id="we-show-the-first-5-row-of-the-data-set">We show the first 5 row of the data set</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">raw_data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </code></pre></div></div>
@@ -281,7 +280,7 @@
 <p>5 rows × 31 columns</p>
 </div>
 
-<h2 id="we-describe-basic-statistics-of-all-numeric-type-columns-features">We describe basic statistics of all numeric type columns (features)</h2>
+<h3 id="we-describe-basic-statistics-of-all-numeric-type-columns-features">We describe basic statistics of all numeric type columns (features)</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">raw_data</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
 </code></pre></div></div>
@@ -525,13 +524,13 @@
 <p>8 rows × 31 columns</p>
 </div>
 
-<h2 id="get-feature-matrix-and-labels">Get feature matrix and labels</h2>
+<h3 id="get-feature-matrix-and-labels">Get feature matrix and labels</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">labels</span> <span class="o">=</span> <span class="n">raw_data</span><span class="p">[</span><span class="s">"Class"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">'category'</span><span class="p">)</span>
 <span class="n">featureMatrix</span> <span class="o">=</span> <span class="n">raw_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,(</span><span class="n">raw_data</span><span class="o">.</span><span class="n">columns</span> <span class="o">!=</span> <span class="s">'Time'</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">raw_data</span><span class="o">.</span><span class="n">columns</span> <span class="o">!=</span> <span class="s">'Class'</span><span class="p">)]</span>
 </code></pre></div></div>
 
-<h2 id="we-plot-the-distribution-of-the-labels-and-the-label-is-highly-skewed-with-much-more-negative-data-than-positive">We plot the distribution of the labels and the label is highly skewed, with much more negative data than positive.</h2>
+<h3 id="we-plot-the-distribution-of-the-labels-and-the-label-is-highly-skewed-with-much-more-negative-data-than-positive">We plot the distribution of the labels and the label is highly skewed, with much more negative data than positive.</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
@@ -544,7 +543,7 @@
 
 <p><img src="/assets/img/freqDist.png" alt="png" /></p>
 
-<h2 id="we-import-sklearn-module-to-split-the-data-into-train-and-test-subsets-and-calculate-the-class-weights-to-be-used-for-class-weighted-loss-function">We import sklearn module to split the data into train and test subsets and calculate the class weights to be used for class weighted loss function.</h2>
+<h3 id="we-import-sklearn-module-to-split-the-data-into-train-and-test-subsets-and-calculate-the-class-weights-to-be-used-for-class-weighted-loss-function">We import sklearn module to split the data into train and test subsets and calculate the class weights to be used for class weighted loss function.</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
 <span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="kn">import</span> <span class="n">class_weight</span>
@@ -572,7 +571,7 @@
 /usr/local/lib/python3.7/site-packages/ipykernel_launcher.py:8: FutureWarning: Method .as_matrix will be removed in a future version. Use .values instead.
 </code></pre></div></div>
 
-<h2 id="using-keras-api-we-build-a-simple-sequential-model-with-3-dense-layers-and-sigmoid-activation-in-the-output-layer">Using Keras API, we build a simple Sequential model with 3 Dense layers and sigmoid activation in the output layer.</h2>
+<h3 id="using-keras-api-we-build-a-simple-sequential-model-with-3-dense-layers-and-sigmoid-activation-in-the-output-layer">Using Keras API, we build a simple Sequential model with 3 Dense layers and sigmoid activation in the output layer.</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">BatchNormalization</span><span class="p">,</span> <span class="n">Dropout</span>
 <span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
@@ -624,7 +623,7 @@ Non-trainable params: 238
 _________________________________________________________________
 </code></pre></div></div>
 
-<h2 id="we-fit-the-model-to-get-parameters">We fit the model to get parameters</h2>
+<h3 id="we-fit-the-model-to-get-parameters">We fit the model to get parameters</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mySimpleModel</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">class_weight</span><span class="o">=</span><span class="n">class_weights</span><span class="p">)</span>
 </code></pre></div></div>
@@ -642,7 +641,7 @@ Epoch 1/1
 &lt;keras.callbacks.History at 0x11446d860&gt;
 </code></pre></div></div>
 
-<h2 id="we-predict-the-label-based-on-test-data-and-print-out-the-positive-predictions">We predict the label based on test data and print out the positive predictions.</h2>
+<h3 id="we-predict-the-label-based-on-test-data-and-print-out-the-positive-predictions">We predict the label based on test data and print out the positive predictions.</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">y_pred</span> <span class="o">=</span> <span class="n">mySimpleModel</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
 <span class="n">ydisplay</span> <span class="o">=</span> <span class="n">y_pred</span><span class="p">[</span><span class="n">y_pred</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">]</span>
@@ -661,7 +660,7 @@ Epoch 1/1
       dtype=float32)
 </code></pre></div></div>
 
-<h2 id="we-calculate-the-average-precision-recall-score">We calculate the average precision-recall score.</h2>
+<h3 id="we-calculate-the-average-precision-recall-score">We calculate the average precision-recall score.</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">average_precision_score</span>
 <span class="n">average_precision</span> <span class="o">=</span> <span class="n">average_precision_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
@@ -673,7 +672,7 @@ Epoch 1/1
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Average precision-recall score: 0.70
 </code></pre></div></div>
 
-<h2 id="precision-recall-curve">Precision-Recall curve</h2>
+<h3 id="precision-recall-curve">Precision-Recall curve</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">precision_recall_curve</span>
 <span class="kn">from</span> <span class="nn">sklearn.utils.fixes</span> <span class="kn">import</span> <span class="n">signature</span>
@@ -701,7 +700,7 @@ Epoch 1/1
 
 <p><img src="/assets/img/auc.png" alt="png" /></p>
 
-<h2 id="roc-curve">ROC curve</h2>
+<h3 id="roc-curve">ROC curve</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_curve</span>
 <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
@@ -723,7 +722,7 @@ Epoch 1/1
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

@@ -9,7 +9,7 @@ tags:
 - gaussian
 ---
 
-## Vibronic spectra of molecules used to be hot research area of molecular science.
+### Vibronic spectra of molecules used to be hot research area of molecular science.
 
 The intensity of the [vibronic transition](https://en.wikipedia.org/wiki/Vibronic_spectroscopy) is governed by the [Franck Condon principle](https://en.wikipedia.org/wiki/Franck–Condon_principle)
 
@@ -26,9 +26,9 @@ As a result, in 1 and 2 check point file must be saved for step 3.
 
 [In the last step we will visualize the emission and absorption vibronic spetra of NH<sub>3</sub>](#step4)
 
-## Ground State
+### Ground State
 {:step1}
-### Input
+#### Input
 ```
 %NProcShared=4 
 %Chk=nh3_ground.chk 
@@ -43,7 +43,7 @@ H          0    0.62658        0.08845       -1.03367
 H          0    1.95550        0.02404       -0.09618 
  
 ```
-### Output
+#### Output
 The Frequency section will look like this
 ```
  Harmonic frequencies (cm**-1), IR intensities (KM/Mole), Raman scattering
@@ -75,9 +75,9 @@ The Frequency section will look like this
 ```
 
 
-## First Excited State
+### First Excited State
 {:#step2}
-### Input
+#### Input
 ```
 %NProcShared=4 
 %Chk=nh3_excited.chk
@@ -92,7 +92,7 @@ H          0    0.62658        0.08845       -1.03367
 H          0    1.95550        0.02404       -0.09618
 
 ```
-### Output
+#### Output
 The frequency section will look like this
 ```
  Harmonic frequencies (cm**-1), IR intensities (KM/Mole), Raman scattering
@@ -125,9 +125,9 @@ The frequency section will look like this
 ```
 
 
-## Franck-Condon Factor Calculation
+### Franck-Condon Factor Calculation
 {:#step3}
-### Input
+#### Input
 ```
 %NProcShared=4 
 %Chk=nh3_ground.chk
@@ -138,7 +138,7 @@ nh3_excited.chk
 ```
 For Emission Spectra Calculation, just add EMI to the Freq Tuple.
 
-### Output
+#### Output
 The start section of the result will look like this
 ```
 **********************************************************************
@@ -174,7 +174,7 @@ The start section of the result will look like this
  ```
  
 
-## Emission and Absorption Spectra of NH<sub>3</sub>
+### Emission and Absorption Spectra of NH<sub>3</sub>
  {:#step4}
  ![alt Vibronic Spectra](/assets/img/vibronic.png)
  

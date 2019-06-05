@@ -4,12 +4,11 @@ layout: project
 name: Image Recognition of Handwritten Digits
 ---
 
-## Convolutional Neural Network
-[Convolutional neural network](https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53) which invented by [Yann LeCun](http://yann.lecun.com) *et al*. and later improved by many others has been proved to be very effective on image recognition tasks.
+[Convolutional neural network](https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53) which is invented by [Yann LeCun](http://yann.lecun.com) *et al*. and later improved by many others has been proved to be very effective on image recognition tasks.
 
 In this tutorial I will show how to use [Keras](https://keras.io) API to implement a simple Convolutional Neural Netwrok to do handwritten digit recognition, which could achieve an accuracy as high as 95%.
 
-## We first load the MNIST data downloaded from the internet
+### We first load the MNIST data downloaded from the internet
 
 
 ```python
@@ -35,7 +34,7 @@ test_labels = read_idx(test_labels_filename)
       import sys
 
 
-## Now we reshape the data to make it appropriate for ConvNet.
+### Now we reshape the data to make it appropriate for ConvNet.
 
 
 ```python
@@ -54,7 +53,7 @@ print(train_images.shape, train_labels.shape, test_images.shape, test_labels.sha
     (60000, 28, 28, 1) (60000, 10) (10000, 28, 28, 1) (10000,)
 
 
-## Before we proceed, we plot one example train data out.
+### Before we proceed, we plot one example train data out.
 
 
 ```python
@@ -71,7 +70,7 @@ print(train_labels[0].argmax())
 ![png](/assets/img/sampleImg.png)
 
 
-## Now we build a sequential ConvNet using Keras API.
+### Now we build a sequential ConvNet using Keras API.
 In our sequential mode, we have 3 Convolutional layers, 2 maxpooling layers, followed by 2 dense layers and a final softmax activation. Since the problem is multi-cateogorical imge recogonition, we used **cateogorical cross entropy** as our loss function. We used **adam** optimizer for parameter optimization.
 1 **Epoch** of optimization is good enough to acheive a 95% accuracy.
 
@@ -117,7 +116,7 @@ mySimpleModel.fit(train_images, train_labels, epochs = 1, verbose = 1)
 
 
 
-## Now we use the trained model to predict some test images and calculate the ratio of misclassified images and correctly classified images.
+### Now we use the trained model to predict some test images and calculate the ratio of misclassified images and correctly classified images.
 
 
 ```python
@@ -139,7 +138,7 @@ print(len(match_test)/len(test_labels))
     0.9708
 
 
-## Now we randomly choose 10 images from the misclassified set and plot them.
+### Now we randomly choose 10 images from the misclassified set and plot them.
 
 
 ```python
@@ -161,7 +160,7 @@ plt.show()
 ![png](/assets/img/misclassified.png)
 
 
-## Now we randomly choose 10 images from the correctly classified set and plot them.
+### Now we randomly choose 10 images from the correctly classified set and plot them.
 
 
 ```python

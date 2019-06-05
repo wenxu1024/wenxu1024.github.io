@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -119,7 +119,7 @@
  	
 </p>
 <div class="post">
-<h1 id="density-functional-theory-in-python-code-2d-external-potential">Density Functional Theory in Python Code (2D External Potential)</h1>
+<h3 id="density-functional-theory-in-python-code-2d-external-potential">Density Functional Theory in Python Code (2D External Potential)</h3>
 
 <p>This note book follows the example as illustrate in the following link</p>
 
@@ -366,7 +366,7 @@ orbital 8 = \frac{1}{2}(\psi_{3,0}(x,y) - \psi_{0,3}(x,y) + \psi_{2,1}(x,y) - \p
 orbital 9 = \frac{1}{2}(\psi_{3,0}(x,y) + \psi_{0,3}(x,y) - \psi_{2,1}(x,y) - \psi_{1,2}(x,y))
 \end{align}</p>
 
-<h2 id="now-add-more-than-one-electrons">Now Add More than One electrons</h2>
+<h3 id="now-add-more-than-one-electrons">Now Add More than One electrons</h3>
 <p>All the above analysis only considers the one electron in the orbtial (1 Body problem). In reality there are many electrons fill the orbitals. Now let’s start adding electrons to the orbitals.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#integral
@@ -441,7 +441,7 @@ v_{x}^{LDA} = = -(\frac{3}{\pi})^{\frac{1}{3}}n(x,y)^{\frac{1}{3}}
     <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">potential</span>
 </code></pre></div></div>
 
-<h2 id="coumlobic-potential">Coumlobic potential</h2>
+<h3 id="coumlobic-potential">Coumlobic potential</h3>
 <p>Electrostatic or Hartree energy
 \begin{align}
 E_{hartree}[n] = 1/2 \int\int{\frac{n(x’,y’)n(x,y)}{\sqrt{(x-x’)^2+(y-y’)^2}}}dxdydx’dy’
@@ -460,7 +460,7 @@ v_{hartree}[n] = \int{\frac{n(x,y)}{\sqrt{(x-x’)^2+(y-y’)^2}}}dx’dy’
     <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">potential</span>
 </code></pre></div></div>
 
-<h2 id="solve-the-ks-equationself-consistency-loop">Solve the KS equation：Self-consistency loop</h2>
+<h3 id="solve-the-ks-equationself-consistency-loop">Solve the KS equation：Self-consistency loop</h3>
 <ol>
   <li>initialize the density (you can take an arbitrary constant)</li>
   <li>Calculate the Exchange and Hatree potentials</li>
@@ -610,7 +610,7 @@ step: 99    energy: 19.7215    energy_diff: -8.5675110882 ex_energy:   -7.2262 h
 not converged
 </code></pre></div></div>
 
-<h2 id="now-get-the-electron-density">Now get the electron density</h2>
+<h3 id="now-get-the-electron-density">Now get the electron density</h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">'3d'</span><span class="p">)</span>
@@ -682,7 +682,7 @@ not converged
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

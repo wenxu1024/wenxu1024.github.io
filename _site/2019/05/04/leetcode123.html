@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -119,14 +119,14 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem Description</h2>
+<h3 id="problem-description">Problem Description</h3>
 <p>Say you have an array for which the ith element is the price of a given stock on day i.</p>
 
 <p>If you were only permitted to complete at most one transaction (i.e., buy one and sell one share of the stock), design an algorithm to find the maximum profit.</p>
 
 <p>Note that you cannot sell a stock before you buy one.</p>
 
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <ol>
   <li>Since we must buy before sell, we want to buy as low as possible and sell as high as possible but higher price must follow the low price</li>
   <li>We can keep track of minimum price have seen while scanning and a maximum profit. If current price is smaller than minimum price, we update the minimum price. If it is larger, we calculate the profit and compare with maxprofit. If it is larger, we update the maximum profit also.</li>
@@ -186,7 +186,7 @@
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

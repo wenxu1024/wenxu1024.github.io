@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -121,7 +121,7 @@
  	
 </p>
 <div class="post">
-<h2 id="vibronic-spectra-of-molecules-used-to-be-hot-research-area-of-molecular-science">Vibronic spectra of molecules used to be hot research area of molecular science.</h2>
+<h3 id="vibronic-spectra-of-molecules-used-to-be-hot-research-area-of-molecular-science">Vibronic spectra of molecules used to be hot research area of molecular science.</h3>
 
 <p>The intensity of the <a href="https://en.wikipedia.org/wiki/Vibronic_spectroscopy">vibronic transition</a> is governed by the <a href="https://en.wikipedia.org/wiki/Franck–Condon_principle">Franck Condon principle</a></p>
 
@@ -140,8 +140,8 @@
 
 <p><a href="#step4">In the last step we will visualize the emission and absorption vibronic spetra of NH<sub>3</sub></a></p>
 
-<h2 id="ground-state">Ground State</h2>
-<h3 id="input">Input</h3>
+<h3 id="ground-state">Ground State</h3>
+<h4 id="input">Input</h4>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>%NProcShared=4 
 %Chk=nh3_ground.chk 
 #P PW91PW91/6-311G(d,p) Opt(Z-Matrix) Freq PoP=Full 
@@ -155,7 +155,7 @@ H          0    0.62658        0.08845       -1.03367
 H          0    1.95550        0.02404       -0.09618 
  
 </code></pre></div></div>
-<h3 id="output">Output</h3>
+<h4 id="output">Output</h4>
 <p>The Frequency section will look like this</p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> Harmonic frequencies (cm**-1), IR intensities (KM/Mole), Raman scattering
  activities (A**4/AMU), depolarization ratios for plane and unpolarized
@@ -185,8 +185,8 @@ H          0    1.95550        0.02404       -0.09618
      4   1    -0.41   0.36   0.18    -0.54   0.49   0.30     0.16  -0.11  -0.08
 </code></pre></div></div>
 
-<h2 id="step2">First Excited State</h2>
-<h3 id="input-1">Input</h3>
+<h3 id="step2">First Excited State</h3>
+<h4 id="input-1">Input</h4>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>%NProcShared=4 
 %Chk=nh3_excited.chk
 #P TD(Singlets) PW91PW91/6-311G(d,p) Opt(Z-Matrix) Freq=savenormalmodes PoP=Full 
@@ -200,7 +200,7 @@ H          0    0.62658        0.08845       -1.03367
 H          0    1.95550        0.02404       -0.09618
 
 </code></pre></div></div>
-<h3 id="output-1">Output</h3>
+<h4 id="output-1">Output</h4>
 <p>The frequency section will look like this</p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> Harmonic frequencies (cm**-1), IR intensities (KM/Mole), Raman scattering
  activities (A**4/AMU), depolarization ratios for plane and unpolarized
@@ -231,8 +231,8 @@ H          0    1.95550        0.02404       -0.09618
 
 </code></pre></div></div>
 
-<h2 id="step3">Franck-Condon Factor Calculation</h2>
-<h3 id="input-2">Input</h3>
+<h3 id="step3">Franck-Condon Factor Calculation</h3>
+<h4 id="input-2">Input</h4>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>%NProcShared=4 
 %Chk=nh3_ground.chk
 #P Geom=AllCheck Freq=(ReadFC,FC,SaveNM) NoSymm
@@ -242,7 +242,7 @@ nh3_excited.chk
 </code></pre></div></div>
 <p>For Emission Spectra Calculation, just add EMI to the Freq Tuple.</p>
 
-<h3 id="output-2">Output</h3>
+<h4 id="output-2">Output</h4>
 <p>The start section of the result will look like this</p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>**********************************************************************
 
@@ -276,7 +276,7 @@ nh3_excited.chk
  Final state structure is superposed to it.
 </code></pre></div></div>
 
-<h2 id="step4">Emission and Absorption Spectra of NH<sub>3</sub></h2>
+<h3 id="step4">Emission and Absorption Spectra of NH<sub>3</sub></h3>
 <p><img src="/assets/img/vibronic.png" alt="alt Vibronic Spectra" /></p>
 
 <p>Since the emission intensity is too small, we multiplied it by a factor of 10. It can clearly be seen that there is a wave length shift between the emission and absorption spectra. This shift is called <a href="https://en.wikipedia.org/wiki/Stokes_shift">Stokes Shift</a> which is due to the shift in equilibrium geometry between the ground and excited states.</p>
@@ -320,7 +320,7 @@ nh3_excited.chk
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

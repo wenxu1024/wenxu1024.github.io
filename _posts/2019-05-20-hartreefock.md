@@ -8,7 +8,7 @@ tags:
 - quantum mechanics
 ---
 
-# Computational chemistry is always fascinating. 
+### Computational chemistry is always fascinating. 
 Being able to predict molecular properties, such as (dipole, charge distribution, geometry, vibrational frequencies, Infra-red spectrum, Raman spectrum, NMR spectrum, polarizability, ... and so on) from the first principle exemplifies the powerfulness of modern computational chemistry / physics.
 
 Hartree Fock is the most important and fundmental algorithm in computational chemistry. Be able to implement it from scratch is imperative to the understanding of the basics.
@@ -18,13 +18,13 @@ Modern computational chemistry is mostly written in C++ or Fortran, which is har
 Below I will demostrate the implementation of Hartree Fock on a H2O molecule on a relatively small basis set 3-21G.
 
 
-## Hartree Fock calculation of H2O system in Python
+#### Hartree Fock calculation of H2O system in Python
 1. This tutorial shows how hartree fock calculation is done typically. This does not intend to be the most efficient algorithmic implementation of HF. But a pedagogical tutorial on what is Hartree Fock and what is the mathematical equations behind it.
 2. We also visualize the Atomic orbitla and Molecular Orbitals, showing how the linear combination of atomic orbitals (LCAO) gave molecular orbitals (MO)
 3. We implemented the McMurchie-Davidson algorithm (using recursion) to calculate the 1-electron and 2-electron integrals (this integrals are saved in Memory, I didn't try to save it on the disk and read them later)
 4. Scipy linear algebra package is used to solve the Hartree Fock Roothaan-Hall equation (generalized eigenvalue-eigenvector problem) (FC=SCe)
 
-### Import libraries
+#### Import libraries
 
 
 ```python
@@ -36,7 +36,7 @@ from scipy.special import factorial2
 from scipy.special import factorial
 ```
 
-### Define Atomic Orbital object, Molecular Orbital object, and Gaussian Primitive object. Give two functions that convert between "S, P, D, F" to "(0,0,0),(1,0,0), (2,0,0)...."
+#### Define Atomic Orbital object, Molecular Orbital object, and Gaussian Primitive object. Give two functions that convert between "S, P, D, F" to "(0,0,0),(1,0,0), (2,0,0)...."
 
 
 
@@ -140,8 +140,8 @@ class Mo(object): #molecular orbital->linear combination of atomic orbitals
     
 ```
 
-# Read Basis Set Information from Basis set data. The data is in Gaussian 94 Format and downloaded from EMSL basis set exchange
-Gaussian Format and Basis Set downloaded from EMSL Basis Set Exchange. In this tutorial 6-311++G(2d,2p) is used.
+## Read Basis Set Information from Basis set data. The data is in Gaussian 94 Format and downloaded from EMSL basis set exchange
+Gaussian Format and Basis Set downloaded from EMSL Basis Set Exchange. In this tutorial 3-21G is used.
 
 
 ```python
@@ -267,7 +267,7 @@ print(aodict)
     defaultdict(<class 'list'>, {'H': [S(0, 0, 0)[5.447178, 0.824547][0.156285, 0.904691], S(0, 0, 0)[0.183192][1.0]], 'O': [S(0, 0, 0)[322.037, 48.4308, 10.4206][0.0592394, 0.3515, 0.707658], S(0, 0, 0)[7.40294, 1.5762][-0.404453, 1.22156], Px(0, 0, 0)[7.40294, 1.5762][0.244586, 0.853955], Py(0, 0, 0)[7.40294, 1.5762][0.244586, 0.853955], Pz(0, 0, 0)[7.40294, 1.5762][0.244586, 0.853955], S(0, 0, 0)[0.373684][1.0], Px(0, 0, 0)[0.373684][1.0], Py(0, 0, 0)[0.373684][1.0], Pz(0, 0, 0)[0.373684][1.0]]})
 
 
-## Read Geometry information
+### Read Geometry information
 Read Geometry information in Cartesian Coordinate. The unit is in Angstrom and the full molecule is used. No symmetry is used. In this tutorial H2O is used as illustration.
 
 
@@ -298,7 +298,7 @@ print(len(aolist))
     13
 
 
-### Define a Function that do implicit plot of 3D surfaces to visualize the Atomic and Molecular orbtials.
+#### Define a Function that do implicit plot of 3D surfaces to visualize the Atomic and Molecular orbtials.
 
 
 ```python
@@ -360,7 +360,7 @@ def plot_implicit(fn, isovalue, bbox=(-2.5,2.5),elev=0, azim=30):
     plt.show()
 ```
 
-## Now Start visualize some of the atomic orbitals
+### Now Start visualize some of the atomic orbitals
 
 
 ```python
@@ -389,7 +389,7 @@ plot_implicit(aolist[4], 0.05,[-4,4],0,90) #Pz orbital on Oxygen.
 ![png](/assets/img/ao.png)
 
 
-### The major work horse of the SCF.  In this section, we define the function that calculates 1-electron and 2-electron integrals using Boys Function and McMurchie-Davidson recurrence formulation.
+#### The major work horse of the SCF.  In this section, we define the function that calculates 1-electron and 2-electron integrals using Boys Function and McMurchie-Davidson recurrence formulation.
 
 
 ```python
@@ -623,7 +623,7 @@ def coulombicAttraction(ao1, atomlist, ao2):
 
 ```
 
-## Now Build S Matrix using the overlap integral
+### Now Build S Matrix using the overlap integral
 
 
 ```python
@@ -690,7 +690,7 @@ print(Smatrix)
        2.51084590e+01]]
 
 
-## Now build T Matrix using the kinetic integral
+### Now build T Matrix using the kinetic integral
 
 
 ```python
@@ -755,7 +755,7 @@ print(Tmatrix)
       -2.38636820e+01]]
 
 
-## Now build 1-Electron Coulombic Attraction Matrix using 1-electron integral
+### Now build 1-Electron Coulombic Attraction Matrix using 1-electron integral
 
 
 ```python
@@ -820,9 +820,9 @@ print(coulombAttractionMatrix)
       -1.49144815e+02]]
 
 
-## Now Build 2-electron Coulombic Repulsion Tensor
-### This Section takes the longest time. In the early days, the 2-electron integral is calculated and saved on disk. They will be read in when neccessary. Nowadays, with the fast computing power, it is actually faster to calculate the 2-electron integrals than read from disk.
-### Here we calculate them and save them in a rank-4 tensor in memory (O(N<sup>4</sup>). The 2-electron integral make the Hartree Fock Algorithm to be O(N<sup>4</sup>) time complexity. But in reality, most of the 2-electron integrals are Zero. It can be optimized to be O(N<sup>2</sup>)
+### Now Build 2-electron Coulombic Repulsion Tensor
+#### This Section takes the longest time. In the early days, the 2-electron integral is calculated and saved on disk. They will be read in when neccessary. Nowadays, with the fast computing power, it is actually faster to calculate the 2-electron integrals than read from disk.
+#### Here we calculate them and save them in a rank-4 tensor in memory (O(N<sup>4</sup>). The 2-electron integral make the Hartree Fock Algorithm to be O(N<sup>4</sup>) time complexity. But in reality, most of the 2-electron integrals are Zero. It can be optimized to be O(N<sup>2</sup>)
 
 
 ```python
@@ -1438,7 +1438,7 @@ for i in range(maxiter):
     SCF Converged
 
 
-## Now let's visualize the MO
+### Now let's visualize the MO
 1. First Build MO List from Converged C
 2. Normalize the MO
 3. Visualize MO (HOMO)

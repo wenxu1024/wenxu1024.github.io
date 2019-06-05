@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -121,7 +121,7 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem description</h2>
+<h3 id="problem-description">Problem description</h3>
 <p>Given a binary tree, return all duplicate subtrees. For each kind of duplicate subtrees, you only need to return the root node of any one of them.</p>
 
 <p>Two trees are duplicate if they have the same structure with same node values.</p>
@@ -145,7 +145,7 @@ and
 Therefore, you need to return above trees' root in the form of a list.
 </code></pre></div></div>
 
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <ol>
   <li>We keep a dictionary of serialized trees. During dfs visit, if we found a node’s serialized string in the dictionary and its count is one (found it second time), we add the node to result. Else we increment the count of the serialized node by 1</li>
 </ol>
@@ -217,7 +217,7 @@ Therefore, you need to return above trees' root in the form of a list.
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

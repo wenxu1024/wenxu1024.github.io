@@ -4,13 +4,12 @@ layout: project
 name: Credit Card Spend Anomaly Detection
 ---
 
-## Credit card spend anomaly detection
 The dataset for credict card spend anomaly is highly skewed (i.e. We have very few positive (fradulent) examples in the dataset).
 
 In this tutorial we will build a **Dense** model with class weighted loss function to fit the skewed data and apply our model to make predictions.
 
 
-## First we import pandas and read in the credit card spend data set
+### First we import pandas and read in the credit card spend data set
 
 
 ```python
@@ -18,7 +17,7 @@ import pandas as pd
 raw_data = pd.read_csv("creditcard.csv")
 ```
 
-## We show the first 5 row of the data set
+### We show the first 5 row of the data set
 
 
 ```python
@@ -197,7 +196,7 @@ raw_data.head()
 
 
 
-## We describe basic statistics of all numeric type columns (features)
+### We describe basic statistics of all numeric type columns (features)
 
 
 ```python
@@ -448,7 +447,7 @@ raw_data.describe()
 
 
 
-## Get feature matrix and labels
+### Get feature matrix and labels
 
 
 ```python
@@ -456,7 +455,7 @@ labels = raw_data["Class"].astype('category')
 featureMatrix = raw_data.loc[:,(raw_data.columns != 'Time') & (raw_data.columns != 'Class')]
 ```
 
-## We plot the distribution of the labels and the label is highly skewed, with much more negative data than positive.
+### We plot the distribution of the labels and the label is highly skewed, with much more negative data than positive.
 
 
 ```python
@@ -473,7 +472,7 @@ ax.set_yscale('log')
 ![png](/assets/img/freqDist.png)
 
 
-## We import sklearn module to split the data into train and test subsets and calculate the class weights to be used for class weighted loss function.
+### We import sklearn module to split the data into train and test subsets and calculate the class weights to be used for class weighted loss function.
 
 
 ```python
@@ -504,7 +503,7 @@ print(class_weights)
       
 
 
-## Using Keras API, we build a simple Sequential model with 3 Dense layers and sigmoid activation in the output layer.
+### Using Keras API, we build a simple Sequential model with 3 Dense layers and sigmoid activation in the output layer.
 
 
 ```python
@@ -558,7 +557,7 @@ mySimpleModel.summary()
     _________________________________________________________________
 
 
-## We fit the model to get parameters
+### We fit the model to get parameters
 
 
 ```python
@@ -579,7 +578,7 @@ mySimpleModel.fit(x_train, y_train, epochs=1, verbose=1, class_weight=class_weig
 
 
 
-## We predict the label based on test data and print out the positive predictions.
+### We predict the label based on test data and print out the positive predictions.
 
 
 ```python
@@ -604,7 +603,7 @@ ydisplay
 
 
 
-## We calculate the average precision-recall score.
+### We calculate the average precision-recall score.
 
 
 ```python
@@ -618,7 +617,7 @@ print('Average precision-recall score: {0:0.2f}'.format(
     Average precision-recall score: 0.70
 
 
-## Precision-Recall curve
+### Precision-Recall curve
 
 
 ```python
@@ -654,7 +653,7 @@ plt.title('2-class Precision-Recall curve: AP={0:0.2f}'.format(
 ![png](/assets/img/auc.png)
 
 
-## ROC curve
+### ROC curve
 
 
 ```python

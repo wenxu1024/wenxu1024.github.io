@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -119,7 +119,7 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem description</h2>
+<h3 id="problem-description">Problem description</h3>
 <p>Given an integer array A, you partition the array into (contiguous) subarrays of length at most K.  After partitioning, each subarray has their values changed to become the maximum value of that subarray.</p>
 
 <p>Return the largest sum of the given array after partitioning.</p>
@@ -135,7 +135,7 @@ Explanation: A becomes [15,15,15,9,10,10,10]</p>
 <p>1 &lt;= K &lt;= A.length &lt;= 500
 0 &lt;= A[i] &lt;= 10^6</p>
 
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <ol>
   <li>Let DP[i] be the partition maximum sum of array A[:i], then we can build DP[i] based on subproblems. That is:</li>
   <li>If A[i - 1] is the only element in the last partition we have DP[i - 1] + 1 x A[i - 1]</li>
@@ -204,7 +204,7 @@ Explanation: A becomes [15,15,15,9,10,10,10]</p>
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

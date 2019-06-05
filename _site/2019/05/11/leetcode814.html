@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -123,7 +123,7 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem description</h2>
+<h3 id="problem-description">Problem description</h3>
 <p>We are given the head node root of a binary tree, where additionally every node’s value is either a 0 or a 1.</p>
 
 <p>Return the same tree where every subtree (of the given tree) not containing a 1 has been removed.</p>
@@ -151,7 +151,7 @@ Output: [1,1,0,1,1,null,1]</p>
 <p>The binary tree will have at most 100 nodes.
 The value of each node will only be 0 or 1.</p>
 
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <ol>
   <li>For each node, we can check whether all nodes of this tree is <strong>Zero</strong>. If it is, we return make this node None</li>
   <li>If not, we prune its left and right subtree, and attach the modified subtrees’ root as the child of the current node.</li>
@@ -228,7 +228,7 @@ The value of each node will only be 0 or 1.</p>
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

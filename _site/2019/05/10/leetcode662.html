@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -113,7 +113,7 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem description</h2>
+<h3 id="problem-description">Problem description</h3>
 <p>Given a binary tree, write a function to get the maximum width of the given tree. The width of a tree is the maximum width among all levels. The binary tree has the same structure as a full binary tree, but some nodes are null.</p>
 
 <p>The width of one level is defined as the length between the end-nodes (the leftmost and right most non-null nodes in the level, where the null nodes between the end-nodes are also counted into the length calculation.</p>
@@ -168,8 +168,8 @@ Output: 8
 Explanation:The maximum width existing in the fourth level with the length 8 (6,null,null,null,null,null,null,7).
 </code></pre></div></div>
 
-<h2 id="solution">Solution</h2>
-<h3 id="bfs">BFS</h3>
+<h3 id="solution">Solution</h3>
+<h4 id="bfs">BFS</h4>
 <ol>
   <li>We do level order traversal of the tree. For each node, we add additional information as the level it belongs and its x coordinate. Then for each level, we calculates the width as the difference of x coordinate between the rightmost node and leftmost node. The maximum difference among all the levels are the width of the binary tree</li>
 </ol>
@@ -208,7 +208,7 @@ Explanation:The maximum width existing in the fourth level with the length 8 (6,
 				
 </code></pre></div></div>
 
-<h3 id="dfs">DFS</h3>
+<h4 id="dfs">DFS</h4>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Definition for a binary tree node.
 # class TreeNode:
 #     def __init__(self, x):
@@ -281,7 +281,7 @@ Explanation:The maximum width existing in the fourth level with the length 8 (6,
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

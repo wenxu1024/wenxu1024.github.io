@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -117,7 +117,7 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem description</h2>
+<h3 id="problem-description">Problem description</h3>
 <p>A complete binary tree is a binary tree in which every level, except possibly the last, is completely filled, and all nodes are as far left as possible.</p>
 
 <p>Write a data structure CBTInserter that is initialized with a complete binary tree and supports the following operations:</p>
@@ -141,7 +141,7 @@ Output: [null,3,4,[1,2,3,4,5,6,7,8]]</p>
 CBTInserter.insert is called at most 10000 times per test case.
 Every value of a given or inserted node is between 0 and 5000.</p>
 
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <ol>
   <li>Since the tree is complete binary tree, we can use serialize it to an array. Everytime, we insert we append to the end of the array and find the parent of the inserted node and modify the left and right attribute of the parent node.</li>
 </ol>
@@ -238,7 +238,7 @@ Every value of a given or inserted node is between 0 and 5000.</p>
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

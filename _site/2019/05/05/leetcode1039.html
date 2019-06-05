@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -119,7 +119,7 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem description</h2>
+<h3 id="problem-description">Problem description</h3>
 <p>Given N, consider a convex N-sided polygon with vertices labelled A[0], A[i], …, A[N-1] in clockwise order.</p>
 
 <p>Suppose you triangulate the polygon into N-2 triangles.  For each triangle, the value of that triangle is the product of the labels of the vertices, and the total score of the triangulation is the sum of these values over all N-2 triangles in the triangulation.</p>
@@ -142,7 +142,7 @@ Example 3:</p>
 Output: 13
 Explanation: The minimum score triangulation has score 1*1*3 + 1*1*4 + 1*1*5 + 1*1*1 = 13.</p>
 
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <ol>
   <li>Notice that in the final triagulation edge (0, N - 1) must belong to a triangle. There are N - 2 options (from 1~N-2) to choose the third point of the triangle.</li>
   <li>Let DP[i, j] be the minimum cost to triangularization ploygon with edge (i, j and points from i~j). Then 
@@ -209,7 +209,7 @@ DP(i, j)=min_{i<k<j} (DP(i, k) + DP(k, j) + A[i]A[k]A[j]) %]]></script></li>
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

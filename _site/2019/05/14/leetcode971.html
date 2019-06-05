@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -119,7 +119,7 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem description</h2>
+<h3 id="problem-description">Problem description</h3>
 <p>Given a binary tree with N nodes, each node has a different value from {1, …, N}.</p>
 
 <p>A node in this binary tree can be flipped by swapping the left child and the right child of that node.</p>
@@ -147,7 +147,7 @@ Example 3:</p>
 <p>Input: root = [1,2,3], voyage = [1,2,3]
 Output: []</p>
 
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <ol>
   <li>We can use DFS to solve the problem. We keep two attributes (nodes flipped and position in voyage) while doing depth first search. If the node is None, we return []. If it is not None and node.val != voyage[position], there is no way to achieve the match by flipping, we return [-1]. If node.val == voyage[position], we check whether the node.left is None or node.left.val == voyage[position + 1]. If left is none or the value does not equal to voyage[position + 1], we need to flip the node.val (add it to flipped). Then we recursively call right child node first, and then left child node (since node is flipped). Otherwise, we recursively call left child node first, and then right child node.</li>
 </ol>
@@ -228,7 +228,7 @@ class Solution:
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

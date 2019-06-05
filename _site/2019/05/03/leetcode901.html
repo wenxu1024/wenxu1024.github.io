@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -119,7 +119,7 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem description</h2>
+<h3 id="problem-description">Problem description</h3>
 <p>Write a class StockSpanner which collects daily price quotes for some stock, and returns the span of that stock’s price for the current day.</p>
 
 <p>The span of the stock’s price today is defined as the maximum number of consecutive days (starting from today and going backwards) for which the price of the stock was less than or equal to today’s price.</p>
@@ -143,7 +143,7 @@ S.next(85) is called and returns 6.</p>
 <p>Note that (for example) S.next(75) returned 4, because the last 4 prices
 (including today’s price of 75) were less than or equal to today’s price.</p>
 
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <ol>
   <li>The stream operation can usually be solved by montonous stack. For this problem, we can keep a monotonous decreasing stack of stock price and its span tuple.
 If stack not empty, we compare the price of stack top with current price, if stack top price is equal to or smaller than current price, we need to add stack top span to the current span. We need to perform this operation until the stack top price is larger than current price or the stack is empty. Then we push the current price and span to the stack.</li>
@@ -214,7 +214,7 @@ If stack not empty, we compare the price of stack top with current price, if sta
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>

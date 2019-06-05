@@ -55,8 +55,8 @@
 			</li>
 		
 			<li>
-			<a href="/research.html" >
-				Research
+			<a href="/projects.html" >
+				Projects
 			</a>
 			</li>
 		
@@ -67,8 +67,8 @@
 			</li>
 		
 			<li>
-			<a href="/projects.html" >
-				Projects
+			<a href="/research.html" >
+				Research
 			</a>
 			</li>
 		
@@ -117,7 +117,7 @@
  	
 </p>
 <div class="post">
-<h2 id="problem-description">Problem description</h2>
+<h3 id="problem-description">Problem description</h3>
 <p>On an infinite plane, a robot initially stands at (0, 0) and faces north.  The robot can receive one of three instructions:</p>
 
 <p>“G”: go straight 1 unit;
@@ -148,7 +148,7 @@ Explanation:
 The robot moves from (0, 0) -&gt; (0, 1) -&gt; (-1, 1) -&gt; (-1, 0) -&gt; (0, 0) -&gt; ...
 </code></pre></div></div>
 
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <ol>
   <li>We notice after 4 sets of instructions, we always face the original direction (north). If at this time, we are at origin. Then we are bounded. If not, then we are unbounded.</li>
   <li>We can keep track of the current position and current direction. as (x, y), (directionx, directiony). Turn left, we just mutiply the direction by ((0,1),(-1,0)). Turn right, we just mutiply the direction by matrix ((0,-1),(1,0)). Move, we just add x + directionx, y + directiony</li>
@@ -219,7 +219,7 @@ The robot moves from (0, 0) -&gt; (0, 1) -&gt; (-1, 1) -&gt; (-1, 0) -&gt; (0, 0
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 21:17:04 -0400
+      	2019-06-04 23:04:56 -0400
     </p>
   </footer>
 </div>
