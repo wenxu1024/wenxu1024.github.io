@@ -1,5 +1,5 @@
-# wenxu86.github.io
+# wenxu1024.github.io
 personal site
 
 # URL
-[wenxu86.github.io](https://wenxu86.github.io)
+[wenxu1024.github.io](https://wenxu1024.github.io)
