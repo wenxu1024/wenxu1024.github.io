@@ -8,27 +8,26 @@ body {
 
 p {
   font-family: 'Poppins', sans-serif;
-  font-size: 1.5em;
+  font-size: 1.1em;
   font-weight: 300;
   line-height: 1.7em;
   color: #999; }
 
 #content p a {
-  font-size: 1.0em; }
+  font-size: 1.1em; }
 
 ul li a {
   font-size: 1.1em; }
 
 ol li {
-  font-size: 1.4em; }
+  font-size: 1.1em; }
 
 a, a:hover, a:focus {
-  color: inherit;
   text-decoration: none;
   transition: all 0.3s; }
 
 .highlight {
-  font-size: 1.2em; }
+  font-size: 1.1em; }
 
 .current {
   color: green; }
@@ -89,12 +88,12 @@ ul {
 
 #sidebar-nav ul li a {
   padding: 10px;
-  font-size: 2.3em;
+  font-size: 1.3em;
   display: block; }
 
 #social-wrapper li a {
   padding: 10px;
-  font-size: 2.3em;
+  font-size: 1.3em;
   display: block; }
 
 .text-justify {
@@ -145,11 +144,6 @@ ul {
   opacity: 1;
   margin: 5px auto; }
 
-.wrapper {
-  display: flex;
-  width: 100%;
-  perspective: 1500px; }
-
 #sidebar-nav {
   width: 20%;
   padding-top: 40px;
@@ -158,7 +152,6 @@ ul {
   position: fixed;
   height: 100vh;
   background: #263651;
-  z-index: 1000;
   border-width: 4px;
   margin-top: -4px;
   border-top: solid #d90006;
@@ -166,22 +159,24 @@ ul {
   transform-origin: center left;
   /* Set the transformed position of sidebar to center left side. */ }
 
+#sidebar {
+  position: fixed; }
+
 #sidebar-nav.active {
   margin-left: -20%;
   transform: rotateY(100deg);
   /* Rotate sidebar vertically by 100 degrees. */ }
 
 #content {
-  width: 80%;
+  margin-left: 20%;
   padding: 20px;
   min-height: 100vh;
   transition: all 0.3s;
-  position: absolute;
   top: 0;
   right: 0; }
 
 #content.active {
-  width: 100%; }
+  margin-left: 0; }
 
 @media (max-width: 768px) {
   #sidebar-nav {
@@ -194,10 +189,10 @@ ul {
     transform: rotateY(0deg); }
 
   #content {
-    width: 100%; }
+    margin-left: 0; }
 
   #content.active {
-    width: 50%; }
+    margin-left: 50%; }
 
   /* Reversing the behavior of the bars: 
      Removing the rotation from the first,

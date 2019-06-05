@@ -4,14 +4,32 @@
     <meta charset="utf-8">
 <title>Check Completeness of a Binary Tree (LC958)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="description" content="A website for Tech and Life">
-<link href="/assets/css/bootstrap.min.css" rel="stylesheet">
-<link href="/assets/css/styles.css" rel="stylesheet">
-<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif] d-->
+<!-- Bootstrap CSS CDN -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<!-- Scrollbar Custom CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+<!-- Font Awesome JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Custom Style -->
+<link href="/assets/css/styles.css" rel="stylesheet">
+<!-- JQuery -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<!-- Custom JS -->
+<script src="/assets/js/mysite.js"></script>
+<!-- Mathjax -->
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- Popper.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<!-- jQuery Custom Scroller CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     
     <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-47234019-2"></script>
@@ -23,29 +41,11 @@
   gtag('config', 'UA-47234019-2');
 </script>
     
-    <!-- Bootstrap CSS CDN -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
-    <!-- Font Awesome JS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- Scrollbar Custom CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
-    <!-- JQuery -->
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-    <!-- Custom JS -->
-    <script src="/assets/js/mysite.js"></script>
-    <!-- Mathjax -->
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <!-- Popper.JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-    <!-- jQuery Custom Scroller CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
   </head>
   <body>
   	<div class="wrapper">
   	 <nav id="sidebar-nav">
-	<div class="active">
+	<div id="sidebar">
 		<ul>
 		
 			<li>
@@ -83,7 +83,7 @@
       		<li> <a href="http://twitter.com"><i class="fa fa-twitter-square"></i> @twitter</a></li>
       		<li> <a href="https://www.linkedin.com/in/wxutamu/"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
       		<li> <a href="http://facebook.com"><i class="fa fa-facebook-square"></i> facebook</a></li>
-      		<li> <a href="https://github.com/dragonrider1024"><i class="fa fa-github-square"></i> github</a> </li>
+      		<li> <a href="https://github.com/wenxu86"><i class="fa fa-github-square"></i> github</a> </li>
       		<li> <a href="mailto:xuzhiwen1024@gmail.com"><i class="fa fa-envelope"></i> email</a></li>
     	</div>
 		</ul>
@@ -200,7 +200,7 @@
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-04 16:04:59 -0400
+      	2019-06-04 20:44:42 -0400
     </p>
   </footer>
 </div>
