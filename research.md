@@ -4,7 +4,7 @@ layout: default
 ---
 
 # Research
-Too specifically related to Chemistry and Part of Physics (molecular). If you don't like, please go to projects and blog pages.
+Too specifically related to Chemistry and Part of Physics (molecular)?  If you don't like it, please go to Projects and Blog pages.
 
 ---
 ## List of research topics

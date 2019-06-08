@@ -4,7 +4,7 @@ layout: project
 name: Image Recognition of Handwritten Digits
 ---
 
-[Convolutional neural network](https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53) which is invented by [Yann LeCun](http://yann.lecun.com) *et al*. and later improved by many others has been proved to be very effective on image recognition tasks.
+[Convolutional neural network](https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53), invented by [Yann LeCun](http://yann.lecun.com) *et al*. and later improved by many others, has been effective on image recognition tasks.
 
 In this tutorial I will show how to use [Keras](https://keras.io) API to implement a simple Convolutional Neural Netwrok to do handwritten digit recognition, which could achieve an accuracy as high as 95%.
 

@@ -4,7 +4,7 @@ layout: project
 name: Credit Card Spend Anomaly Detection
 ---
 
-The dataset for credict card spend anomaly is highly skewed (i.e. We have very few positive (fradulent) examples in the dataset).
+The dataset for credict card spend anomaly is highly skewed (i.e., We have very few positive/fradulent examples in the dataset).
 
 In this tutorial we will build a **Dense** model with class weighted loss function to fit the skewed data and apply our model to make predictions.
 

@@ -4,7 +4,7 @@ layout: project
 name: Some Java utilities for chemical ionization mass spectrometry
 ---
 
-GUI interface can be come handy when perform simple calculator operations. Here I wrote two Java uitilities in Swing to perform ion cluster composition calculation and mass concentration calculation
+GUI interface comes handy for simple calculator operations. Here I wrote two Java uitilities in Swing to perform ion cluster composition calculation and mass concentration calculation
 
 1. [Combinatoric ion cluster composition calculator](#utility-1)
 2. [Concentration calculator for ion-drift chemical ionizaiton mass spectrometry](#utility-2)

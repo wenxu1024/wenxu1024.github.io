@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-<title>Partition Array for Maximum Sum (LC1043)</title>
+<title>Gas Station</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="description" content="A website for Tech and Life">
@@ -97,10 +97,10 @@
         </button>
         <hr/>
   		  <div class="container">
-    	   <div class="article-title"> Partition Array for Maximum Sum (LC1043)</div>
+    	   <div class="article-title"> Gas Station</div>
 <p class="meta">
 	<small>
-      &nbsp;<i class="fa fa-calendar-o"></i> 12 May 2019
+      &nbsp;<i class="fa fa-calendar-o"></i> 08 Jun 2019
     </small>
 </p>
 <p> By 
@@ -111,58 +111,81 @@
 </p>
 <p>
  	
- 		<a href="/tags/dynamic programming.html">dynamic programming</a>
- 	
  		<a href="/tags/leetcode.html">leetcode</a>
  	
  		<a href="/tags/algorithm.html">algorithm</a>
  	
+ 		<a href="/tags/greedy.html">greedy</a>
+ 	
 </p>
 <div class="post">
-<h3 id="problem-description">Problem description</h3>
-<p>Given an integer array A, you partition the array into (contiguous) subarrays of length at most K.  After partitioning, each subarray has their values changed to become the maximum value of that subarray.</p>
+<p>There are N gas stations along a circular route, where the amount of gas at station i is gas[i].</p>
 
-<p>Return the largest sum of the given array after partitioning.</p>
+<p>You have a car with an unlimited gas tank and it costs cost[i] of gas to travel from station i to its next station (i+1). You begin the journey with an empty tank at one of the gas stations.</p>
 
-<p>Example 1:</p>
-
-<p>Input: A = [1,15,7,9,2,5,10], K = 3
-Output: 84
-Explanation: A becomes [15,15,15,9,10,10,10]</p>
+<p>Return the starting gas station’s index if you can travel around the circuit once in the clockwise direction, otherwise return -1.</p>
 
 <p>Note:</p>
 
-<p>1 &lt;= K &lt;= A.length &lt;= 500
-0 &lt;= A[i] &lt;= 10^6</p>
+<p>If there exists a solution, it is guaranteed to be unique.
+Both input arrays are non-empty and have the same length.
+Each element in the input arrays is a non-negative integer.
+Example 1:</p>
+
+<p>Input: 
+gas  = [1,2,3,4,5]
+cost = [3,4,5,1,2]</p>
+
+<p>Output: 3</p>
+
+<p>Explanation:
+Start at station 3 (index 3) and fill up with 4 unit of gas. Your tank = 0 + 4 = 4
+Travel to station 4. Your tank = 4 - 1 + 5 = 8
+Travel to station 0. Your tank = 8 - 2 + 1 = 7
+Travel to station 1. Your tank = 7 - 3 + 2 = 6
+Travel to station 2. Your tank = 6 - 4 + 3 = 5
+Travel to station 3. The cost is 5. Your gas is just enough to travel back to station 3.
+Therefore, return 3 as the starting index.
+Example 2:</p>
+
+<p>Input: 
+gas  = [2,3,4]
+cost = [3,4,3]</p>
+
+<p>Output: -1</p>
+
+<p>Explanation:
+You can’t start at station 0 or 1, as there is not enough gas to travel to the next station.
+Let’s start at station 2 and fill up with 4 unit of gas. Your tank = 0 + 4 = 4
+Travel to station 0. Your tank = 4 - 3 + 2 = 3
+Travel to station 1. Your tank = 3 - 3 + 3 = 3
+You cannot travel back to station 2, as it requires 4 unit of gas but you only have 3.
+Therefore, you can’t travel around the circuit once no matter where you start.</p>
 
 <h3 id="solution">Solution</h3>
 <ol>
-  <li>Let DP[i] be the partition maximum sum of array A[:i], then we can build DP[i] based on subproblems. That is:</li>
-  <li>If A[i - 1] is the only element in the last partition we have DP[i - 1] + 1 x A[i - 1]</li>
-  <li>If A[i - 1] and A[i - 2] are the only elements in the last partition we have DP[i - 2] + 2 x max(A[i - 2], A[i -1])</li>
-  <li>….</li>
-  <li>If A[i - 1] ,,,A[i - K] are the only elements in the last partition we have DP[i - K] + K x max(A[i - K],,A[i - 1])</li>
-  <li>We take the maximum among all the cases</li>
+  <li>Notice if we start from index i we have gas[i] - cost[i]. If gas[i] - cost[i] &lt; 0, we would immediately stop and move to the next position</li>
+  <li>If gas[i] - cost[i] &gt; 0, we travel to i + 1, gas[i] - cost[i] + gas[i + 1] - cost[i + 1]</li>
+  <li>If at index j we have gas[i] - cost[i] + gas[i + 1] - cost[i + 1] … + gas[j] - cost[j] &lt; 0. We stop. Could we start from index i + 1? The answer is no, since gas[i] - cost[i] &gt;= 0, that would mean gas[i+1] - cost[i+1] +…+gas[j] - cost[j] &lt; 0. Same is true for position i + 2,…, j. So we can safetly skip positions i + 1, …, j and start from position j + 1</li>
 </ol>
 
 <p>Below is my python implementation</p>
-
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">maxSumAfterPartitioning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">K</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="s">'''
-        DP[i] = (DP[i - 1] + A[i - 1], DP[i - 2], max(A[i - 1], A[i - 2]), .., DP[i - K] + max(A[i - 1], ..., A[i - K])
-        '''</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
-        <span class="n">DP</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">K</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">DP</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">A</span><span class="p">[:</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">i</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">temp</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s">'inf'</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">K</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="n">temp</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">j</span><span class="p">])</span>
-                <span class="n">DP</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">DP</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">DP</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">j</span> <span class="o">*</span> <span class="n">temp</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">DP</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
-				
+    <span class="k">def</span> <span class="nf">canCompleteCircuit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gas</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">cost</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">gas</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+            <span class="n">tot</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span>
+                <span class="n">tot</span> <span class="o">+=</span> <span class="n">gas</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">cost</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="k">break</span> <span class="c1">#we failed at position j
+</span>                
+            <span class="k">else</span><span class="p">:</span> <span class="c1">#no break, we finished a cycle
+</span>                <span class="k">return</span> <span class="n">i</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 </code></pre></div></div>
 
 </div>
@@ -170,10 +193,8 @@ Explanation: A becomes [15,15,15,9,10,10,10]</p>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 <ul class="pager">
 
-  <li class="previous"><a href="/2019/05/12/leetcode1041.html">&larr; Older</a></li>
+  <li class="previous"><a href="/2019/06/01/rrkm.html">&larr; Older</a></li>
 
-
-  <li class="next"><a href="/2019/05/14/leetcode971.html">Newer &rarr;</a></li>
 
 </ul>
 <div id="disqus_thread">
