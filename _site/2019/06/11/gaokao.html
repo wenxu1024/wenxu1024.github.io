@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-<title>Best Time to Buy and Sell Stock (LeetCode 121)</title>
+<title>2019高考数学最后一题</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="description" content="A website for Tech and Life">
@@ -97,10 +97,10 @@
         </button>
         <hr/>
   		  <div class="container">
-    	   <div class="article-title"> Best Time to Buy and Sell Stock (LeetCode 121)</div>
+    	   <div class="article-title"> 2019高考数学最后一题</div>
 <p class="meta">
 	<small>
-      &nbsp;<i class="fa fa-calendar-o"></i> 04 May 2019
+      &nbsp;<i class="fa fa-calendar-o"></i> 11 Jun 2019
     </small>
 </p>
 <p> By 
@@ -111,51 +111,72 @@
 </p>
 <p>
  	
- 		<a href="/tags/algorithm.html">algorithm</a>
- 	
- 		<a href="/tags/leetcode.html">leetcode</a>
- 	
- 		<a href="/tags/.html"></a>
+ 		<a href="/tags/gaokao.html">gaokao</a>
  	
 </p>
 <div class="post">
-<h3 id="problem-description">Problem Description</h3>
-<p>Say you have an array for which the ith element is the price of a given stock on day i.</p>
+<p>已知a, b, c为正数，且满足abc=1. 证明：
+\begin{align}
+\frac{1}{a} + \frac{1}{b} + \frac{1}{c} \le a^2 + b^2 + c^2
+\end{align}
+和
+\begin{align}
+(a+b)^3 + (b+c)^3+ (c+d)^3 \ge 24
+\end{align}</p>
 
-<p>If you were only permitted to complete at most one transaction (i.e., buy one and sell one share of the stock), design an algorithm to find the maximum profit.</p>
+<p><strong>证明</strong>:
+如果把abc=1带入第一个要证明的不等式，那么
+\begin{align}
+a^2+b^2+c^2 \ge bc + ca + ab
+\end{align}
+两边同时乘以2，右边移到左边得到
+\begin{align}
+2a^2+2b^2+2c^2-2ab-2bc-2ca \ge 0
+\end{align}
+不等式左边又可以写成
+\begin{align}
+a^2-2ab+b^2+b^2-2bc+c^2+c^2-2ca+a^2 = (a-b)^2+(b-c)^2+(c-a)^2
+\end{align}
+三个完全平方的和大于等于0，原不等式得证。</p>
 
-<p>Note that you cannot sell a stock before you buy one.</p>
+<p>现在我们证明第二部分。由第一个不等式得知
+\begin{align}
+a^2+b^2 \ge \frac{1}{a} + \frac{1}{b} + \frac{1}{c} - c^2 = \frac{1}{a} + \frac{1}{b} + \frac{1}{c} - \frac{c}{ab}
+\end{align}
+所以
+\begin{align}
+(a+b)^3 = (a+b)^2(a+b) = (a^2+b^2+2ab)(a+b) \ge (\frac{1}{a}+ \frac{1}{b} + \frac{1}{c} - \frac{c}{ab} + \frac{2}{c})(a+b) = 1 + 1 + \frac{a}{b} + \frac{b}{a} + \frac{3a}{c} + \frac{3b}{c} - \frac{c}{b} - \frac{c}{a}
+\end{align}
+同理，
+\begin{align}
+(b+c)^3 \ge 1 + 1 + \frac{b}{c} + \frac{c}{b} + \frac{3b}{a} + \frac{3c}{a} - \frac{a}{b} - \frac{a}{c} \\
+(c+a)^3 \ge 1 + 1 + \frac{c}{a} + \frac{a}{c} + \frac{3c}{b} + \frac{3a}{b} - \frac{b}{a} - \frac{b}{c}
+\end{align}</p>
 
-<h3 id="solution">Solution</h3>
-<ol>
-  <li>Since we must buy before sell, we want to buy as low as possible and sell as high as possible but higher price must follow the low price</li>
-  <li>We can keep track of minimum price have seen while scanning and a maximum profit. If current price is smaller than minimum price, we update the minimum price. If it is larger, we calculate the profit and compare with maxprofit. If it is larger, we update the maximum profit also.</li>
-  <li>Below is a python implementation</li>
-</ol>
+<p>把三个不等式相加，得到
+\begin{align}
+(a+b)^3+(b+c)^3+(c+a)^3 \ge 6 + 3(\frac{a}{b} + \frac{b}{a}) + 3(\frac{a}{c} + \frac{c}{a}) + 3(\frac{b}{c} + \frac{c}{b})
+\end{align}</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">maxProfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="n">miniprice</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">'inf'</span><span class="p">)</span>
-        <span class="n">maxprofit</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prices</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="n">miniprice</span><span class="p">:</span>
-                <span class="n">miniprice</span> <span class="o">=</span> <span class="n">p</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">profit</span> <span class="o">=</span> <span class="n">p</span> <span class="o">-</span> <span class="n">miniprice</span>
-                <span class="n">maxprofit</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">maxprofit</span><span class="p">,</span> <span class="n">profit</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">maxprofit</span>
-				
-</code></pre></div></div>
+<p>由于
+\begin{align}
+\frac{a}{b} + \frac{b}{a} \ge 2 \sqrt{\frac{a}{b} \cdot \frac{b}{a}} = 2
+\end{align}</p>
+
+<p>所以，
+\begin{align}
+(a+b)^3+(b+c)^3+(c+d)^3 \ge 6 + 3\cdot2 + 3\cdot2 + 3\cdot2 = 24
+\end{align}</p>
+
+<p>原不等式得证。</p>
 
 </div>
 <a href="https://twitter.com/share" class="twitter-share-button " data-size="small" data-count="none">Tweet</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 <ul class="pager">
 
-  <li class="previous"><a href="/2019/05/04/leetcode122.html">&larr; Older</a></li>
+  <li class="previous"><a href="/2019/06/09/rpmd.html">&larr; Older</a></li>
 
-
-  <li class="next"><a href="/2019/05/04/leetcode392.html">Newer &rarr;</a></li>
 
 </ul>
 <div id="disqus_thread">
