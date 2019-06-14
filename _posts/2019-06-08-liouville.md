@@ -26,7 +26,8 @@ and
 
 Since $$q_t=q_t(p_0,q_0)$$ is a function of $$p_0$$, and $$q_0$$, we can write
 \begin{align}
-\dot q_t = \frac {\partial q_t}{\partial p_0} \cdot \dot p_0 + \frac{\partial q_t}{\partial q_0} \cdot  \dot q_0 = \frac{\partial q_t}{\partial p_0} \cdot (-\frac{\partial H}{\partial q_0}) + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial H}{\partial p_0} = -\frac{\partial q_t}{\partial p_0} \cdot \frac{\partial p_t}{\partial q_0} \cdot \frac{\partial H}{\partial p_t} + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial p_t}{\partial p_0} \cdot \frac{\partial H}{\partial p_t}
+\dot q_t = \frac {\partial q_t}{\partial p_0} \cdot \dot p_0 + \frac{\partial q_t}{\partial q_0} \cdot  \dot q_0 = \frac{\partial q_t}{\partial p_0} \cdot (-\frac{\partial H}{\partial q_0}) + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial H}{\partial p_0} = -\frac{\partial q_t}{\partial p_0} \cdot (\frac{\partial p_t}{\partial q_0} \cdot \frac{\partial H}{\partial p_t} + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial H}{\partial q_t})+ \frac{\partial q_t}{\partial q_0} \cdot (\frac{\partial p_t}{\partial p_0} \cdot \frac{\partial H}{\partial p_t} + \frac{\partial q_t}{\partial p_0} \cdot \frac{\partial H}{\partial q_t}) \\\
+\dot q_t = (-\frac{\partial q_t}{\partial p_0} \cdot \frac{\partial p_t}{\partial q_0} + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial p_t}{\partial p_0}) \cdot \frac{\partial H}{\partial p_t} + (-\frac{\partial q_t}{\partial p_0} \cdot \frac{\partial q_t}{\partial q_0} + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial q_t}{\partial p_0}) \cdot \frac{\partial H}{\partial q_t} = (-\frac{\partial q_t}{\partial p_0} \cdot \frac{\partial p_t}{\partial q_0} + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial p_t}{\partial p_0}) \cdot \frac{\partial H}{\partial p_t}
 \end{align}
 
 Combing this equation with the Hamiltonian equation for $$\dot q_t$$, we obtained

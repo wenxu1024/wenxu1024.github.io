@@ -136,7 +136,8 @@ and
 
 <p>Since <script type="math/tex">q_t=q_t(p_0,q_0)</script> is a function of <script type="math/tex">p_0</script>, and <script type="math/tex">q_0</script>, we can write
 \begin{align}
-\dot q_t = \frac {\partial q_t}{\partial p_0} \cdot \dot p_0 + \frac{\partial q_t}{\partial q_0} \cdot  \dot q_0 = \frac{\partial q_t}{\partial p_0} \cdot (-\frac{\partial H}{\partial q_0}) + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial H}{\partial p_0} = -\frac{\partial q_t}{\partial p_0} \cdot \frac{\partial p_t}{\partial q_0} \cdot \frac{\partial H}{\partial p_t} + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial p_t}{\partial p_0} \cdot \frac{\partial H}{\partial p_t}
+\dot q_t = \frac {\partial q_t}{\partial p_0} \cdot \dot p_0 + \frac{\partial q_t}{\partial q_0} \cdot  \dot q_0 = \frac{\partial q_t}{\partial p_0} \cdot (-\frac{\partial H}{\partial q_0}) + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial H}{\partial p_0} = -\frac{\partial q_t}{\partial p_0} \cdot (\frac{\partial p_t}{\partial q_0} \cdot \frac{\partial H}{\partial p_t} + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial H}{\partial q_t})+ \frac{\partial q_t}{\partial q_0} \cdot (\frac{\partial p_t}{\partial p_0} \cdot \frac{\partial H}{\partial p_t} + \frac{\partial q_t}{\partial p_0} \cdot \frac{\partial H}{\partial q_t}) \\
+\dot q_t = (-\frac{\partial q_t}{\partial p_0} \cdot \frac{\partial p_t}{\partial q_0} + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial p_t}{\partial p_0}) \cdot \frac{\partial H}{\partial p_t} + (-\frac{\partial q_t}{\partial p_0} \cdot \frac{\partial q_t}{\partial q_0} + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial q_t}{\partial p_0}) \cdot \frac{\partial H}{\partial q_t} = (-\frac{\partial q_t}{\partial p_0} \cdot \frac{\partial p_t}{\partial q_0} + \frac{\partial q_t}{\partial q_0} \cdot \frac{\partial p_t}{\partial p_0}) \cdot \frac{\partial H}{\partial p_t}
 \end{align}</p>
 
 <p>Combing this equation with the Hamiltonian equation for <script type="math/tex">\dot q_t</script>, we obtained
@@ -197,7 +198,7 @@ So,
     <p class="text-muted credit">
       &copy; 2019 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-06-11 13:32:56 -0400
+      	2019-06-14 10:15:21 -0400
     </p>
   </footer>
 </div>
