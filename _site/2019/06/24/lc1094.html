@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-<title>Best Time to Buy and Sell Stock (LeetCode 121)</title>
+<title>Car Pooling</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="description" content="A website for Tech and Life">
@@ -97,10 +97,10 @@
         </button>
         <hr/>
   		  <div class="container">
-    	   <div class="article-title"> Best Time to Buy and Sell Stock (LeetCode 121)</div>
+    	   <div class="article-title"> Car Pooling</div>
 <p class="meta">
 	<small>
-      &nbsp;<i class="fa fa-calendar-o"></i> 04 May 2019
+      &nbsp;<i class="fa fa-calendar-o"></i> 24 Jun 2019
     </small>
 </p>
 <p> By 
@@ -111,40 +111,79 @@
 </p>
 <p>
  	
- 		<a href="/tags/algorithm.html">algorithm</a>
- 	
  		<a href="/tags/leetcode.html">leetcode</a>
  	
- 		<a href="/tags/.html"></a>
+ 		<a href="/tags/algorithm.html">algorithm</a>
+ 	
+ 		<a href="/tags/sorting.html">sorting</a>
  	
 </p>
 <div class="post">
-<h3 id="problem-description">Problem Description</h3>
-<p>Say you have an array for which the ith element is the price of a given stock on day i.</p>
+<h3 id="problem-description">Problem description</h3>
+<p>You are driving a vehicle that has capacity empty seats initially available for passengers.  The vehicle only drives east (ie. it cannot turn around and drive west.)</p>
 
-<p>If you were only permitted to complete at most one transaction (i.e., buy one and sell one share of the stock), design an algorithm to find the maximum profit.</p>
+<p>Given a list of trips, trip[i] = [num_passengers, start_location, end_location] contains information about the i-th trip: the number of passengers that must be picked up, and the locations to pick them up and drop them off.  The locations are given as the number of kilometers due east from your vehicle’s initial location.</p>
 
-<p>Note that you cannot sell a stock before you buy one.</p>
+<p>Return true if and only if it is possible to pick up and drop off all passengers for all the given trips.</p>
+
+<p>Example 1:</p>
+
+<p>Input: trips = [[2,1,5],[3,3,7]], capacity = 4
+Output: false
+Example 2:</p>
+
+<p>Input: trips = [[2,1,5],[3,3,7]], capacity = 5
+Output: true
+Example 3:</p>
+
+<p>Input: trips = [[2,1,5],[3,5,7]], capacity = 3
+Output: true
+Example 4:</p>
+
+<p>Input: trips = [[3,2,7],[3,7,9],[8,3,9]], capacity = 11
+Output: true</p>
+
+<p>Constraints:</p>
+
+<p>trips.length &lt;= 1000
+trips[i].length == 3
+1 &lt;= trips[i][0] &lt;= 100
+0 &lt;= trips[i][1] &lt; trips[i][2] &lt;= 1000
+1 &lt;= capacity &lt;= 100000</p>
 
 <h3 id="solution">Solution</h3>
-<ol>
-  <li>Since we must buy before sell, we want to buy as low as possible and sell as high as possible but higher price must follow the low price</li>
-  <li>We can keep track of minimum price have seen while scanning and a maximum profit. If current price is smaller than minimum price, we update the minimum price. If it is larger, we calculate the profit and compare with maxprofit. If it is larger, we update the maximum profit also.</li>
-  <li>Below is a python implementation</li>
-</ol>
+<p>If at any location, we need to pickup more passengers than the capacity, we will return False. Otherwise, we return True.
+Actually, we just need to look at the boundary points, as non boundary points can be coverted to boundary points without changing the number of passengers that need to be picked up.</p>
+
+<p>Below is my python implementation</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">maxProfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="n">miniprice</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">'inf'</span><span class="p">)</span>
-        <span class="n">maxprofit</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prices</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="n">miniprice</span><span class="p">:</span>
-                <span class="n">miniprice</span> <span class="o">=</span> <span class="n">p</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">profit</span> <span class="o">=</span> <span class="n">p</span> <span class="o">-</span> <span class="n">miniprice</span>
-                <span class="n">maxprofit</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">maxprofit</span><span class="p">,</span> <span class="n">profit</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">maxprofit</span>
-				
+    <span class="k">def</span> <span class="nf">carPooling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trips</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="s">'''
+        2     7
+              7      9
+          3          9
+          
+        find intersection of inteverals [2, 7) [7, 9) and [3, 9)
+        then in each intersection calculate the number of passengers need to pickup. If any of the number is greater than capacity we return False. If all number are smaller than or equal to capacity we return True
+        
+        Actually, we just need to look at the the boundary points
+        '''</span>
+        <span class="n">boundaries</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">trip</span> <span class="ow">in</span> <span class="n">trips</span><span class="p">:</span>
+            <span class="n">num</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">trip</span>
+            <span class="n">boundaries</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+            <span class="n">boundaries</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">boundaries</span><span class="p">):</span>
+            <span class="n">acc</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">trip</span> <span class="ow">in</span> <span class="n">trips</span><span class="p">:</span>
+                <span class="n">num</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">trip</span>
+                <span class="k">if</span> <span class="n">pos</span> <span class="o">&gt;=</span> <span class="n">start</span> <span class="ow">and</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">:</span>
+                    <span class="n">acc</span> <span class="o">+=</span> <span class="n">num</span>
+            <span class="k">if</span> <span class="n">acc</span> <span class="o">&gt;</span> <span class="n">capacity</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+        
 </code></pre></div></div>
 
 </div>
@@ -152,10 +191,8 @@
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 <ul class="pager">
 
-  <li class="previous"><a href="/2019/05/04/leetcode122.html">&larr; Older</a></li>
+  <li class="previous"><a href="/2019/06/23/lc1095.html">&larr; Older</a></li>
 
-
-  <li class="next"><a href="/2019/05/04/leetcode392.html">Newer &rarr;</a></li>
 
 </ul>
 <div id="disqus_thread">

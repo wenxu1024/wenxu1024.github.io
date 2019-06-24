@@ -1,0 +1,271 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<title>Find in Mountain Array</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="A website for Tech and Life">
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif] d-->
+<!-- Bootstrap CSS CDN -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<!-- Scrollbar Custom CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+<!-- Font Awesome JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Custom Style -->
+<link href="/assets/css/styles.css" rel="stylesheet">
+<!-- JQuery -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<!-- Custom JS -->
+<script src="/assets/js/mysite.js"></script>
+<!-- Mathjax -->
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- Popper.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<!-- jQuery Custom Scroller CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-47234019-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-47234019-2');
+</script>
+    
+  </head>
+  <body>
+  	<div class="wrapper">
+  	 <nav id="sidebar-nav">
+	<div id="sidebar">
+		<ul>
+		
+			<li>
+			<a href="/" >
+				Home
+			</a>
+			</li>
+		
+			<li>
+			<a href="/projects.html" >
+				Projects
+			</a>
+			</li>
+		
+			<li>
+			<a href="/blog.html" >
+				Blog
+			</a>
+			</li>
+		
+			<li>
+			<a href="/research.html" >
+				Research
+			</a>
+			</li>
+		
+			<li>
+			<a href="/about.html" >
+				About
+			</a>
+			</li>
+		
+		<hr />
+    	<div id="social-wrapper">
+      		<li> <a href="http://twitter.com"><i class="fa fa-twitter-square"></i> @twitter</a></li>
+      		<li> <a href="https://www.linkedin.com/in/wxutamu/"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
+      		<li> <a href="http://facebook.com"><i class="fa fa-facebook-square"></i> facebook</a></li>
+      		<li> <a href="https://github.com/wenxu1024"><i class="fa fa-github-square"></i> github</a> </li>
+      		<li> <a href="mailto:xuzhiwen1024@gmail.com"><i class="fa fa-envelope"></i> email</a></li>
+    	</div>
+		</ul>
+	</div>
+</nav>
+      <div id="content">
+        <button type="button" id="sidebarCollapse" class="navbar-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+        </button>
+        <hr/>
+  		  <div class="container">
+    	   <div class="article-title"> Find in Mountain Array</div>
+<p class="meta">
+	<small>
+      &nbsp;<i class="fa fa-calendar-o"></i> 23 Jun 2019
+    </small>
+</p>
+<p> By 
+	
+  	
+    <a href="/authors/wen.html">Wen Xu</a>
+  	
+</p>
+<p>
+ 	
+ 		<a href="/tags/leetcode.html">leetcode</a>
+ 	
+ 		<a href="/tags/algorithm.html">algorithm</a>
+ 	
+ 		<a href="/tags/binary search.html">binary search</a>
+ 	
+</p>
+<div class="post">
+<h3 id="problem-description">Problem description</h3>
+<p>(This problem is an interactive problem.)</p>
+
+<p>You may recall that an array A is a mountain array if and only if:</p>
+
+<p>A.length &gt;= 3
+There exists some i with 0 &lt; i &lt; A.length - 1 such that:
+A[0] &lt; A[1] &lt; … A[i-1] &lt; A[i]
+A[i] &gt; A[i+1] &gt; … &gt; A[A.length - 1]
+Given a mountain array mountainArr, return the minimum index such that mountainArr.get(index) == target.  If such an index doesn’t exist, return -1.</p>
+
+<p>You can’t access the mountain array directly.  You may only access the array using a MountainArray interface:</p>
+
+<p>MountainArray.get(k) returns the element of the array at index k (0-indexed).
+MountainArray.length() returns the length of the array.
+Submissions making more than 100 calls to MountainArray.get will be judged Wrong Answer.  Also, any solutions that attempt to circumvent the judge will result in disqualification.</p>
+
+<p>Example 1:</p>
+
+<p>Input: array = [1,2,3,4,5,3,1], target = 3
+Output: 2
+Explanation: 3 exists in the array, at index=2 and index=5. Return the minimum index, which is 2.
+Example 2:</p>
+
+<p>Input: array = [0,1,2,4,2,1], target = 3
+Output: -1
+Explanation: 3 does not exist in the array, so we return -1.</p>
+
+<p>Constraints:</p>
+
+<p>3 &lt;= mountain_arr.length() &lt;= 10000
+0 &lt;= target &lt;= 10^9
+0 &lt;= mountain_arr.get(index) &lt;= 10^9</p>
+
+<h3 id="solution">Solution</h3>
+<p>We can use a binary search to find the index of the peak element. After finding the index of the peak element, we use two other binary searches to find target in left and right section, respectively.
+If we find target in left section, we return the index
+If we can’t find targt in left section, we return the index found in the right section. If we can’t find in both left and right sections, we return -1</p>
+
+<p>Below is my python implementation</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># """
+# This is MountainArray's API interface.
+# You should not implement it, or speculate about its implementation
+# """
+#class MountainArray:
+#    def get(self, index: int) -&gt; int:
+#    def length(self) -&gt; int:
+</span>
+<span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">findInMountainArray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">:</span> <span class="s">'MountainArray'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        
+        
+        <span class="k">def</span> <span class="nf">findpeakidx</span><span class="p">(</span><span class="n">i</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">:</span><span class="s">'MountainArray'</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">mountain_arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">mountain_arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">mountain_arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">t</span> <span class="ow">and</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">u</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">k</span>
+            <span class="k">elif</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">t</span> <span class="ow">and</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="n">u</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">findpeakidx</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="ow">and</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">u</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">findpeakidx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">)</span>
+            
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">mountain_arr</span><span class="o">.</span><span class="n">length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">findpeakidx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">)</span>
+        
+        
+        <span class="k">def</span> <span class="nf">leftbin</span><span class="p">(</span><span class="n">target</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">mountain_arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="n">s</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">k</span>
+            <span class="k">elif</span> <span class="n">target</span> <span class="o">&gt;</span> <span class="n">s</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">leftbin</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">leftbin</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">)</span>
+            
+            
+        <span class="k">def</span> <span class="nf">rightbin</span><span class="p">(</span><span class="n">target</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">mountain_arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="n">s</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">k</span>
+            <span class="k">elif</span> <span class="n">target</span> <span class="o">&gt;</span> <span class="n">s</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">rightbin</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">rightbin</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">)</span>
+            
+        <span class="n">left</span> <span class="o">=</span> <span class="n">leftbin</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">left</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">rightbin</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">mountain_arr</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">left</span>
+						
+</code></pre></div></div>
+
+</div>
+<a href="https://twitter.com/share" class="twitter-share-button " data-size="small" data-count="none">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<ul class="pager">
+
+  <li class="previous"><a href="/2019/06/23/lc1079.html">&larr; Older</a></li>
+
+
+  <li class="next"><a href="/2019/06/24/lc1094.html">Newer &rarr;</a></li>
+
+</ul>
+<div id="disqus_thread">
+
+  <script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+      var disqus_shortname = 'wenx'; // required: replace example with your forum shortname
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>
+    Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+
+  <a href="http://disqus.com" class="dsq-brlink">
+    comments powered by <span class="logo-disqus">Disqus</span>
+  </a>
+
+</div>
+
+		    </div>
+        <div class="container">
+  <footer>
+    <p class="text-muted credit">
+      &copy; 2019 Based on Herring Cove &middot; Build with
+      	<a href="https://jekyllrb.com"> Jekyll </a>
+      	2019-06-24 01:44:25 -0400
+    </p>
+  </footer>
+</div>
+      </div>
+	  </div>
+  </body>
+</html>
