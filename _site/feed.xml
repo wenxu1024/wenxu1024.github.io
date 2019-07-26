@@ -1,4 +1,80 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2019-06-24T01:44:25-04:00</updated><id>/feed.xml</id><title type="html">[“Wen Xu’s Personal Site”]</title><subtitle>[&quot;A website for Tech and Life&quot;]</subtitle><author><name>Wen Xu</name></author><entry><title type="html">Car Pooling</title><link href="/2019/06/24/lc1094.html" rel="alternate" type="text/html" title="Car Pooling" /><published>2019-06-24T00:00:00-04:00</published><updated>2019-06-24T00:00:00-04:00</updated><id>/2019/06/24/lc1094</id><content type="html" xml:base="/2019/06/24/lc1094.html">&lt;h3 id=&quot;problem-description&quot;&gt;Problem description&lt;/h3&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2019-07-26T15:08:28-04:00</updated><id>/feed.xml</id><title type="html">[“Wen Xu’s Personal Site”]</title><subtitle>[&quot;A website for Tech and Life&quot;]</subtitle><author><name>Wen Xu</name></author><entry><title type="html">Smallest Sufficient Team</title><link href="/2019/07/26/lc1125.html" rel="alternate" type="text/html" title="Smallest Sufficient Team" /><published>2019-07-26T00:00:00-04:00</published><updated>2019-07-26T00:00:00-04:00</updated><id>/2019/07/26/lc1125</id><content type="html" xml:base="/2019/07/26/lc1125.html">&lt;h3 id=&quot;problem-description&quot;&gt;Problem description&lt;/h3&gt;
+&lt;p&gt;In a project, you have a list of required skills req_skills, and a list of people.  The i-th person people[i] contains a list of skills that person has.&lt;/p&gt;
+
+&lt;p&gt;Consider a sufficient team: a set of people such that for every required skill in req_skills, there is at least one person in the team who has that skill.  We can represent these teams by the index of each person: for example, team = [0, 1, 3] represents the people with skills people[0], people[1], and people[3].&lt;/p&gt;
+
+&lt;p&gt;Return any sufficient team of the smallest possible size, represented by the index of each person.&lt;/p&gt;
+
+&lt;p&gt;You may return the answer in any order.  It is guaranteed an answer exists.&lt;/p&gt;
+
+&lt;p&gt;Example 1:&lt;/p&gt;
+
+&lt;p&gt;Input: req_skills = [“java”,”nodejs”,”reactjs”], people = [[“java”],[“nodejs”],[“nodejs”,”reactjs”]]
+Output: [0,2]
+Example 2:&lt;/p&gt;
+
+&lt;p&gt;Input: req_skills = [“algorithms”,”math”,”java”,”reactjs”,”csharp”,”aws”], people = [[“algorithms”,”math”,”java”],[“algorithms”,”math”,”reactjs”],[“java”,”csharp”,”aws”],[“reactjs”,”csharp”],[“csharp”,”math”],[“aws”,”java”]]
+Output: [1,2]&lt;/p&gt;
+
+&lt;h3 id=&quot;solution&quot;&gt;Solution&lt;/h3&gt;
+&lt;p&gt;This problem is a set cover problem. &lt;a href=&quot;https://en.wikipedia.org/wiki/Set_cover_problem&quot;&gt;&lt;strong&gt;&lt;em&gt;Set Cover Problem&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;This problem is proved to be NP-Complete. To solve this we need to encode the skills using bits.
+Let’s say a sub set of required skills is skill_set = [a, b, c, d], then
+DP[skill_set] can be constructed for all the subsets of req_skills. There are 2&lt;sup&gt;n&lt;/sup&gt; numbers of sub sets of req_skills. So, the solution will take O(2&lt;sup&gt;n&lt;/sup&gt;) space, where n is total number of skills in req_skills set.&lt;/p&gt;
+
+&lt;p&gt;To ammend each skill_set to be req_skills, there are at most m steps (each step add a person), where m is the total number of person.&lt;/p&gt;
+
+&lt;p&gt;Here we can implement a Bell-Ford like procedure to calculate DP[skill_set]. DP[skill_set] will converge in m steps.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;If DP[skill_set&lt;/td&gt;
+      &lt;td&gt;current_person_skill] is longer than DP[skill_set] + [i], then we need to update DP[skill_set&lt;/td&gt;
+      &lt;td&gt;current_person_skill] with DP[skill_set] + [i].&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Otherwise, we keep DP[skill_set&lt;/td&gt;
+      &lt;td&gt;current_person_skill] unchanged.&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;If skill_set&lt;/td&gt;
+      &lt;td&gt;current_person_skill is not visited before, we just assign DP[skill_set&lt;/td&gt;
+      &lt;td&gt;current_person_skill] with the value DP[skill_set] + [i]&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Below is my python implementation&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Solution&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;smallestSufficientTeam&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;req_skills&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;people&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;skill2idx&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;skill&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;skill&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;enumerate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req_skills&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)}&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req_skills&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;dp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]}&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;person&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;enumerate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;people&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;his_skill&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;skill&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;person&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;his_skill&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;skill2idx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;skill&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; 
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;skills&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pset&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()):&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;with_him&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;skills&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;his_skill&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;skills&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;with_him&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;with_him&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;keys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;or&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;with_him&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]):&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;dp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;with_him&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pset&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>wen</name></author><category term="algorithm" /><category term="NP Hard" /><category term="dynamic programming" /><summary type="html">Problem description In a project, you have a list of required skills req_skills, and a list of people. The i-th person people[i] contains a list of skills that person has.</summary></entry><entry><title type="html">Car Pooling</title><link href="/2019/06/24/lc1094.html" rel="alternate" type="text/html" title="Car Pooling" /><published>2019-06-24T00:00:00-04:00</published><updated>2019-06-24T00:00:00-04:00</updated><id>/2019/06/24/lc1094</id><content type="html" xml:base="/2019/06/24/lc1094.html">&lt;h3 id=&quot;problem-description&quot;&gt;Problem description&lt;/h3&gt;
 &lt;p&gt;You are driving a vehicle that has capacity empty seats initially available for passengers.  The vehicle only drives east (ie. it cannot turn around and drive west.)&lt;/p&gt;
 
 &lt;p&gt;Given a list of trips, trip[i] = [num_passengers, start_location, end_location] contains information about the i-th trip: the number of passengers that must be picked up, and the locations to pick them up and drop them off.  The locations are given as the number of kilometers due east from your vehicle’s initial location.&lt;/p&gt;
@@ -572,141 +648,4 @@ a^2+b^2 \ge \frac{1}{a} + \frac{1}{b} + \frac{1}{c} - c^2 = \frac{1}{a} + \frac{
 (a+b)^3+(b+c)^3+(c+d)^3 \ge 6 + 3\cdot2 + 3\cdot2 + 3\cdot2 = 24
 \end{align}&lt;/p&gt;
 
-&lt;p&gt;原不等式得证。&lt;/p&gt;</content><author><name>wen</name></author><category term="gaokao" /><summary type="html">已知a, b, c为正数，且满足abc=1. 证明： \begin{align} \frac{1}{a} + \frac{1}{b} + \frac{1}{c} \le a^2 + b^2 + c^2 \end{align} 和 \begin{align} (a+b)^3 + (b+c)^3+ (c+d)^3 \ge 24 \end{align}</summary></entry><entry><title type="html">Ring Polymer Molecular Dynamics Derivation</title><link href="/2019/06/09/rpmd.html" rel="alternate" type="text/html" title="Ring Polymer Molecular Dynamics Derivation" /><published>2019-06-09T00:00:00-04:00</published><updated>2019-06-09T00:00:00-04:00</updated><id>/2019/06/09/rpmd</id><content type="html" xml:base="/2019/06/09/rpmd.html">&lt;p&gt;Schrodinger’s equations states that
-\begin{align}
-\frac{d}{dt}|\Psi_t \rangle = \frac{-i \cdot \hat H}{\hbar} \cdot |\Psi_t \rangle
-\end{align}
-A formal solution to the equation is
-\begin{align}
-|\Psi_t \rangle = e^{\frac{-i \cdot \hat Ht}{\hbar}} \cdot |\Psi_0 \rangle
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;Using
-\begin{align}
-1 = \int{|x_i\rangle \langle x_i| dx_i}
-\end{align}
-and insert &lt;script type=&quot;math/tex&quot;&gt;\langle x_f|&lt;/script&gt; to the left, we obtain
-\begin{align}
-\langle x_f| \Psi_t \rangle = \int \langle x_f | e^{\frac{-i \cdot \hat Ht}{\hbar}}  | x_i \rangle \langle x_i | \Psi_0 \rangle dx_i
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;Define &lt;script type=&quot;math/tex&quot;&gt;U(x_f, t; x_i, 0) = \langle x_f | e^{\frac{-i \cdot \hat Ht}{\hbar}}  | x_i \rangle&lt;/script&gt;, then we have
-\begin{align}
-\langle x_f| \Psi_t \rangle = \int U(x_f, t; x_i, 0) \cdot \langle x_i |\Psi_0 \rangle dx_i
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;How do we calculate &lt;script type=&quot;math/tex&quot;&gt;U(x_f, t; x_i, 0)&lt;/script&gt;? Feynman came up with the following solution. Let’s descretize the path from &lt;script type=&quot;math/tex&quot;&gt;x_i&lt;/script&gt; to &lt;script type=&quot;math/tex&quot;&gt;x_f&lt;/script&gt;. We have points along the path, &lt;script type=&quot;math/tex&quot;&gt;x_1, x_2, ..., x_{N - 1}&lt;/script&gt;, and &lt;script type=&quot;math/tex&quot;&gt;x_0 = x_i , x_N = x_f&lt;/script&gt;. For each point we have
-\begin{align}
- 1=\int{|x_{1}\rangle \langle x_{1}| dx_{1}} \\
- 1=\int{|x_{2}\rangle \langle x_{2}| dx_{2}} \\
-….
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;We insert all these identity in &lt;script type=&quot;math/tex&quot;&gt;U(x_f, t; x_i, 0)&lt;/script&gt; and obtain
-\begin{align}
-U(x_f, t; x_i, 0)=\int dx_{N-1} \int dx_{N-2} \int dx_{N-3}…\int dx_1 \langle x_N | e^{\frac{-i \cdot \hat Ht}{N\hbar}} | x_{N-1} \rangle \cdot \langle x_{N-1} | e^{\frac{-i \cdot \hat Ht}{N\hbar}} | x_{N-2} \rangle \cdot \langle x_{N-2} | e^{\frac{-i \cdot \hat Ht}{N\hbar}} | x_{N-3} \rangle \cdot … \cdot \langle x_1 | e^{\frac{-i \cdot \hat Ht}{N\hbar}} | x_{0} \rangle
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;To evaluate &lt;script type=&quot;math/tex&quot;&gt;\langle x_N | e^{\frac{-i \cdot \hat Ht}{N\hbar}} | x_{N-1} \rangle&lt;/script&gt;, we insert the following identity
-\begin{align}
-1 = \int |p\rangle \langle p | dp \\
-1 = \int |p’ \rangle \langle p’ | dp’
-\end{align}
-So,
-\begin{align}
-\langle x_N | e^{\frac{-i \cdot \hat Ht}{N\hbar}} | x_{N-1} \rangle = \int dp \int dp’ \langle x_N | p’ \rangle \langle p’ |e^{\frac{-i \cdot \hat Ht}{N\hbar}}|p \rangle \langle p|x_{N-1} \rangle
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;For larger enough N, in interval &lt;script type=&quot;math/tex&quot;&gt;[x_{N-1}, x_N]&lt;/script&gt;, &lt;script type=&quot;math/tex&quot;&gt;V(x)&lt;/script&gt; can be approximated as &lt;script type=&quot;math/tex&quot;&gt;V(x_{N-1})&lt;/script&gt;, so
-\begin{align}
-\langle p’ |e^{\frac{-i \cdot \hat Ht}{N\hbar}}|p \rangle = \langle p’ |e^{\frac{-i \cdot t }{N\hbar}(\frac{\hat p^2}{2 \cdot m} + V(x_{N-1}))}|p \rangle = e^{\frac{-i \cdot t }{N\hbar}(\frac{\hat p^2}{2 \cdot m} + V(x_{N-1}))} \cdot \delta (p - p’)
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;We also have
-\begin{align}
-\langle x_N | p’ \rangle = \frac{1}{\sqrt{2 \cdot \pi \hbar}} \cdot e^{\frac{i \cdot p’ \cdot x_N}{\hbar}} \\
-\langle p | x_{N-1} \rangle = \frac{1}{\sqrt{2 \cdot \pi \hbar}} \cdot e^{-\frac{i \cdot p \cdot x_{N- 1}}{\hbar}}
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;Therefore, we have
-\begin{equation}
-\langle x_N | e^{\frac{-i \cdot \hat Ht}{N\hbar}} | x_{N-1} \rangle = \frac{1}{2\pi\hbar}\int dp e^{\frac{-i \cdot t }{N\hbar}(\frac{\hat p^2}{2 \cdot m} + V(x_{N-1}))} \cdot e^{\frac{i}{\hbar} \cdot p \cdot (x_N - x_{N-1})} = \frac{1}{2\pi\hbar} \cdot e^{\frac{-i\Delta t}{\hbar} V(x_{N-1})} \cdot e^{\frac{i\Delta t}{2m\hbar}(\frac{(x_N - x_{N - 1})m}{\Delta t})^2} (\frac{2m\pi\hbar}{i\Delta t})^{1/2} \\
-\langle x_N | e^{\frac{-i \cdot \hat Ht}{N\hbar}} | x_{N-1} \rangle = (\frac{m}{2\pi\hbar i \Delta t})^{1/2} \cdot e^{\frac{i \Delta t}{\hbar} \cdot (\frac{1}{2} m (\frac{x_N - x_{N - 1}}{\Delta t})^2 - V(x_{N - 1}))} = (\frac{m}{2\pi\hbar i \Delta t})^{1/2} \cdot e^{\frac{i \Delta t}{\hbar} \cdot L(x_{N - 1})}
-\label{eq:pathint}
-\tag{1}
-\end{equation}
-where &lt;script type=&quot;math/tex&quot;&gt;\Delta t = \frac{t}{N}&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;L&lt;/script&gt; is the &lt;a href=&quot;https://en.wikipedia.org/wiki/Lagrangian_mechanics&quot;&gt;Lagrangian&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Now we insert the above formula for &lt;script type=&quot;math/tex&quot;&gt;j = 0...N - 1&lt;/script&gt; into the expression of &lt;script type=&quot;math/tex&quot;&gt;U(x_f, t; x_i, 0)&lt;/script&gt; and obtain,
-\begin{align}
-U(x_f, t; x_i, 0)=\int dx_{N-1} \int dx_{N-2} \int dx_{N-3}…\int dx_1 (\frac{m}{2\pi\hbar i \Delta t})^{N/2} \cdot e^{\frac{i\Delta t}{\hbar}\sum_{j=0}^{N - 1}L(x_{j})} \\
-U(x_f, t; x_i, 0)=\int dx_{N-1} \int dx_{N-2} \int dx_{N-3}…\int dx_1 (\frac{m}{2\pi\hbar i \Delta t})^{N/2} \cdot e^{\frac{i}{\hbar} \int_0^t L d \tau}  \\
-U(x_f, t; x_i, 0)=\int dx_{N-1} \int dx_{N-2} \int dx_{N-3}…\int dx_1 (\frac{m}{2\pi\hbar i \Delta t})^{N/2} \cdot e^{\frac{i}{\hbar} S(t)}
-\end{align}
-Where &lt;script type=&quot;math/tex&quot;&gt;S(t)&lt;/script&gt; is the &lt;a href=&quot;https://en.wikipedia.org/wiki/Action_(physics)&quot;&gt;Action Integral&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Insert the above expression for &lt;script type=&quot;math/tex&quot;&gt;U&lt;/script&gt; into the expression for &lt;script type=&quot;math/tex&quot;&gt;\langle x_f| \Psi_t \rangle&lt;/script&gt;, we obtain
-\begin{align}
-\langle x_f| \Psi_t \rangle = \int dx_0 \int dx_1 …\int dx_{N - 1} (\frac{m}{2\pi\hbar i \Delta t})^{N/2} \cdot e^{\frac{i}{\hbar} S(t)} \cdot \langle x_0|\Psi_0 \rangle
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;This equation is Exact and it is called Feynman’s &lt;a href=&quot;https://en.wikipedia.org/wiki/Relation_between_Schrödinger%27s_equation_and_the_path_integral_formulation_of_quantum_mechanics&quot;&gt;Path Integral Formulation&lt;/a&gt; of Quantum Mechanics&lt;/p&gt;
-
-&lt;h3 id=&quot;but-why-we-spend-so-much-time-derive-the-path-integral-formulation-how-it-is-related-to-ring-polymer-molecular-dynamics-or-statistical-mechanics&quot;&gt;But why we spend so much time derive the Path Integral Formulation? How it is related to Ring Polymer Molecular Dynamics or Statistical Mechanics?&lt;/h3&gt;
-
-&lt;p&gt;To see the connection with statistic mechanics, we observe that the quantum statistical &lt;a href=&quot;https://en.wikipedia.org/wiki/Partition_function_(statistical_mechanics)&quot;&gt;partition function&lt;/a&gt;
-\begin{align}
-Q(\beta) = Tr(e^{-\beta \hat H})
-\end{align}
-where &lt;script type=&quot;math/tex&quot;&gt;\beta = \frac{1}{k_B T}&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;Tr&lt;/script&gt; is the trace of the matrix.
-If we expand Q in the basis of coordinate states, we obtain
-\begin{align}
-Q(\beta) = \int dx \langle x | e^{-\beta \hat H} | x \rangle
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;We notice that 
-\begin{align}
-\rho_{xx} = \langle x | e^{-\beta \hat H} | x \rangle
-\end{align}
-is very close to
-\begin{align}
-U(x_f, t; x_i, 0) = \langle x_f | e^{\frac{-i \cdot \hat Ht}{\hbar}}  | x_i \rangle
-\end{align}
-in the form with &lt;script type=&quot;math/tex&quot;&gt;x_f = x_i&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;t = -i\beta\hbar&lt;/script&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;So, doing equilibrium statistical mechanics is equivalent to doing quantum mechanics with imaginary time.&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Similarly, we can use Feynman’s Path Integral Formulation to calculate &lt;script type=&quot;math/tex&quot;&gt;\rho_{xx}&lt;/script&gt; too. In order to do that, we just simply replace &lt;script type=&quot;math/tex&quot;&gt;x_f&lt;/script&gt; with &lt;script type=&quot;math/tex&quot;&gt;x_0&lt;/script&gt;and t with &lt;script type=&quot;math/tex&quot;&gt;-i\beta\hbar&lt;/script&gt;. Substitue t in Eq. \eqref{eq:pathint}.&lt;/p&gt;
-
-&lt;p&gt;So,
-\begin{align}
-\langle x_N | e^{\frac{-\beta \cdot \hat H}{N}} | x_{N-1} \rangle = (\frac{m}{2\pi\beta_{N}\hbar^2})^{1/2} \cdot e^{-\beta_N V(x_{N - 1})} \cdot e^{-\frac{\beta_N}{2}m\omega_N^2 \cdot (x_N - x_{N - 1})^2}
-\end{align}
-Where &lt;script type=&quot;math/tex&quot;&gt;\beta_N = \frac{\beta}{N}&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;\omega_N = \frac{1}{\beta_N \hbar}&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;Inserting above equation to &lt;script type=&quot;math/tex&quot;&gt;\rho_{xx}&lt;/script&gt; , we obtain
-\begin{align}
-\rho_{xx} = \int dx_1 \int dx_2 \int dx_3 … \int dx_{N - 1} (\frac{m}{2\pi\beta_{N}\hbar^2})^{N/2} \cdot e^{-\beta_N \cdot (\sum_0^{N-1} \frac{m}{2} \omega_N^2(x_{j+1} - x_j)^2 + V(x_j))}
-\end{align}
-where &lt;script type=&quot;math/tex&quot;&gt;x_N = x_0&lt;/script&gt;&lt;/p&gt;
-
-&lt;p&gt;Therefore,
-\begin{align}
-Q(\beta) = \int dx \langle x | e^{-\beta \hat H} | x \rangle = \int dx_0 \int dx_1 … \int dx_{N-1} (\frac{m}{2\pi\beta_{N}\hbar^2})^{N/2} \cdot e^{-\beta_N \cdot (\sum_0^{N-1} \frac{m}{2} \omega_N^2(x_{j+1} - x_j)^2 + V(x_j))}
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;Notice for N &lt;strong&gt;distinguishable&lt;/strong&gt; classical bead with interacting potential &lt;script type=&quot;math/tex&quot;&gt;V_{eff} = (\sum_0^{N-1} \frac{m}{2} \omega_N^2(x_{j+1} - x_j)^2 + V(x_j))&lt;/script&gt; (&lt;strong&gt;Only adjacent&lt;/strong&gt; beads are connected through a spring with force constant of &lt;script type=&quot;math/tex&quot;&gt;\omega_N&lt;/script&gt;. Its partition function is
-\begin{align}
-Q_{classical}(\beta) = (\frac{m}{2\pi\beta\hbar^2})^{N/2} \int dx_0 \int dx_1 … \int dx_{N - 1} e^{-\beta V_{eff}} 
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;The form of &lt;script type=&quot;math/tex&quot;&gt;Q_{classical}(\beta)&lt;/script&gt; is almost the same as &lt;script type=&quot;math/tex&quot;&gt;Q(\beta)&lt;/script&gt;, except the temperature. If we evaluate &lt;script type=&quot;math/tex&quot;&gt;Q_{classical}&lt;/script&gt; at a different temperature &lt;script type=&quot;math/tex&quot;&gt;T' = NT&lt;/script&gt;, we would obtain
-\begin{align}
-Q(\beta) = Q_{classcial}(\beta_N)
-\end{align}&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;In summary, the quantum mechanical partition function &lt;script type=&quot;math/tex&quot;&gt;Q(\beta)&lt;/script&gt; can be obtained by classcial mechanics simulation of N distinguishable beads with effective Hamiltonian as at temperature NT&lt;/strong&gt;
-\begin{align}
-H_{eff} = \sum_0^{N - 1} (\frac{p_j^2}{2m} + \frac{m}{2} \omega_N^2(x_{j+1} - x_j)^2 + V(x_j))
-\end{align}
-Where &lt;script type=&quot;math/tex&quot;&gt;x_N = x_0&lt;/script&gt;.&lt;/p&gt;</content><author><name>wen</name></author><category term="physics" /><category term="derivation" /><summary type="html">Schrodinger’s equations states that \begin{align} \frac{d}{dt}|\Psi_t \rangle = \frac{-i \cdot \hat H}{\hbar} \cdot |\Psi_t \rangle \end{align} A formal solution to the equation is \begin{align} |\Psi_t \rangle = e^{\frac{-i \cdot \hat Ht}{\hbar}} \cdot |\Psi_0 \rangle \end{align}</summary></entry></feed>
+&lt;p&gt;原不等式得证。&lt;/p&gt;</content><author><name>wen</name></author><category term="gaokao" /><summary type="html">已知a, b, c为正数，且满足abc=1. 证明： \begin{align} \frac{1}{a} + \frac{1}{b} + \frac{1}{c} \le a^2 + b^2 + c^2 \end{align} 和 \begin{align} (a+b)^3 + (b+c)^3+ (c+d)^3 \ge 24 \end{align}</summary></entry></feed>
