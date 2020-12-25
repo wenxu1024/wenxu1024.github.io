@@ -31,6 +31,16 @@
 <!-- Bootstrap JS -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-47234019-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-47234019-2');
+</script>
+    
   </head>
   <body>
   	<div class="wrapper">
@@ -108,9 +118,8 @@
 </p>
 <div class="post">
 <h3 id="problem-description">Problem description</h3>
-<p>Given an array arr of positive integers, consider all binary trees such that:</p>
-
-<p>Each node has either 0 or 2 children;
+<p>Given an array arr of positive integers, consider all binary trees such that:
+Each node has either 0 or 2 children;
 The values of arr correspond to the values of each leaf in an in-order traversal of the tree.  (Recall that a node is a leaf if and only if it has 0 children.)
 The value of each non-leaf node is equal to the product of the largest leaf value in its left and right subtree respectively.
 Among all possible binary trees considered, return the smallest possible sum of the values of each non-leaf node.  It is guaranteed this sum fits into a 32-bit integer.</p>
@@ -208,6 +217,8 @@ DP[i][j] = DP[i][k] + DP[k + 1][j] + max(arr[i:k+1])*max(arr[k+1:j+1])</p>
   <li class="previous"><a href="/2019/07/26/lc1129.html">&larr; Older</a></li>
 
 
+  <li class="next"><a href="/2020/12/24/lc1695.html">Newer &rarr;</a></li>
+
 </ul>
 <div id="disqus_thread">
 
@@ -235,9 +246,9 @@ DP[i][j] = DP[i][k] + DP[k + 1][j] + max(arr[i:k+1])*max(arr[k+1:j+1])</p>
         <div class="container">
   <footer>
     <p class="text-muted credit">
-      &copy; 2019 Based on Herring Cove &middot; Build with
+      &copy; 2020 Based on Herring Cove &middot; Build with
       	<a href="https://jekyllrb.com"> Jekyll </a>
-      	2019-07-26 15:29:32 -0400
+      	2020-12-24 21:36:23 -0500
     </p>
   </footer>
 </div>
