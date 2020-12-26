@@ -1,0 +1,213 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<title>Count of Matches in Tournament</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="A website for Tech and Life">
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif] d-->
+<!-- Bootstrap CSS CDN -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<!-- Scrollbar Custom CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+<!-- Font Awesome JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Custom Style -->
+<link href="/assets/css/styles.css" rel="stylesheet">
+<!-- JQuery -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<!-- Custom JS -->
+<script src="/assets/js/mysite.js"></script>
+<!-- Mathjax -->
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- Popper.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<!-- jQuery Custom Scroller CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-47234019-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-47234019-2');
+</script>
+    
+  </head>
+  <body>
+  	<div class="wrapper">
+  	 <nav id="sidebar-nav">
+	<div id="sidebar">
+		<ul>
+		
+			<li>
+			<a href="/" >
+				Home
+			</a>
+			</li>
+		
+			<li>
+			<a href="/projects.html" >
+				Projects
+			</a>
+			</li>
+		
+			<li>
+			<a href="/blog.html" >
+				Blog
+			</a>
+			</li>
+		
+			<li>
+			<a href="/research.html" >
+				Research
+			</a>
+			</li>
+		
+			<li>
+			<a href="/about.html" >
+				About
+			</a>
+			</li>
+		
+		<hr />
+    	<div id="social-wrapper">
+      		<li> <a href="http://twitter.com"><i class="fa fa-twitter-square"></i> @twitter</a></li>
+      		<li> <a href="https://www.linkedin.com/in/wxutamu/"><i class="fa fa-linkedin-square"></i> linkedin</a> </li>
+      		<li> <a href="http://facebook.com"><i class="fa fa-facebook-square"></i> facebook</a></li>
+      		<li> <a href="https://github.com/wenxu1024"><i class="fa fa-github-square"></i> github</a> </li>
+      		<li> <a href="mailto:xuzhiwen1024@gmail.com"><i class="fa fa-envelope"></i> email</a></li>
+    	</div>
+		</ul>
+	</div>
+</nav>
+      <div id="content">
+        <button type="button" id="sidebarCollapse" class="navbar-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+        </button>
+        <hr/>
+  		  <div class="container">
+    	   <div class="article-title"> Count of Matches in Tournament</div>
+<p class="meta">
+	<small>
+      &nbsp;<i class="fa fa-calendar-o"></i> 25 Dec 2020
+    </small>
+</p>
+<p> By 
+	
+  	
+    <a href="/authors/wen.html">Wen Xu</a>
+  	
+</p>
+<p>
+ 	
+ 		<a href="/tags/algorithm.html">algorithm</a>
+ 	
+</p>
+<div class="post">
+<h3 id="description">Description</h3>
+<p>You are given an integer n, the number of teams in a tournament that has strange rules:</p>
+
+<p>If the current number of teams is even, each team gets paired with another team. A total of n / 2 matches are played, and n / 2 teams advance to the next round.
+If the current number of teams is odd, one team randomly advances in the tournament, and the rest gets paired. A total of (n - 1) / 2 matches are played, and (n - 1) / 2 + 1 teams advance to the next round.
+Return the number of matches played in the tournament until a winner is decided.</p>
+
+<p>Example 1:</p>
+
+<p>Input: n = 7
+Output: 6
+Explanation: Details of the tournament:</p>
+<ul>
+  <li>1st Round: Teams = 7, Matches = 3, and 4 teams advance.</li>
+  <li>2nd Round: Teams = 4, Matches = 2, and 2 teams advance.</li>
+  <li>3rd Round: Teams = 2, Matches = 1, and 1 team is declared the winner.
+Total number of matches = 3 + 2 + 1 = 6.
+Example 2:</li>
+</ul>
+
+<p>Input: n = 14
+Output: 13
+Explanation: Details of the tournament:</p>
+<ul>
+  <li>1st Round: Teams = 14, Matches = 7, and 7 teams advance.</li>
+  <li>2nd Round: Teams = 7, Matches = 3, and 4 teams advance.</li>
+  <li>3rd Round: Teams = 4, Matches = 2, and 2 teams advance.</li>
+  <li>4th Round: Teams = 2, Matches = 1, and 1 team is declared the winner.
+Total number of matches = 7 + 3 + 2 + 1 = 13.</li>
+</ul>
+
+<p>Constraints:</p>
+
+<p>1 &lt;= n &lt;= 200</p>
+
+<h3 id="solution">Solution</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">numberOfMatches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">+=</span> <span class="n">n</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">n</span> <span class="o">//=</span> <span class="mi">2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>     
+        <span class="k">return</span> <span class="n">c</span>
+</code></pre></div></div>
+
+</div>
+<a href="https://twitter.com/share" class="twitter-share-button " data-size="small" data-count="none">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<ul class="pager">
+
+  <li class="previous"><a href="/2020/12/24/lc1696.html">&larr; Older</a></li>
+
+
+  <li class="next"><a href="/2020/12/25/lc1689.html">Newer &rarr;</a></li>
+
+</ul>
+<div id="disqus_thread">
+
+  <script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+      var disqus_shortname = 'wenx'; // required: replace example with your forum shortname
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>
+    Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+
+  <a href="http://disqus.com" class="dsq-brlink">
+    comments powered by <span class="logo-disqus">Disqus</span>
+  </a>
+
+</div>
+
+		    </div>
+        <div class="container">
+  <footer>
+    <p class="text-muted credit">
+      &copy; 2020 Based on Herring Cove &middot; Build with
+      	<a href="https://jekyllrb.com"> Jekyll </a>
+      	2020-12-26 18:20:32 -0500
+    </p>
+  </footer>
+</div>
+      </div>
+	  </div>
+  </body>
+</html>
